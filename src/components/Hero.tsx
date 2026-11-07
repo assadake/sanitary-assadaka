@@ -1,28 +1,32 @@
 import { useEffect, useState } from "react";
-import { PRODUCTS, px } from "../data/catalog";
+import { px } from "../data/catalog";
 import { WHATSAPP_NUMBER, formatPrice } from "../i18n";
 import { useStore } from "../store";
 import { Stars } from "./Bits";
 import { IconArrow, IconBag, IconCheck, IconPin, IconShield, IconTruck, IconWhatsApp } from "./Icons";
 import Reveal from "./Reveal";
 
-const HERO_PRODUCT = PRODUCTS.find((p) => p.id === "TL-2001")!;
 const HERO_IMG_A = 6585763; // living room
 const HERO_IMG_B = 5974048; // tools
 const HERO_IMG_C = 36573009; // espresso
 
-const ROTATING = [HERO_PRODUCT, PRODUCTS.find((p) => p.id === "TL-4001")!, PRODUCTS.find((p) => p.id === "TL-1001")!];
 
 export default function Hero() {
-  const { t, lang, add, waLink } = useStore();
+  const { t, lang, add, waLink, products } = useStore();
   const [idx, setIdx] = useState(0);
 
-  useEffect(() => {
-    const id = window.setInterval(() => setIdx((i) => (i + 1) % ROTATING.length), 4200);
-    return () => window.clearInterval(id);
-  }, []);
+  const rotating = ["TL-2001", "TL-4001", "TL-1001"]
+    .map((id) => products.find((product) => product.id === id))
+    .filter((product) => product !== undefined);
+  const featuredProducts = rotating.length ? rotating : products.slice(0, 3);
 
-  const featured = ROTATING[idx];
+  useEffect(() => {
+    const id = window.setInterval(() => setIdx((i) => (i + 1) % Math.max(1, featuredProducts.length)), 4200);
+    return () => window.clearInterval(id);
+  }, [featuredProducts.length]);
+
+  const featured = featuredProducts[idx % featuredProducts.length];
+  if (!featured) return null;
 
   const stats = [
     { v: "+1,200", k: t("hero.stat1") },
@@ -224,7 +228,7 @@ export default function Hero() {
                 </div>
               </div>
               <div className="mt-2.5 flex gap-1">
-                {ROTATING.map((p, i) => (
+                {featuredProducts.map((p, i) => (
                   <button
                     key={p.id}
                     type="button"

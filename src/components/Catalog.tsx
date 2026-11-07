@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { CATEGORIES, PRODUCTS, px, type Product } from "../data/catalog";
+import { CATEGORIES, px, type Product } from "../data/catalog";
 import { WHATSAPP_NUMBER, formatPrice } from "../i18n";
 import { useStore } from "../store";
 import { SectionHead, Stars } from "./Bits";
@@ -260,12 +260,12 @@ function QuickView() {
 
 /* ───────────────────────── Catalog ───────────────────────── */
 export default function Catalog() {
-  const { t, lang, query, setQuery, cat, setCat, sort, setSort } = useStore();
+  const { t, lang, query, setQuery, cat, setCat, sort, setSort, products } = useStore();
   const [visible, setVisible] = useState(8);
 
   const list = useMemo(() => {
     const q = query.trim().toLowerCase();
-    let out = PRODUCTS.filter((p) => {
+    let out = products.filter((p) => {
       const okCat = cat === "all" || p.cat === cat;
       const hay = `${p.name.ar} ${p.name.en} ${p.desc.ar} ${p.desc.en} ${p.id} ${p.origin.ar} ${p.origin.en} ${p.cat}`.toLowerCase();
       return okCat && (!q || hay.includes(q));
@@ -274,7 +274,7 @@ export default function Catalog() {
     if (sort === "high") out = [...out].sort((a, b) => b.price - a.price);
     if (sort === "featured") out = [...out].sort((a, b) => Number(Boolean(b.badge)) - Number(Boolean(a.badge)) || b.rating - a.rating);
     return out;
-  }, [query, cat, sort]);
+  }, [query, cat, sort, products]);
 
   const shown = list.slice(0, visible);
 
@@ -328,7 +328,7 @@ export default function Catalog() {
         <div className="no-bar -mx-4 mb-8 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0">
           {[{ id: "all", name: { ar: t("product.all"), en: t("product.all") } }, ...CATEGORIES].map((c) => {
             const active = cat === c.id;
-            const n = c.id === "all" ? PRODUCTS.length : PRODUCTS.filter((p) => p.cat === c.id).length;
+            const n = c.id === "all" ? products.length : products.filter((p) => p.cat === c.id).length;
             return (
               <button
                 key={c.id}

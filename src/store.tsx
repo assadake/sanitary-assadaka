@@ -9,6 +9,7 @@ type Store = {
   setLang: (l: Lang) => void;
   t: (k: string) => string;
   dir: "rtl" | "ltr";
+  products: Product[];
   cart: CartLine[];
   add: (id: string, qty?: number) => void;
   setQty: (id: string, qty: number) => void;
@@ -47,6 +48,7 @@ const load = <T,>(key: string, fallback: T): T => {
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>(() => load<Lang>("tolin.lang", "ar"));
+  const [products, setProducts] = useState<Product[]>(PRODUCTS);
   const [cart, setCart] = useState<CartLine[]>(() => load<CartLine[]>("tolin.cart", []));
   const [favs, setFavs] = useState<string[]>(() => load<string[]>("tolin.favs", []));
   const [cartOpen, setCartOpen] = useState(false);
@@ -57,6 +59,20 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [toast, setToast] = useState<string | null>(null);
 
   const dir = lang === "ar" ? "rtl" : "ltr";
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch("/api/products", { signal: controller.signal })
+      .then((response) => {
+        if (!response.ok) throw new Error("Could not load products");
+        return response.json() as Promise<Product[]>;
+      })
+      .then((items) => { if (Array.isArray(items)) setProducts(items); })
+      .catch((error: unknown) => {
+        if (error instanceof Error && error.name !== "AbortError") console.error("Product catalogue is using its offline fallback", error);
+      });
+    return () => controller.abort();
+  }, []);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -108,10 +124,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         if (found) return prev.map((l) => (l.id === id ? { ...l, qty: Math.min(99, l.qty + qty) } : l));
         return [...prev, { id, qty }];
       });
-      const p = PRODUCTS.find((x) => x.id === id);
+      const p = products.find((x) => x.id === id);
       if (p) setToast(`${dictionaries[lang]["cart.added"]} · ${p.name[lang]}`);
     },
-    [lang],
+    [lang, products],
   );
 
   const setQty = useCallback((id: string, qty: number) => {
@@ -130,9 +146,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const lines = useMemo(
     () =>
       cart
-        .map((l) => ({ product: PRODUCTS.find((p) => p.id === l.id)!, qty: l.qty }))
+        .map((l) => ({ product: products.find((p) => p.id === l.id)!, qty: l.qty }))
         .filter((l) => Boolean(l.product)),
-    [cart],
+    [cart, products],
   );
 
   const count = useMemo(() => cart.reduce((s, l) => s + l.qty, 0), [cart]);
@@ -146,6 +162,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const value: Store = {
     lang,
     setLang,
+    products,
     t,
     dir,
     cart,
@@ -192,9 +209,10 @@ export function buildOrderMessage(opts: {
   city: string;
   note: string;
   mode: "deliver" | "pickup";
+  orderNo?: string;
 }) {
   const { lang, lines, subtotal, name, phone, city, note, mode } = opts;
-  const orderNo = `TL-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+  const orderNo = opts.orderNo ?? `TL-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
   const L = (a: string, b: string) => (lang === "ar" ? a : b);
 
   const rows = lines

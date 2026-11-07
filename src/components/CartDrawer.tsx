@@ -8,6 +8,8 @@ export default function CartDrawer() {
   const { t, lang, cartOpen, setCartOpen, lines, count, subtotal, setQty, remove, clear, setCat } = useStore();
   const [form, setForm] = useState({ name: "", phone: "", city: "", note: "", mode: "deliver" as "deliver" | "pickup" });
   const [sent, setSent] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!cartOpen) return;
@@ -16,10 +18,39 @@ export default function CartDrawer() {
     return () => document.removeEventListener("keydown", onKey);
   }, [cartOpen, setCartOpen]);
 
-  const submit = () => {
-    const order = buildOrderMessage({ ...form, lines, subtotal, lang });
-    window.open(order.href, "_blank", "noopener,noreferrer");
-    setSent(order.orderNo);
+  const submit = async () => {
+    if (submitting || lines.length === 0) return;
+    if (!form.name.trim() || !form.phone.trim()) {
+      setSubmitError(lang === "ar" ? "أدخل اسمك ورقم هاتفك لإكمال الطلب." : "Enter your name and phone number to continue.");
+      return;
+    }
+    setSubmitting(true);
+    setSubmitError(null);
+    const whatsappTab = window.open("about:blank", "_blank");
+    try {
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customer: form,
+          items: lines.map(({ product, qty }) => ({ productId: product.id, qty })),
+        }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Order could not be saved");
+      const order = buildOrderMessage({ ...form, lang, orderNo: result.orderNo, subtotal: result.subtotal, lines: result.lines });
+      if (whatsappTab) whatsappTab.location.href = order.href;
+      else window.location.href = order.href;
+      setSent(result.orderNo);
+    } catch (error) {
+      whatsappTab?.close();
+      setSubmitError(lang === "ar"
+        ? "تعذر حفظ الطلب. تحقق من اتصال الإنترنت وحاول مرة أخرى."
+        : "We could not save your order. Check your connection and try again.");
+      console.error("Order submission failed", error);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -207,7 +238,7 @@ export default function CartDrawer() {
                         <textarea
                           rows={2}
                           value={form[key]}
-                          onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
+                          onChange={(e) => { setSubmitError(null); setForm((f) => ({ ...f, [key]: e.target.value })); }}
                           placeholder={ph}
                           className="w-full resize-none rounded-xl border border-line bg-mist px-3.5 py-2.5 text-[13px] outline-none transition-all placeholder:text-ink-soft/50 focus:border-ikea focus:bg-white focus:shadow-[0_0_0_3px_rgba(0,88,163,0.12)]"
                         />
@@ -215,7 +246,7 @@ export default function CartDrawer() {
                         <input
                           type={key === "phone" ? "tel" : "text"}
                           value={form[key]}
-                          onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
+                          onChange={(e) => { setSubmitError(null); setForm((f) => ({ ...f, [key]: e.target.value })); }}
                           placeholder={ph}
                           className="w-full rounded-xl border border-line bg-mist px-3.5 py-2.5 text-[13px] outline-none transition-all placeholder:text-ink-soft/50 focus:border-ikea focus:bg-white focus:shadow-[0_0_0_3px_rgba(0,88,163,0.12)]"
                         />
@@ -246,13 +277,15 @@ export default function CartDrawer() {
               </dl>
               <p className="mt-2 text-[11px] leading-relaxed text-ink-soft/75">{t("cart.deliveryNote")}</p>
 
+              {submitError && <p role="alert" className="mt-2 text-[12px] font-semibold text-brick">{submitError}</p>}
               <button
                 type="button"
                 onClick={submit}
+                disabled={submitting}
                 className="group mt-3 inline-flex w-full items-center justify-center gap-2.5 rounded-full bg-leaf px-5 py-4 font-display text-[15px] font-black text-white transition-all duration-300 hover:brightness-110 hover:shadow-[0_16px_36px_-16px_rgba(31,122,77,1)] active:scale-[0.98]"
               >
                 <IconWhatsApp className="h-5.5 w-5.5 transition-transform duration-300 group-hover:scale-110" />
-                {t("cart.checkout")}
+                {submitting ? (lang === "ar" ? "جارٍ حفظ الطلب…" : "Saving order…") : t("cart.checkout")}
               </button>
               <div className="mt-2.5 flex items-center justify-between text-[11px] text-ink-soft/70">
                 <span>{t("cart.checkoutNote")}</span>

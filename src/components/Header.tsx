@@ -15,7 +15,7 @@ import {
   IconWhatsApp,
   IconX,
 } from "./Icons";
-import { CATEGORIES, PRODUCTS, px } from "../data/catalog";
+import { CATEGORIES, px } from "../data/catalog";
 
 const NAV = [
   { key: "nav.products", href: "#catalog" },
@@ -29,7 +29,7 @@ const NAV = [
 ];
 
 export default function Header() {
-  const { t, count, favs, setCartOpen, query, setQuery, lang, setCat } = useStore();
+  const { t, count, favs, setCartOpen, query, setQuery, lang, setCat, products } = useStore();
   const [scrolled, setScrolled] = useState(false);
   const [progress, setProgress] = useState(0);
   const [mobile, setMobile] = useState(false);
@@ -267,7 +267,7 @@ export default function Header() {
                         <span className="min-w-0 flex-1">
                           <span className="block truncate font-display text-[13px] font-bold text-ink">{c.name[lang]}</span>
                           <span className="mt-0.5 block text-[11px] text-ink-soft tabular">
-                            {PRODUCTS.filter((p) => p.cat === c.id).length} {t("cat.count")}
+                            {products.filter((p) => p.cat === c.id).length} {t("cat.count")}
                           </span>
                         </span>
                         <IconArrow className="h-4 w-4 shrink-0 text-ink-soft/35 transition-all duration-300 group-hover:translate-x-1 group-hover:text-ikea rtl:rotate-180 rtl:group-hover:-translate-x-1" />
