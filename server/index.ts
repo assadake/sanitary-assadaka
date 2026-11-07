@@ -8,6 +8,16 @@ import { fileURLToPath } from "node:url";
 import { PRODUCTS, type Product } from "../src/data/catalog.ts";
 
 const app = express();
+const LEGACY_TEMPLATE_IDS = [
+  ...Array.from({ length: 5 }, (_, index) => `TL-${1001 + index}`),
+  ...Array.from({ length: 7 }, (_, index) => `TL-${2001 + index}`),
+  ...Array.from({ length: 6 }, (_, index) => `TL-${3001 + index}`),
+  ...Array.from({ length: 5 }, (_, index) => `TL-${4001 + index}`),
+  ...Array.from({ length: 4 }, (_, index) => `TL-${5001 + index}`),
+  ...Array.from({ length: 5 }, (_, index) => `TL-${6001 + index}`),
+  ...Array.from({ length: 4 }, (_, index) => `TL-${7001 + index}`),
+  ...Array.from({ length: 5 }, (_, index) => `TL-${8001 + index}`),
+];
 const port = Number(process.env.PORT || 3000);
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const databaseUrl = process.env.DATABASE_URL;
@@ -201,7 +211,7 @@ async function start() {
   const hasAppliedAssadakaCatalog = settingRows[0]?.value === catalogRevision;
   const legacyTemplateIds = existingProducts
     .map(({ id }) => id)
-    .filter((id) => /^TL-\d{4}$/.test(id));
+    .filter((id) => LEGACY_TEMPLATE_IDS.includes(id));
   const shouldReplaceTemplateCatalog = !hasAppliedAssadakaCatalog && legacyTemplateIds.length > 0;
   const shouldSeedCatalog = existingProducts.length === 0;
 
@@ -210,7 +220,7 @@ async function start() {
     try {
       await client.query("BEGIN");
       if (shouldReplaceTemplateCatalog) {
-        await client.query("DELETE FROM products WHERE id ~ '^TL-[0-9]{4}$'");
+        await client.query("DELETE FROM products WHERE id = ANY($1::text[])", [legacyTemplateIds]);
         console.info(`Replaced ${legacyTemplateIds.length} starter template products with the Assadaka catalogue.`);
       }
       for (const [index, product] of PRODUCTS.entries()) {
