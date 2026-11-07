@@ -1,0 +1,184 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Noto Kufi Arabic", "Archivo", ui-sans-serif, system-ui;
+  --font-sans: "IBM Plex Sans Arabic", "Helvetica Neue", Helvetica, sans-serif;
+
+  --color-ikea: #0058a3;
+  --color-ikea-deep: #003f77;
+  --color-ikea-soft: #e6eef6;
+  --color-sun: #ffdb00;
+  --color-sun-deep: #e6c500;
+  --color-ink: #111114;
+  --color-ink-soft: #4a4a52;
+  --color-mist: #f4f4f2;
+  --color-line: #dcdcd8;
+  --color-leaf: #1f7a4d;
+  --color-brick: #c0392b;
+
+  --animate-marquee: marquee 38s linear infinite;
+  --animate-marquee-rev: marquee-rev 44s linear infinite;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-kenburns: kenburns 22s ease-in-out infinite alternate;
+  --animate-pop: pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  --animate-spin-slow: spin 14s linear infinite;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes marquee-rev {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+}
+@keyframes kenburns {
+  from {
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+  to {
+    transform: scale(1.09) translate3d(1.5%, -1.5%, 0);
+  }
+}
+@keyframes pop {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-mist);
+  color: var(--color-ink);
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--color-sun);
+  color: var(--color-ink);
+}
+
+/* ---------- ambient page background ---------- */
+.ambient {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(60rem 40rem at 110% -10%, rgba(0, 88, 163, 0.13), transparent 60%),
+    radial-gradient(48rem 34rem at -15% 12%, rgba(255, 219, 0, 0.18), transparent 62%),
+    radial-gradient(40rem 30rem at 50% 120%, rgba(0, 88, 163, 0.1), transparent 60%);
+}
+.ambient::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(to right, rgba(17, 17, 20, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(17, 17, 20, 0.045) 1px, transparent 1px);
+  background-size: 84px 84px;
+  mask-image: radial-gradient(circle at 50% 30%, black, transparent 78%);
+}
+
+/* ---------- scroll reveal ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- utilities ---------- */
+.no-bar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.snap-x-mand {
+  scroll-snap-type: x mandatory;
+}
+.snap-start-i {
+  scroll-snap-align: start;
+}
+
+.link-sweep {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 2px;
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  transition: background-size 0.35s ease;
+}
+.link-sweep:hover {
+  background-size: 100% 2px;
+}
+[dir="rtl"] .link-sweep {
+  background-position: 100% 100%;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+:focus-visible {
+  outline: 3px solid rgba(0, 88, 163, 0.55);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
