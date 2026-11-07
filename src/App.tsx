@@ -1,7 +1,7 @@
 import Catalog from "./components/Catalog";
 import CartDrawer from "./components/CartDrawer";
 import Departments from "./components/Departments";
-import { Toast, WhatsAppFloat } from "./components/Floating";
+import { ContactFloat, Toast } from "./components/Floating";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
@@ -13,33 +13,26 @@ import Stories from "./components/Stories";
 import { Ticker } from "./components/Bits";
 import { StoreProvider, useStore } from "./store";
 
-const ORIGINS = [
-  { flag: "🇮🇹", ar: "إيطاليا", en: "Italy" },
-  { flag: "🇩🇪", ar: "ألمانيا", en: "Germany" },
-  { flag: "🇹🇷", ar: "تركيا", en: "Türkiye" },
-  { flag: "🇵🇱", ar: "بولندا", en: "Poland" },
-  { flag: "🇪🇸", ar: "إسبانيا", en: "Spain" },
-  { flag: "🇸🇪", ar: "السويد", en: "Sweden" },
-  { flag: "🇩🇰", ar: "الدنمارك", en: "Denmark" },
-  { flag: "🇳🇱", ar: "هولندا", en: "Netherlands" },
-  { flag: "🇫🇷", ar: "فرنسا", en: "France" },
-  { flag: "🇵🇹", ar: "البرتغال", en: "Portugal" },
+const BRANDS = [
+  { name: "IDEAL", sub: { ar: "أدوات صحية", en: "Sanitary ware" } },
+  { name: "TURKUAZ", sub: { ar: "حلول الحمام", en: "Bathroom solutions" } },
+  { name: "CeraStyle", sub: { ar: "سيراميك صحي", en: "Ceramics" } },
 ];
 
 function OriginStrip() {
   const { lang } = useStore();
-  const items = [...ORIGINS, ...ORIGINS];
+  const items = [...BRANDS, ...BRANDS];
   return (
     <div className="relative flex items-center gap-4 overflow-hidden border-b border-line bg-white py-3.5">
       <span className="z-10 hidden shrink-0 items-center gap-2 bg-white ps-4 pe-6 font-display text-[11px] font-black uppercase tracking-[0.2em] text-ink sm:ps-6 md:flex lg:ps-10">
         <span className="h-2 w-2 rounded-full bg-brick" />
-        {lang === "ar" ? "مستورد مباشرة من" : "Imported directly from"}
+        {lang === "ar" ? "ماركات متوفرة" : "Brands featured"}
       </span>
       <div className="flex w-max shrink-0 animate-marquee-rev items-center gap-8 whitespace-nowrap will-change-transform">
         {items.map((o, i) => (
-          <span key={i} className="flex items-center gap-2 text-[13px] font-semibold text-ink-soft">
-            <span className="text-base leading-none">{o.flag}</span>
-            {o[lang]}
+          <span key={i} className="flex items-center gap-2 text-[12px] font-semibold text-ink-soft">
+            <span className="text-base leading-none"><span className="h-2 w-2 rounded-full bg-ikea" /></span>
+            {o.name} · {o.sub[lang]}
             <span className="ms-6 h-1 w-1 rounded-full bg-line" />
           </span>
         ))}
@@ -70,7 +63,7 @@ function Shell() {
         <Footer />
       </div>
       <CartDrawer />
-      <WhatsAppFloat />
+      <ContactFloat />
       <Toast />
     </div>
   );

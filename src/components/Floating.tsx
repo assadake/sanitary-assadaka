@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { WHATSAPP_DISPLAY } from "../i18n";
-import { useStore } from "../store";
-import { IconArrow, IconBag, IconCheck, IconWhatsApp } from "./Icons";
 
-export function WhatsAppFloat() {
-  const { lang, waLink, t } = useStore();
+import { useStore } from "../store";
+import { IconArrow, IconBag, IconCheck, IconFacebook } from "./Icons";
+
+export function ContactFloat() {
+  const { lang, contactLink, t } = useStore();
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -21,10 +21,10 @@ export function WhatsAppFloat() {
       }`}
     >
       <a
-        href={waLink(
+        href={contactLink(
           lang === "ar"
-            ? "السلام عليكم، نبي نطلب من تولين للبضائع الأروبية."
-            : "Hello, I'd like to order from TOLIN European Goods.",
+            ? "السلام عليكم، نبي نستفسر عن المواد الصحية والسيراميك."
+            : "Hello, I would like to enquire about sanitary ware and ceramics.",
         )}
         target="_blank"
         rel="noreferrer noopener"
@@ -32,12 +32,12 @@ export function WhatsAppFloat() {
       >
         <span className="relative grid h-9 w-9 place-items-center rounded-full bg-white/15">
           <span className="absolute inset-0 animate-ping rounded-full bg-white/25" />
-          <IconWhatsApp className="relative h-5.5 w-5.5" />
+          <IconFacebook className="relative h-5.5 w-5.5" />
         </span>
         <span className="flex flex-col leading-tight">
           <span className="font-display text-[13.5px] font-bold">{t("wa.float")}</span>
           <span className="text-[11px] text-white/70 tabular">
-            {WHATSAPP_DISPLAY} · {t("wa.floatSub")}
+            {t("wa.floatSub")}
           </span>
         </span>
       </a>

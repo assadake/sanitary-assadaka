@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { WHATSAPP_DISPLAY, WHATSAPP_NUMBER } from "../i18n";
+import { COMPANY_DISPLAY, FACEBOOK_PAGE_URL } from "../i18n";
 import { useStore } from "../store";
 import { LangSwitch, Logo } from "./Bits";
 import {
@@ -8,14 +8,14 @@ import {
   IconChevron,
   IconHeart,
   IconMenu,
-  IconPhone,
+  IconFacebook,
   IconPin,
   IconSearch,
   IconTruck,
-  IconWhatsApp,
+
   IconX,
 } from "./Icons";
-import { CATEGORIES, PRODUCTS, px } from "../data/catalog";
+import { CATEGORIES, px } from "../data/catalog";
 
 const NAV = [
   { key: "nav.products", href: "#catalog" },
@@ -29,7 +29,7 @@ const NAV = [
 ];
 
 export default function Header() {
-  const { t, count, favs, setCartOpen, query, setQuery, lang, setCat } = useStore();
+  const { t, count, favs, setCartOpen, query, setQuery, lang, setCat, products, contactLink } = useStore();
   const [scrolled, setScrolled] = useState(false);
   const [progress, setProgress] = useState(0);
   const [mobile, setMobile] = useState(false);
@@ -66,9 +66,7 @@ export default function Header() {
     return () => document.removeEventListener("keydown", onKey);
   }, [mobile, mega]);
 
-  const waGeneral = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-    lang === "ar" ? "السلام عليكم، عندي سؤال بخصوص منتجات تولين." : "Hello, I have a question about TOLIN products.",
-  )}`;
+  const companyPage = FACEBOOK_PAGE_URL;
 
   return (
     <header id="top" className="sticky top-0 z-40">
@@ -87,19 +85,21 @@ export default function Header() {
           </div>
           <div className="flex items-center gap-1">
             <a
-              href={`tel:+${WHATSAPP_NUMBER}`}
-              className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-white/75 transition-colors hover:bg-white/10 hover:text-white"
-            >
-              <IconPhone className="h-3.5 w-3.5" />
-              <span className="tabular">{WHATSAPP_DISPLAY}</span>
-            </a>
-            <a
-              href={waGeneral}
+              href={companyPage}
               target="_blank"
               rel="noreferrer noopener"
               className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-white/75 transition-colors hover:bg-white/10 hover:text-white"
             >
-              <IconWhatsApp className="h-4 w-4" />
+              <IconFacebook className="h-4 w-4" />
+              {lang === "ar" ? COMPANY_DISPLAY : "Assadaka Sanitary Ware & Ceramics"}
+            </a>
+            <a
+              href={contactLink()}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-white/75 transition-colors hover:bg-white/10 hover:text-white"
+            >
+              <IconFacebook className="h-4 w-4" />
               {t("top.help")}
             </a>
             <span className="mx-1 h-4 w-px bg-white/15" />
@@ -267,7 +267,7 @@ export default function Header() {
                         <span className="min-w-0 flex-1">
                           <span className="block truncate font-display text-[13px] font-bold text-ink">{c.name[lang]}</span>
                           <span className="mt-0.5 block text-[11px] text-ink-soft tabular">
-                            {PRODUCTS.filter((p) => p.cat === c.id).length} {t("cat.count")}
+                            {products.filter((p) => p.cat === c.id).length} {t("cat.count")}
                           </span>
                         </span>
                         <IconArrow className="h-4 w-4 shrink-0 text-ink-soft/35 transition-all duration-300 group-hover:translate-x-1 group-hover:text-ikea rtl:rotate-180 rtl:group-hover:-translate-x-1" />
@@ -282,7 +282,7 @@ export default function Header() {
                       aria-hidden
                       className="pointer-events-none absolute -end-6 -top-8 font-display text-[7rem] font-black leading-none text-white/[0.07]"
                     >
-                      EU
+                      AS
                     </span>
                     <div className="relative">
                       <span className="inline-flex items-center gap-2 rounded-full bg-sun px-3 py-1 font-display text-[10px] font-black uppercase tracking-[0.16em] text-ink">
@@ -290,26 +290,22 @@ export default function Header() {
                         {lang === "ar" ? "شحنة جديدة" : "New shipment"}
                       </span>
                       <p className="mt-3 font-display text-[17px] font-black leading-snug">
-                        {lang === "ar" ? "حاوية ميلانو وصلت المخزن" : "The Milan container just landed"}
+                        {lang === "ar" ? "تعرّف على منتجاتنا" : "Explore our product range"}
                       </p>
                       <p className="mt-1.5 text-[12.5px] leading-relaxed text-white/65">
                         {lang === "ar"
-                          ? "أجهزة مطبخ وأثاث بكميات محدودة — احجز قطعتك قبل ما تخلص."
-                          : "Kitchen appliances and furniture in limited quantities — reserve yours before it's gone."}
+                          ? "أدوات صحية وسيراميك ومواد بناء؛ اسألنا عن الموديلات والأسعار المتوفرة."
+                          : "Sanitary ware, ceramic tiles and building materials; ask us about available models and prices."}
                       </p>
                     </div>
                     <a
-                      href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-                        lang === "ar"
-                          ? "السلام عليكم، نبي نشوف منتجات شحنة ميلانو الجديدة."
-                          : "Hello, I'd like to see the new Milan shipment.",
-                      )}`}
+                      href={contactLink()}
                       target="_blank"
                       rel="noreferrer noopener"
                       className="relative mt-5 inline-flex items-center justify-center gap-2 rounded-full bg-white px-4 py-3 font-display text-[13px] font-bold text-ink transition-colors hover:bg-sun"
                     >
-                      <IconWhatsApp className="h-4.5 w-4.5 text-leaf" />
-                      {lang === "ar" ? "احجز على واتساب" : "Reserve on WhatsApp"}
+                      <IconFacebook className="h-4.5 w-4.5 text-ikea" />
+                      {lang === "ar" ? "راسلنا عبر ماسنجر" : "Message us on Messenger"}
                     </a>
                   </div>
                 </div>
@@ -379,13 +375,13 @@ export default function Header() {
               {t("top.location")}
             </div>
             <a
-              href={waGeneral}
+              href={contactLink()}
               target="_blank"
               rel="noreferrer noopener"
               className="flex items-center justify-center gap-2 rounded-full bg-leaf px-4 py-3 font-display text-[14px] font-bold text-white"
             >
-              <IconWhatsApp className="h-5 w-5" />
-              <span className="tabular">{WHATSAPP_DISPLAY}</span>
+              <IconFacebook className="h-5 w-5" />
+              <span>{lang === "ar" ? COMPANY_DISPLAY : "Assadaka Sanitary Ware & Ceramics"}</span>
             </a>
           </div>
         </div>

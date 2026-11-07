@@ -1,20 +1,20 @@
 import { useState } from "react";
 import { STORIES, px, type Bi } from "../data/catalog";
-import { WHATSAPP_NUMBER } from "../i18n";
+
 import { useStore } from "../store";
 import { SectionHead } from "./Bits";
 import { RailArrows, RailProgress, useRail } from "./Carousel";
-import { IconCheck, IconWhatsApp, IconX } from "./Icons";
+import { IconCheck, IconFacebook, IconX } from "./Icons";
 import Reveal from "./Reveal";
 
 const STEPS: Bi[] = [
-  { ar: "نختار المورد الأوروبي ونعاين العيّنة قبل الشراء.", en: "We pick the European supplier and inspect the sample before buying." },
-  { ar: "الشحنة تُفحص وتُغلَّف وتُوثَّق بالصور في المخزن.", en: "The shipment is tested, packed and photographed at the warehouse." },
-  { ar: "توصلك لبيتك مع التركيب والضمان المكتوب.", en: "It reaches your home with installation and a written warranty." },
+  { ar: "أرسل مقاسات المكان أو مساحة المشروع.", en: "Share the space measurements or project area." },
+  { ar: "حدد الموديل أو اللون أو نوع التشطيب الذي تفضله.", en: "Specify the model, colour or finish you prefer." },
+  { ar: "تحقق من السعر والتوفر والضمان مع الشركة قبل الشراء.", en: "Confirm price, availability and warranty with the company before buying." },
 ];
 
 export default function Stories() {
-  const { t, lang } = useStore();
+  const { t, lang, contactLink } = useStore();
   const rail = useRail();
   const [openId, setOpenId] = useState<string | null>(null);
   const story = STORIES.find((s) => s.id === openId) ?? null;
@@ -129,15 +129,13 @@ export default function Stories() {
                 ))}
               </ol>
               <a
-                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-                  lang === "ar" ? `قرأت قصة «${story.title.ar}» ونبي تفاصيل أكثر.` : `I read "${story.title.en}" and would like more details.`,
-                )}`}
+                href={contactLink()}
                 target="_blank"
                 rel="noreferrer noopener"
                 className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-leaf px-5 py-3.5 font-display text-[14px] font-bold text-white transition-transform hover:scale-[1.01] active:scale-95"
               >
-                <IconWhatsApp className="h-5 w-5" />
-                {lang === "ar" ? "ناقش معنا على واتساب" : "Discuss with us on WhatsApp"}
+                <IconFacebook className="h-5 w-5" />
+                {lang === "ar" ? "استفسر عبر صفحة فيسبوك" : "Message us on Facebook"}
               </a>
             </div>
           </div>

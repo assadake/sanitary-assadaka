@@ -53,7 +53,7 @@ export default function Rooms() {
                 />
                 <span className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/5 to-transparent" />
                 <span className="absolute start-4 top-4 rounded-full bg-white/90 px-3 py-1 font-display text-[10.5px] font-black uppercase tracking-[0.14em] text-ikea tabular backdrop-blur">
-                  {r.pieces} {t("rooms.pieces")}
+                  {t("rooms.pieces")}
                 </span>
                 <div className="absolute inset-x-0 bottom-0 p-4">
                   <h3 className="font-display text-[19px] font-black leading-tight text-white">{r.title[lang]}</h3>

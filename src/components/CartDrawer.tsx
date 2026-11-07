@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import { px } from "../data/catalog";
-import { WHATSAPP_DISPLAY, formatPrice } from "../i18n";
-import { buildOrderMessage, useStore } from "../store";
-import { IconBag, IconCheck, IconMinus, IconPlus, IconTrash, IconTruck, IconWhatsApp, IconX } from "./Icons";
+import { MESSENGER_URL, formatPrice } from "../i18n";
+import { useStore } from "../store";
+import { IconBag, IconCheck, IconMinus, IconPlus, IconTrash, IconTruck, IconFacebook, IconX } from "./Icons";
 
 export default function CartDrawer() {
   const { t, lang, cartOpen, setCartOpen, lines, count, subtotal, setQty, remove, clear, setCat } = useStore();
   const [form, setForm] = useState({ name: "", phone: "", city: "", note: "", mode: "deliver" as "deliver" | "pickup" });
   const [sent, setSent] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!cartOpen) return;
@@ -16,10 +18,38 @@ export default function CartDrawer() {
     return () => document.removeEventListener("keydown", onKey);
   }, [cartOpen, setCartOpen]);
 
-  const submit = () => {
-    const order = buildOrderMessage({ ...form, lines, subtotal, lang });
-    window.open(order.href, "_blank", "noopener,noreferrer");
-    setSent(order.orderNo);
+  const submit = async () => {
+    if (submitting || lines.length === 0) return;
+    if (!form.name.trim() || !form.phone.trim()) {
+      setSubmitError(lang === "ar" ? "أدخل اسمك ورقم هاتفك لإكمال الطلب." : "Enter your name and phone number to continue.");
+      return;
+    }
+    setSubmitting(true);
+    setSubmitError(null);
+    const messengerTab = window.open("about:blank", "_blank");
+    try {
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customer: form,
+          items: lines.map(({ product, qty }) => ({ productId: product.id, qty })),
+        }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Order could not be saved");
+      if (messengerTab) messengerTab.location.href = MESSENGER_URL;
+      else window.location.href = MESSENGER_URL;
+      setSent(result.orderNo);
+    } catch (error) {
+      messengerTab?.close();
+      setSubmitError(lang === "ar"
+        ? "تعذر حفظ الطلب. تحقق من اتصال الإنترنت وحاول مرة أخرى."
+        : "We could not save your order. Check your connection and try again.");
+      console.error("Order submission failed", error);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -47,7 +77,7 @@ export default function CartDrawer() {
             <div>
               <h2 className="font-display text-[16px] font-black leading-none">{t("cart.title")}</h2>
               <p className="mt-1.5 text-[11.5px] text-ink-soft tabular">
-                {count} {t("cart.items")} · {formatPrice(subtotal, lang)}
+                {count} {t("cart.items")} · {subtotal > 0 ? formatPrice(subtotal, lang) : t("product.priceOnRequest")}
               </p>
             </div>
           </div>
@@ -67,12 +97,12 @@ export default function CartDrawer() {
               <IconCheck className="h-8 w-8" />
             </span>
             <h3 className="font-display text-[19px] font-black leading-tight">
-              {lang === "ar" ? "تحوّلت لواتساب ✓" : "Sent to WhatsApp ✓"}
+              {lang === "ar" ? "تم تسجيل طلب الاستفسار ✓" : "Enquiry saved ✓"}
             </h3>
             <p className="text-[13.5px] leading-relaxed text-ink-soft">
               {lang === "ar"
-                ? `افتحنا محادثة مع ${WHATSAPP_DISPLAY} وطلبك مكتوب فيها. اضغط إرسال في واتساب لتأكيد الطلب.`
-                : `We opened a chat with ${WHATSAPP_DISPLAY} with your order written in it. Press send inside WhatsApp to confirm.`}
+                ? "تم حفظ تفاصيل طلبك. افتحنا صفحة الصداقة على ماسنجر للتواصل والمتابعة."
+                : "Your enquiry details have been saved. We opened the Assadaka Messenger page for follow-up."}
             </p>
             <p className="rounded-full bg-white px-4 py-2 font-display text-[13px] font-bold tabular text-ikea">
               {t("cart.orderNum")}: {sent}
@@ -162,7 +192,7 @@ export default function CartDrawer() {
                           </button>
                         </div>
                         <span className="font-display text-[14.5px] font-black tabular">
-                          {formatPrice(p.price * qty, lang)}
+                          {p.price === null ? formatPrice(null, lang) : formatPrice(p.price * qty, lang)}
                         </span>
                       </div>
                     </div>
@@ -207,7 +237,7 @@ export default function CartDrawer() {
                         <textarea
                           rows={2}
                           value={form[key]}
-                          onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
+                          onChange={(e) => { setSubmitError(null); setForm((f) => ({ ...f, [key]: e.target.value })); }}
                           placeholder={ph}
                           className="w-full resize-none rounded-xl border border-line bg-mist px-3.5 py-2.5 text-[13px] outline-none transition-all placeholder:text-ink-soft/50 focus:border-ikea focus:bg-white focus:shadow-[0_0_0_3px_rgba(0,88,163,0.12)]"
                         />
@@ -215,7 +245,7 @@ export default function CartDrawer() {
                         <input
                           type={key === "phone" ? "tel" : "text"}
                           value={form[key]}
-                          onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
+                          onChange={(e) => { setSubmitError(null); setForm((f) => ({ ...f, [key]: e.target.value })); }}
                           placeholder={ph}
                           className="w-full rounded-xl border border-line bg-mist px-3.5 py-2.5 text-[13px] outline-none transition-all placeholder:text-ink-soft/50 focus:border-ikea focus:bg-white focus:shadow-[0_0_0_3px_rgba(0,88,163,0.12)]"
                         />
@@ -241,18 +271,20 @@ export default function CartDrawer() {
                 </div>
                 <div className="flex items-center justify-between border-t border-line pt-2">
                   <dt className="font-display text-[14px] font-black">{t("cart.total")}</dt>
-                  <dd className="font-display text-[19px] font-black tabular text-ikea">{formatPrice(subtotal, lang)}</dd>
+                  <dd className="font-display text-[19px] font-black tabular text-ikea">{subtotal > 0 ? `${formatPrice(subtotal, lang)}${lines.some((line) => line.product.price === null) ? ` + ${t("product.priceOnRequest")}` : ""}` : formatPrice(null, lang)}</dd>
                 </div>
               </dl>
               <p className="mt-2 text-[11px] leading-relaxed text-ink-soft/75">{t("cart.deliveryNote")}</p>
 
+              {submitError && <p role="alert" className="mt-2 text-[12px] font-semibold text-brick">{submitError}</p>}
               <button
                 type="button"
                 onClick={submit}
+                disabled={submitting}
                 className="group mt-3 inline-flex w-full items-center justify-center gap-2.5 rounded-full bg-leaf px-5 py-4 font-display text-[15px] font-black text-white transition-all duration-300 hover:brightness-110 hover:shadow-[0_16px_36px_-16px_rgba(31,122,77,1)] active:scale-[0.98]"
               >
-                <IconWhatsApp className="h-5.5 w-5.5 transition-transform duration-300 group-hover:scale-110" />
-                {t("cart.checkout")}
+                <IconFacebook className="h-5.5 w-5.5 transition-transform duration-300 group-hover:scale-110" />
+                {submitting ? (lang === "ar" ? "جارٍ حفظ الطلب…" : "Saving order…") : t("cart.checkout")}
               </button>
               <div className="mt-2.5 flex items-center justify-between text-[11px] text-ink-soft/70">
                 <span>{t("cart.checkoutNote")}</span>

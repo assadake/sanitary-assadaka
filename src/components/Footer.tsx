@@ -1,20 +1,15 @@
 import { CATEGORIES } from "../data/catalog";
-import { WHATSAPP_DISPLAY, WHATSAPP_NUMBER } from "../i18n";
+import { FACEBOOK_PAGE_URL } from "../i18n";
 import { useStore } from "../store";
 import { LangSwitch, Logo } from "./Bits";
 import {
   IconArrow,
   IconFacebook,
-  IconInstagram,
-  IconMail,
-  IconPhone,
   IconPin,
-  IconTiktok,
-  IconWhatsApp,
 } from "./Icons";
 
 export default function Footer() {
-  const { t, lang, setCat, setQuery, waLink } = useStore();
+  const { t, lang, setCat, setQuery, contactLink } = useStore();
 
   const goCat = (id: string) => {
     setCat(id);
@@ -23,7 +18,7 @@ export default function Footer() {
   };
   const goTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 
-  const wa = (msg: string) => waLink(msg);
+  const pageLink = contactLink();
 
   const columns: { title: string; links: { label: string; onClick?: () => void; href?: string }[] }[] = [
     {
@@ -34,12 +29,12 @@ export default function Footer() {
       title: t("footer.help"),
       links: [
         { label: t("faq.title"), onClick: () => goTo("showroom") },
-        { label: lang === "ar" ? "التوصيل والتركيب" : "Delivery & fitting", onClick: () => goTo("services") },
-        { label: lang === "ar" ? "الضمان والاستبدال" : "Warranty & returns", onClick: () => goTo("showroom") },
-        { label: lang === "ar" ? "طرق الدفع" : "Payment methods", onClick: () => goTo("showroom") },
+        { label: lang === "ar" ? "استفسر عن التوصيل" : "Ask about delivery", onClick: () => goTo("services") },
+        { label: lang === "ar" ? "استفسر عن الضمان والاستبدال" : "Ask about warranty & returns", onClick: () => goTo("showroom") },
+        { label: lang === "ar" ? "استفسر عن الدفع" : "Ask about payment", onClick: () => goTo("showroom") },
         {
-          label: lang === "ar" ? "تواصل واتساب" : "WhatsApp us",
-          href: wa(lang === "ar" ? "السلام عليكم، نبي مساعدة." : "Hello, I need some help."),
+          label: lang === "ar" ? "تواصل عبر فيسبوك" : "Contact on Facebook",
+          href: pageLink,
         },
       ],
     },
@@ -61,7 +56,7 @@ export default function Footer() {
         aria-hidden
         className="pointer-events-none absolute -bottom-[6vw] start-1/2 -translate-x-1/2 font-display text-[24vw] font-black leading-none tracking-tighter text-white/[0.04] select-none"
       >
-        {lang === "ar" ? "أوروبا" : "EUROPE"}
+        {lang === "ar" ? "مواد صحية" : "SANITARY"}
       </span>
 
       <div className="relative mx-auto max-w-[1440px] px-4 py-14 sm:px-6 lg:px-10 lg:py-20">
@@ -76,34 +71,21 @@ export default function Footer() {
                 {t("showroom.addressVal")}
               </li>
               <li>
-                <a href={`tel:+${WHATSAPP_NUMBER}`} className="flex items-center gap-2.5 transition-colors hover:text-sun">
-                  <IconPhone className="h-4 w-4 shrink-0 text-sun" />
-                  <span className="tabular">{WHATSAPP_DISPLAY}</span>
-                </a>
-              </li>
-              <li>
                 <a
-                  href={wa(lang === "ar" ? "السلام عليكم، نبي نستفسر عن منتج." : "Hello, I'd like to enquire about a product.")}
+                  href={FACEBOOK_PAGE_URL}
                   target="_blank"
                   rel="noreferrer noopener"
                   className="flex items-center gap-2.5 transition-colors hover:text-sun"
                 >
-                  <IconMail className="h-4 w-4 shrink-0 text-sun" />
-                  info@tolin-goods.ly
+                  <IconFacebook className="h-4 w-4 shrink-0 text-sun" />
+                  {lang === "ar" ? "الصداقة للمواد الصحية والسيراميك" : "Assadaka Sanitary Ware & Ceramics"}
                 </a>
               </li>
             </ul>
 
             <div className="mt-6 flex items-center gap-2">
               {[
-                { icon: <IconFacebook className="h-4.5 w-4.5" />, label: "Facebook", href: "https://facebook.com" },
-                { icon: <IconInstagram className="h-4.5 w-4.5" />, label: "Instagram", href: "https://instagram.com" },
-                { icon: <IconTiktok className="h-4.5 w-4.5" />, label: "TikTok", href: "https://tiktok.com" },
-                {
-                  icon: <IconWhatsApp className="h-4.5 w-4.5" />,
-                  label: "WhatsApp",
-                  href: wa(lang === "ar" ? "السلام عليكم." : "Hello."),
-                },
+                { icon: <IconFacebook className="h-4.5 w-4.5" />, label: "Facebook", href: FACEBOOK_PAGE_URL },
               ].map((s) => (
                 <a
                   key={s.label}

@@ -1,23 +1,21 @@
 import { useState } from "react";
 import { FAQ_KEYS } from "../data/catalog";
-import { WHATSAPP_DISPLAY, WHATSAPP_NUMBER } from "../i18n";
+import { COMPANY_DISPLAY, FACEBOOK_PAGE_URL } from "../i18n";
 import { useStore } from "../store";
 import { SectionHead } from "./Bits";
-import { IconArrow, IconCheck, IconChevron, IconClock, IconPhone, IconPin, IconWhatsApp } from "./Icons";
+import { IconArrow, IconChevron, IconClock, IconFacebook, IconPin } from "./Icons";
 import Reveal from "./Reveal";
 
-const MAPS = "https://www.google.com/maps/dir/?api=1&destination=Jumhuriya%20Street%2C%20Tripoli%2C%20Libya";
+const MAPS = "https://www.google.com/maps/search/?api=1&query=Assadaka%20Alraqia%20sanitary%20ware%20Tripoli%20Libya";
 
 export default function Showroom() {
-  const { t, lang, waLink } = useStore();
+  const { t, lang, contactLink } = useStore();
   const [openFaq, setOpenFaq] = useState<string | null>("faq1");
-  const [email, setEmail] = useState("");
-  const [done, setDone] = useState(false);
 
   const facts = [
     { icon: <IconPin className="h-5 w-5" />, k: t("showroom.address"), v: t("showroom.addressVal") },
     { icon: <IconClock className="h-5 w-5" />, k: t("showroom.hours"), v: t("showroom.hoursVal") },
-    { icon: <IconPhone className="h-5 w-5" />, k: t("showroom.phone"), v: `+${WHATSAPP_NUMBER}` },
+    { icon: <IconFacebook className="h-5 w-5" />, k: t("showroom.phone"), v: COMPANY_DISPLAY },
   ];
 
   return (
@@ -61,7 +59,7 @@ export default function Showroom() {
                   <IconArrow className="h-4 w-4 transition-transform group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" />
                 </a>
                 <a
-                  href={waLink(
+                  href={contactLink(
                     lang === "ar"
                       ? "السلام عليكم، نبي نحجز موعد زيارة للمعرض في طرابلس."
                       : "Hello, I'd like to book a visit to the Tripoli showroom.",
@@ -70,7 +68,7 @@ export default function Showroom() {
                   rel="noreferrer noopener"
                   className="inline-flex items-center gap-2 rounded-full bg-leaf px-5 py-3.5 font-display text-[13.5px] font-bold text-white transition-transform hover:scale-[1.02] active:scale-95"
                 >
-                  <IconWhatsApp className="h-4.5 w-4.5" />
+                  <IconFacebook className="h-4.5 w-4.5" />
                   {t("showroom.wa")}
                 </a>
               </div>
@@ -81,8 +79,8 @@ export default function Showroom() {
           <Reveal delay={120} className="lg:col-span-7">
             <div className="relative aspect-[4/3] overflow-hidden rounded-[26px] border border-line bg-ikea-soft sm:aspect-[16/11]">
               <img
-                src="https://images.pexels.com/photos/21999720/pexels-photo-21999720.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1400&h=1000"
-                alt={lang === "ar" ? "وسط مدينة طرابلس قرب البحر" : "Tripoli city centre by the sea"}
+                src="https://images.pexels.com/photos/11701114/pexels-photo-11701114.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1400&h=1000"
+                alt={lang === "ar" ? "تصميم حمام" : "Bathroom design"}
                 loading="lazy"
                 className="absolute inset-0 h-full w-full object-cover opacity-55 saturate-[0.65]"
               />
@@ -101,10 +99,10 @@ export default function Showroom() {
               </svg>
 
               <span className="absolute start-6 top-5 rounded-full bg-white/90 px-3 py-1.5 font-display text-[10.5px] font-black uppercase tracking-[0.18em] text-ikea backdrop-blur">
-                {lang === "ar" ? "البحر المتوسط" : "Mediterranean Sea"}
+                {lang === "ar" ? "الصداقة الراقية" : "Assadaka Alraqia"}
               </span>
               <span className="absolute inset-x-6 top-[27%] text-center font-display text-[11px] font-bold uppercase tracking-[0.3em] text-ikea-deep/70">
-                {lang === "ar" ? "شارع الجمهورية" : "Jumhuriya Street"}
+                {lang === "ar" ? "طرابلس، ليبيا" : "Tripoli, Libya"}
               </span>
 
               {/* pin */}
@@ -118,8 +116,8 @@ export default function Showroom() {
 
               <div className="absolute inset-x-4 bottom-4 flex flex-wrap items-end justify-between gap-3 sm:inset-x-6 sm:bottom-6">
                 <div className="max-w-sm rounded-2xl border border-white/60 bg-white/92 p-4 backdrop-blur">
-                  <p className="font-display text-[11px] font-black uppercase tracking-[0.18em] text-ikea">TOLIN · Tripoli</p>
-                  <p className="mt-1.5 font-display text-[15px] font-bold leading-snug text-ink">{t("showroom.addressVal")}</p>
+                  <p className="font-display text-[11px] font-black uppercase tracking-[0.18em] text-ikea">ASSADAKA · TRIPOLI</p>
+                  <p className="mt-1.5 font-display text-[15px] font-bold leading-snug text-ink">{lang === "ar" ? "اسأل الشركة عن موقع الفرع." : "Ask the company to confirm the branch location."}</p>
                   <a
                     href={MAPS}
                     target="_blank"
@@ -197,36 +195,18 @@ export default function Showroom() {
                   {t("newsletter.title")}
                 </h3>
                 <p className="relative mt-2 max-w-sm text-[13.5px] leading-relaxed text-ink/70">{t("newsletter.text")}</p>
-                <form
-                  className="relative mt-6"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    if (!email.trim()) return;
-                    setDone(true);
-                    setEmail("");
-                    window.setTimeout(() => setDone(false), 4000);
-                  }}
+                <a
+                  href={FACEBOOK_PAGE_URL}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="relative mt-6 inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 font-display text-[13.5px] font-bold text-white transition-colors hover:bg-ikea"
                 >
-                  <div className="flex flex-col gap-2 sm:flex-row">
-                    <input
-                      type="text"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder={t("newsletter.ph")}
-                      className="w-full rounded-full border border-ink/15 bg-white px-4 py-3 text-[13.5px] outline-none transition-shadow focus:shadow-[0_0_0_3px_rgba(0,88,163,0.25)]"
-                    />
-                    <button
-                      type="submit"
-                      className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-ink px-6 py-3 font-display text-[13.5px] font-bold text-white transition-transform hover:scale-[1.03] active:scale-95"
-                    >
-                      {done ? <IconCheck className="h-4 w-4 text-sun" /> : null}
-                      {done ? t("newsletter.done") : t("newsletter.cta")}
-                    </button>
-                  </div>
-                </form>
+                  <IconFacebook className="h-4.5 w-4.5" />
+                  {t("newsletter.cta")}
+                </a>
                 <p className="relative mt-4 flex items-center gap-2 text-[12px] font-semibold text-ink/70">
-                  <IconWhatsApp className="h-4 w-4 text-leaf" />
-                  <span className="tabular">{WHATSAPP_DISPLAY}</span>
+                  <IconFacebook className="h-4 w-4 text-ikea" />
+                  <span>{COMPANY_DISPLAY}</span>
                 </p>
               </div>
             </Reveal>
@@ -234,15 +214,15 @@ export default function Showroom() {
             <Reveal delay={120}>
               <div className="mt-4 grid grid-cols-2 gap-4">
                 <div className="rounded-[22px] border border-line bg-white p-5">
-                  <p className="font-display text-[34px] font-black leading-none text-ikea tabular">24h</p>
+                  <p className="font-display text-[24px] font-black leading-none text-ikea">IDEAL</p>
                   <p className="mt-2 text-[12.5px] leading-snug text-ink-soft">
-                    {lang === "ar" ? "توصيل داخل طرابلس" : "Delivery inside Tripoli"}
+                    {lang === "ar" ? "علامة مذكورة في صفحة الشركة" : "Brand featured on the company page"}
                   </p>
                 </div>
                 <div className="rounded-[22px] border border-line bg-white p-5">
-                  <p className="font-display text-[34px] font-black leading-none text-ikea tabular">7</p>
+                  <p className="font-display text-[24px] font-black leading-none text-ikea">TURKUAZ</p>
                   <p className="mt-2 text-[12.5px] leading-snug text-ink-soft">
-                    {lang === "ar" ? "أيام للاستبدال" : "Days to exchange"}
+                    {lang === "ar" ? "علامة مذكورة في صفحة الشركة" : "Brand featured on the company page"}
                   </p>
                 </div>
               </div>

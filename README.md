@@ -1,134 +1,77 @@
-# تولين للبضائع الأروبية · TOLIN European Goods
+# شركة الصداقة الراقية · مواد صحية وسيراميك
 
-Boutique en ligne mono-page (SPA) pour un magasin libyen de **produits de maison**, **électroménager importé d'Europe** et **outillage / bricolage** — basée à **Tripoli, Libye**.
+متجر إلكتروني عربي (RTL) وإنجليزي (LTR) لمواد البناء والمواد الصحية والسيراميك، مستوحى من صفحة [الصداقة للمواد الصحية والسيراميك](https://www.facebook.com/AssadakaARAQIA/). صفحة الشركة تذكر علامات **IDEAL** و**TURKUAZ** و**CeraStyle**. الأسعار والتوفر والضمان غير مثبتة في الكتالوج الابتدائي؛ يعرض الموقع «السعر عند الاستفسار» إلى أن تحدّثها الشركة في قاعدة البيانات.
 
-Le catalogue est bilingue **arabe (RTL, langue principale) ⇄ anglais (LTR)**, et le panier d'achat se transforme en **commande détaillée envoyée sur WhatsApp** au **+218 91 344 2640** (aucun paiement en ligne).
+## التقنية
 
-> Ar · متجر ليبي متخصص في منتجات المنزل، الأجهزة الكهربائية الأوروبية وعدّة البريكولاج — طرابلس، ليبيا. الطلبات تُرسَل مباشرة عبر واتساب.
-
----
-
-## ⚡ Stack
-
-| Couche | Choix |
+| الطبقة | التقنية |
 | --- | --- |
-| Build | **Vite 7** + `vite-plugin-singlefile` (tout le site tient dans un seul `dist/index.html`) |
-| UI | **React 19** + **TypeScript** (strict) |
-| Style | **Tailwind CSS 4** (thème maison : `--color-ikea`, `--color-sun`, polices `font-display` / `font-sans`) |
-| Typo | Noto Kufi Arabic (display) + IBM Plex Sans Arabic (texte) via Google Fonts |
-| État | Context React maison (`src/store.tsx`) — langue, panier, favoris persistés en `localStorage` |
-| Images | Pexels CDN (aucun binaire dans le dépôt) |
+| الواجهة | React 19 + TypeScript + Tailwind CSS 4 + Vite 7 |
+| الخادم/API | Express + Node.js |
+| قاعدة البيانات | PostgreSQL عبر Neon |
+| الاستضافة | Render Web Service (`render.yaml`) |
+| الصور | Pexels CDN |
 
-Aucune dépendance backend, aucune variable d'environnement requise.
+## النشر على Render وNeon
 
----
+الموقع وخادم الـ API يعملان في خدمة Render واحدة. يحتاج الخادم إلى المتغير السري `DATABASE_URL` الذي يحتوي على رابط اتصال Neon، ويفضل الرابط المجمع (*pooled connection string*) مع `sslmode=require`.
 
-## 🚀 Publier sur Vercel depuis GitHub
+1. أنشئ قاعدة PostgreSQL على [Neon](https://neon.tech) وانسخ رابط الاتصال.
+2. افتح خدمة الموقع في [Render](https://dashboard.render.com)، ثم **Environment** وأضف متغيراً اسمه `DATABASE_URL` والصق الرابط كقيمة سرية.
+3. أعد النشر. ينشئ الخادم الجداول تلقائياً (`products`, `orders`, `app_settings`) ويهيّئ الكتالوج الابتدائي عند الحاجة.
+4. افحص `https://YOUR-SERVICE.onrender.com/api/health`؛ يجب أن يعيد `{"status":"ok"}`.
 
-### 1. Créer le dépôt GitHub
+### ترحيل نسخة الموقع القديمة
 
-```bash
-git init
-git add .
-git commit -m "feat: TOLIN European Goods — boutique bilingue AR/EN avec commande WhatsApp"
-git branch -M main
-git remote add origin https://github.com/<VOTRE-COMPTE>/tolin-european-goods.git
-git push -u origin main
+إذا كانت قاعدة Neon تحتوي على منتجات القالب القديم ذات المعرّفات `TL-####`، فسيستبدلها الخادم مرة واحدة بمنتجات الصداقة النموذجية عند تشغيل النسخة الجديدة. لا يحذف الخادم سجلات `orders` القديمة. راجع المنتجات والطلبات الموجودة في Neon قبل النشر إذا كنت قد أدخلت بيانات فعلية، وخذ نسخة احتياطية عند الحاجة. بعد الترحيل، تعديلات قاعدة البيانات لا تستبدلها عمليات النشر اللاحقة.
+
+> الأصناف الموجودة في `src/data/catalog.ts` **أمثلة أولية وليست تأكيداً للتوفر أو الموديل أو السعر**. حدّثها في Neon قبل التسويق الفعلي. بيانات المخزون والضمان كذلك عند الاستفسار ما لم تُدخَل قيم مؤكدة.
+
+## الكتالوج والطلبات في Neon
+
+لا يوجد حالياً لوحة إدارة. المنتجات تُقرأ من جدول PostgreSQL وتُدار من **Neon → SQL Editor**. مثال تعديل سعر مؤكد، أو جعله عند الاستفسار:
+
+```sql
+-- تعديل سعر بعد تأكيده (القيمة بالدينار الليبي)
+UPDATE products
+SET data = jsonb_set(data, '{price}', '1250'::jsonb), updated_at = NOW()
+WHERE id = 'AS-1001';
+
+-- إرجاع السعر إلى «عند الاستفسار»
+UPDATE products
+SET data = jsonb_set(data, '{price}', 'null'::jsonb), updated_at = NOW()
+WHERE id = 'AS-1001';
+
+-- إخفاء صنف مؤقتاً دون حذفه
+UPDATE products SET active = FALSE, updated_at = NOW() WHERE id = 'AS-1001';
+
+-- عرض آخر الاستفسارات (بيانات العملاء خاصة)
+SELECT order_no, customer->>'name' AS customer, customer->>'phone' AS phone,
+       subtotal, collection_mode, status, created_at
+FROM orders ORDER BY created_at DESC LIMIT 50;
 ```
 
-> `dist/`, `node_modules/` et `.vercel/` sont déjà exclus par le `.gitignore`.
-> Si vous générez un `package-lock.json` (`npm install` en local), commitez-le puis remplacez
-> `installCommand` par `npm ci` dans `vercel.json` : builds plus rapides et reproductibles.
+لإضافة صنف جديد، أضف صفاً في `products` مع `id` فريد و`data` بصيغة JSON مشابهة للمنتجات الموجودة. الحقول الثنائية مثل `name`, `desc`, `origin`, `mat` تحتاج مفاتيح `ar` و`en`. استخدم `price: null` و`stock: null` حتى تتأكد من السعر والمخزون. تأكد أن `cat` يطابق أحد أقسام `CATEGORIES` في `src/data/catalog.ts`.
 
-### 2. Importer dans Vercel
+عند إرسال استفسار من السلة، يتحقق الخادم من الصنف والكمية ويعيد حساب السعر المعلن من قاعدة البيانات، ثم يحفظ الطلب في `orders` ويفتح صفحة ماسنجر للشركة. المنتجات بلا سعر تُسجّل كسعر مطلوب؛ والإجمالي المبدئي لا يتضمن قيمة لها. حالة `new` تعني أن العميل أرسل الاستفسار عبر الموقع، وليست تأكيداً لعملية شراء أو رسالة أُرسلت في ماسنجر.
 
-1. <https://vercel.com/new> → **Import Git Repository** → choisir le dépôt.
-2. Vercel détecte **Vite** automatiquement. Vérifiez :
-
-   | Champ | Valeur |
-   | --- | --- |
-   | Framework Preset | `Vite` |
-   | Build Command | `npm run build` |
-   | Output Directory | `dist` |
-   | Install Command | `npm install` |
-   | Node.js Version | `20.x` ou plus |
-
-   Ces valeurs sont déjà figées dans **`vercel.json`** — rien à saisir manuellement.
-3. **Deploy**. Chaque `git push` sur `main` redéploie la production ; les pull requests obtiennent une *Preview URL*.
-
-### 3. Domaine personnalisé (optionnel)
-
-Vercel → projet → **Settings → Domains** → ajouter `tolin-goods.ly` (ou `.com`), puis créer chez votre registrar :
-
-- `A` → `76.76.21.21` ( apex ) ou
-- `CNAME` → `cname.vercel-dns.com` ( `www` / sous-domaine )
-
-### Alternative sans GitHub : CLI Vercel
+## التطوير المحلي
 
 ```bash
-npm i -g vercel
-vercel          # preview
-vercel --prod   # production
+npm ci
+npm run dev         # الواجهة فقط؛ تستخدم بيانات الكتالوج الاحتياطية
+npm run build       # dist/index.html
+npm start           # API + الواجهة المبنية، يتطلب DATABASE_URL
+npm run typecheck
 ```
 
----
+## الملفات الرئيسية
 
-## 🧑‍💻 Développement local
-
-```bash
-npm install
-npm run dev       # http://localhost:5173
-npm run build     # génère dist/index.html (fichier unique)
-npm run preview   # sert le build de production
-npx tsc --noEmit  # vérification de types
-```
-
-Un workflow **GitHub Actions** (`.github/workflows/ci.yml`) rejoue `npm install` + type-check + build à chaque push et conserve `dist/` comme artefact — utile pour vérifier un déploiement avant de le merger.
-
----
-
-## 🛠 Personnaliser le contenu
-
-| Ce que vous voulez changer | Fichier |
+| الغرض | الملف |
 | --- | --- |
-| **Numéro WhatsApp** | `src/i18n.ts` → `WHATSAPP_NUMBER` / `WHATSAPP_DISPLAY` |
-| **Produits** (nom, prix, stock, origine, garantie…) | `src/data/catalog.ts` → `PRODUCTS` |
-| **Rayons / départements** | `src/data/catalog.ts` → `CATEGORIES` |
-| **Pièces & carrousels d'inspiration** | `src/data/catalog.ts` → `ROOMS`, `STORIES` |
-| **Textes de l'interface** (AR + EN) | `src/i18n.ts` → objets `ar` et `en` (mêmes clés) |
-| **Adresse, horaires, FAQ** | `src/i18n.ts` (`showroom.*`, `faq*`) + `src/components/Showroom.tsx` (lien Google Maps) |
-| **Couleurs & polices** | `src/index.css` → bloc `@theme` |
-| **Modèle du message de commande** | `src/store.tsx` → `buildOrderMessage()` |
-
-### Ajouter un produit
-
-```ts
-{ id: "TL-9001", cat: "diy",
-  name: { ar: "اسم المنتج", en: "Product name" },
-  desc: { ar: "الوصف", en: "Description" },
-  price: 450, old: 520,            // `old` déclenche le badge de remise
-  img: 5974048,                    // ID photo Pexels
-  origin: { ar: "ألمانيا", en: "Germany" },
-  rating: 4.6, reviews: 12, stock: 8,
-  dim: "22×8×24 cm",
-  mat: { ar: "فولاذ", en: "Steel" },
-  warranty: 24,
-  badge: "new" }                    // new | offer | best | import
-```
-
-Les prix sont affichés en **dinar libyen** (`formatPrice()` dans `src/i18n.ts`).
-
----
-
-## 🧾 Comment fonctionne la commande
-
-1. Le visiteur ajoute des produits au panier (persistant, même après fermeture du navigateur).
-2. Il renseigne **nom, téléphone, ville, note** et choisit *livraison* ou *retrait au showroom*.
-3. **`أرسل الطلب عبر واتساب`** génère un message structuré — référence `TL-<année>-<n°>`, date, lignes avec quantités et prix, total estimé, coordonnées — puis ouvre `https://wa.me/218913442640`.
-4. Le client n'a plus qu'à appuyer sur *Envoyer* dans WhatsApp. Aucun paiement en ligne : **paiement à la livraison** ou virement.
-
----
-
-## 📄 Licence
-
-Code fourni à des fins de démonstration. Les visuels proviennent de **Pexels** (licence libre) et les marques citées appartiennent à leurs propriétaires.
+| المنتجات والأقسام وأفكار الحمامات | `src/data/catalog.ts` |
+| النصوص العربية والإنجليزية ورابط صفحة الشركة | `src/i18n.ts` |
+| جلب المنتجات وحالة السلة | `src/store.tsx` |
+| API، جداول Neon وترحيل الكتالوج الأولي | `server/index.ts` |
+| إعداد Render | `render.yaml` |
+| بيانات عنوان الموقع وSEO | `index.html` |

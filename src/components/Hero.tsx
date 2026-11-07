@@ -1,40 +1,44 @@
 import { useEffect, useState } from "react";
-import { PRODUCTS, px } from "../data/catalog";
-import { WHATSAPP_NUMBER, formatPrice } from "../i18n";
+import { px } from "../data/catalog";
+import { COMPANY_DISPLAY, formatPrice } from "../i18n";
 import { useStore } from "../store";
 import { Stars } from "./Bits";
-import { IconArrow, IconBag, IconCheck, IconPin, IconShield, IconTruck, IconWhatsApp } from "./Icons";
+import { IconArrow, IconBag, IconCheck, IconPin, IconShield, IconTruck, IconFacebook } from "./Icons";
 import Reveal from "./Reveal";
 
-const HERO_PRODUCT = PRODUCTS.find((p) => p.id === "TL-2001")!;
-const HERO_IMG_A = 6585763; // living room
-const HERO_IMG_B = 5974048; // tools
-const HERO_IMG_C = 36573009; // espresso
+const HERO_IMG_A = 11701114; // bathroom inspiration
+const HERO_IMG_B = 12340558; // ceramic tiles
+const HERO_IMG_C = 8135115; // basin and tap
 
-const ROTATING = [HERO_PRODUCT, PRODUCTS.find((p) => p.id === "TL-4001")!, PRODUCTS.find((p) => p.id === "TL-1001")!];
 
 export default function Hero() {
-  const { t, lang, add, waLink } = useStore();
+  const { t, lang, add, contactLink, products } = useStore();
   const [idx, setIdx] = useState(0);
 
-  useEffect(() => {
-    const id = window.setInterval(() => setIdx((i) => (i + 1) % ROTATING.length), 4200);
-    return () => window.clearInterval(id);
-  }, []);
+  const rotating = ["AS-1001", "AS-4001", "AS-2001"]
+    .map((id) => products.find((product) => product.id === id))
+    .filter((product) => product !== undefined);
+  const featuredProducts = rotating.length ? rotating : products.slice(0, 3);
 
-  const featured = ROTATING[idx];
+  useEffect(() => {
+    const id = window.setInterval(() => setIdx((i) => (i + 1) % Math.max(1, featuredProducts.length)), 4200);
+    return () => window.clearInterval(id);
+  }, [featuredProducts.length]);
+
+  const featured = featuredProducts[idx % featuredProducts.length];
+  if (!featured) return null;
 
   const stats = [
-    { v: "+1,200", k: t("hero.stat1") },
-    { v: "38", k: t("hero.stat2") },
-    { v: "11", k: t("hero.stat3") },
-    { v: "22", k: t("hero.stat4") },
+    { v: "IDEAL", k: t("hero.stat1") },
+    { v: "TURKUAZ", k: t("hero.stat2") },
+    { v: "CeraStyle", k: t("hero.stat3") },
+    { v: lang === "ar" ? "طرابلس" : "Tripoli", k: t("hero.stat4") },
   ];
 
   const perks = [
-    { icon: <IconTruck className="h-4 w-4" />, label: lang === "ar" ? "توصيل 24–48 ساعة في طرابلس" : "24–48h delivery in Tripoli" },
-    { icon: <IconShield className="h-4 w-4" />, label: lang === "ar" ? "ضمان حتى 24 شهر" : "Warranty up to 24 months" },
-    { icon: <IconCheck className="h-4 w-4" />, label: lang === "ar" ? "دفع عند الاستلام" : "Cash on delivery" },
+    { icon: <IconTruck className="h-4 w-4" />, label: lang === "ar" ? "التوصيل يُؤكّد حسب المنطقة" : "Delivery confirmed by location" },
+    { icon: <IconShield className="h-4 w-4" />, label: lang === "ar" ? "الضمان حسب المنتج" : "Warranty depends on product" },
+    { icon: <IconCheck className="h-4 w-4" />, label: lang === "ar" ? "استفسر عن السعر والتوفر" : "Ask about price and availability" },
   ];
 
   return (
@@ -60,7 +64,7 @@ export default function Hero() {
         aria-hidden
         className="pointer-events-none absolute -bottom-10 start-1/2 -translate-x-1/2 font-display text-[22vw] font-black leading-none tracking-tighter text-white/[0.035] select-none"
       >
-        {lang === "ar" ? "تولين" : "TOLIN"}
+        {lang === "ar" ? "الصداقة" : "ASSADAKA"}
       </span>
 
       <div className="relative mx-auto grid max-w-[1440px] gap-10 px-4 pb-14 pt-12 sm:px-6 lg:grid-cols-12 lg:gap-8 lg:px-10 lg:pb-20 lg:pt-16">
@@ -70,7 +74,7 @@ export default function Hero() {
             <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3.5 py-1.5 backdrop-blur">
               <IconPin className="h-4 w-4 text-sun" />
               <span className="font-display text-[11px] font-bold uppercase tracking-[0.2em] text-white/85">
-                {t("hero.kicker")} {lang === "ar" ? "تولين" : "TOLIN"}
+                {t("hero.kicker")} {lang === "ar" ? "الصداقة" : "ASSADAKA"}
               </span>
             </span>
           </Reveal>
@@ -99,16 +103,16 @@ export default function Hero() {
           <Reveal delay={230}>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <a
-                href={waLink(
+                href={contactLink(
                   lang === "ar"
-                    ? "السلام عليكم، نبي نتعرف على المنتجات المتوفرة حالياً في تولين."
-                    : "Hello, I'd like to know what's currently available at TOLIN.",
+                    ? "السلام عليكم، نبي نستفسر عن المواد الصحية والسيراميك."
+                    : "Hello, I would like to enquire about sanitary ware and ceramics.",
                 )}
                 target="_blank"
                 rel="noreferrer noopener"
                 className="group inline-flex items-center gap-2.5 rounded-full bg-sun px-6 py-3.5 font-display text-[15px] font-bold text-ink transition-all duration-300 hover:bg-white hover:shadow-[0_16px_40px_-14px_rgba(255,219,0,0.8)] active:scale-95"
               >
-                <IconWhatsApp className="h-5 w-5 text-leaf transition-transform duration-300 group-hover:scale-110" />
+                <IconFacebook className="h-5 w-5 text-ikea transition-transform duration-300 group-hover:scale-110" />
                 {t("hero.cta1")}
               </a>
               <a
@@ -152,7 +156,7 @@ export default function Hero() {
             <div className="relative aspect-[4/5] overflow-hidden rounded-[28px] border border-white/10 sm:aspect-[16/13] lg:aspect-[4/4.35]">
               <img
                 src={px(HERO_IMG_A, 1200, 1300)}
-                alt={lang === "ar" ? "صالون أوروبي حديث" : "Modern European living room"}
+                alt={lang === "ar" ? "تصميم حمام مع سيراميك" : "Bathroom design with ceramic tiles"}
                 className="h-full w-full animate-kenburns object-cover"
                 loading="eager"
               />
@@ -160,14 +164,14 @@ export default function Hero() {
               <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-5">
                 <div>
                   <p className="font-display text-[11px] font-bold uppercase tracking-[0.2em] text-sun">
-                    {lang === "ar" ? "شحنة هذا الأسبوع" : "This week's shipment"}
+                    {lang === "ar" ? "نصائح قبل الشراء" : "Before you enquire"}
                   </p>
                   <p className="mt-1 font-display text-[17px] font-bold leading-tight text-white">
-                    {lang === "ar" ? "ميلانو ← طرابلس" : "Milan → Tripoli"}
+                    {lang === "ar" ? "المقاس والموديل أولاً" : "Model and measurements first"}
                   </p>
                 </div>
                 <span className="rounded-full bg-white/15 px-3 py-1.5 text-[11px] font-semibold text-white backdrop-blur">
-                  40 {lang === "ar" ? "حاوية/سنة" : "containers/yr"}
+                  {lang === "ar" ? "اسأل عن التفاصيل" : "Ask for details"}
                 </span>
               </div>
             </div>
@@ -205,12 +209,12 @@ export default function Hero() {
                     {featured.name[lang]}
                   </p>
                   <div className="mt-1 flex items-center gap-1.5">
-                    <Stars rating={featured.rating} className="h-3 w-3" />
-                    <span className="text-[10.5px] text-ink-soft tabular">({featured.reviews})</span>
+                    {featured.rating !== null && <Stars rating={featured.rating} className="h-3 w-3" />}
+                    <span className="text-[10.5px] text-ink-soft tabular">{featured.rating !== null ? `(${featured.reviews})` : ""}</span>
                   </div>
                   <div className="mt-1.5 flex items-center justify-between gap-2">
                     <span className="font-display text-[15px] font-black tabular text-ink">
-                      {formatPrice(featured.price, lang)}
+                      {formatPrice(featured.price === null ? null : featured.price, lang)}
                     </span>
                     <button
                       type="button"
@@ -224,7 +228,7 @@ export default function Hero() {
                 </div>
               </div>
               <div className="mt-2.5 flex gap-1">
-                {ROTATING.map((p, i) => (
+                {featuredProducts.map((p, i) => (
                   <button
                     key={p.id}
                     type="button"
@@ -249,16 +253,16 @@ export default function Hero() {
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-leaf opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-leaf" />
             </span>
-            {lang === "ar" ? "المعرض مفتوح الآن — شارع الجمهورية، طرابلس" : "Showroom open now — Jumhuriya St, Tripoli"}
+            {lang === "ar" ? "تواصل معنا لتأكيد موقع الفرع والتوفر" : "Contact us to confirm branch location and availability"}
           </span>
           <a
-            href={`https://wa.me/${WHATSAPP_NUMBER}`}
+            href={contactLink()}
             target="_blank"
             rel="noreferrer noopener"
             className="link-sweep inline-flex items-center gap-2 font-semibold text-white/80 hover:text-sun"
           >
-            <IconWhatsApp className="h-4 w-4" />
-            <span className="tabular">+{WHATSAPP_NUMBER}</span>
+            <IconFacebook className="h-4 w-4" />
+            <span>{COMPANY_DISPLAY}</span>
           </a>
           <span className="hidden items-center gap-2 md:inline-flex">
             {t("hero.scroll")}

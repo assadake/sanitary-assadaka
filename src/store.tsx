@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { dictionaries, WHATSAPP_NUMBER, formatPrice, type Lang } from "./i18n";
+import { dictionaries, MESSENGER_URL, type Lang } from "./i18n";
 import { PRODUCTS, type Product } from "./data/catalog";
 
 export type CartLine = { id: string; qty: number };
@@ -9,6 +9,7 @@ type Store = {
   setLang: (l: Lang) => void;
   t: (k: string) => string;
   dir: "rtl" | "ltr";
+  products: Product[];
   cart: CartLine[];
   add: (id: string, qty?: number) => void;
   setQty: (id: string, qty: number) => void;
@@ -31,7 +32,7 @@ type Store = {
   setSort: (s: "featured" | "low" | "high") => void;
   toast: string | null;
   notify: (msg: string) => void;
-  waLink: (text: string) => string;
+  contactLink: (text?: string) => string;
 };
 
 const Ctx = createContext<Store | null>(null);
@@ -47,6 +48,7 @@ const load = <T,>(key: string, fallback: T): T => {
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>(() => load<Lang>("tolin.lang", "ar"));
+  const [products, setProducts] = useState<Product[]>(PRODUCTS);
   const [cart, setCart] = useState<CartLine[]>(() => load<CartLine[]>("tolin.cart", []));
   const [favs, setFavs] = useState<string[]>(() => load<string[]>("tolin.favs", []));
   const [cartOpen, setCartOpen] = useState(false);
@@ -57,6 +59,20 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [toast, setToast] = useState<string | null>(null);
 
   const dir = lang === "ar" ? "rtl" : "ltr";
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch("/api/products", { signal: controller.signal })
+      .then((response) => {
+        if (!response.ok) throw new Error("Could not load products");
+        return response.json() as Promise<Product[]>;
+      })
+      .then((items) => { if (Array.isArray(items)) setProducts(items); })
+      .catch((error: unknown) => {
+        if (error instanceof Error && error.name !== "AbortError") console.error("Product catalogue is using its offline fallback", error);
+      });
+    return () => controller.abort();
+  }, []);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -108,10 +124,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         if (found) return prev.map((l) => (l.id === id ? { ...l, qty: Math.min(99, l.qty + qty) } : l));
         return [...prev, { id, qty }];
       });
-      const p = PRODUCTS.find((x) => x.id === id);
+      const p = products.find((x) => x.id === id);
       if (p) setToast(`${dictionaries[lang]["cart.added"]} · ${p.name[lang]}`);
     },
-    [lang],
+    [lang, products],
   );
 
   const setQty = useCallback((id: string, qty: number) => {
@@ -130,22 +146,20 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const lines = useMemo(
     () =>
       cart
-        .map((l) => ({ product: PRODUCTS.find((p) => p.id === l.id)!, qty: l.qty }))
+        .map((l) => ({ product: products.find((p) => p.id === l.id)!, qty: l.qty }))
         .filter((l) => Boolean(l.product)),
-    [cart],
+    [cart, products],
   );
 
   const count = useMemo(() => cart.reduce((s, l) => s + l.qty, 0), [cart]);
-  const subtotal = useMemo(() => lines.reduce((s, l) => s + l.product.price * l.qty, 0), [lines]);
+  const subtotal = useMemo(() => lines.reduce((s, l) => s + (l.product.price ?? 0) * l.qty, 0), [lines]);
 
-  const waLink = useCallback(
-    (text: string) => `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`,
-    [],
-  );
+  const contactLink = useCallback((_text?: string) => MESSENGER_URL, []);
 
   const value: Store = {
     lang,
     setLang,
+    products,
     t,
     dir,
     cart,
@@ -170,7 +184,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setSort,
     toast,
     notify,
-    waLink,
+    contactLink,
   };
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
@@ -180,55 +194,4 @@ export function useStore() {
   const ctx = useContext(Ctx);
   if (!ctx) throw new Error("useStore must be used inside StoreProvider");
   return ctx;
-}
-
-/** Builds the itemised WhatsApp order message. */
-export function buildOrderMessage(opts: {
-  lang: Lang;
-  lines: { product: Product; qty: number }[];
-  subtotal: number;
-  name: string;
-  phone: string;
-  city: string;
-  note: string;
-  mode: "deliver" | "pickup";
-}) {
-  const { lang, lines, subtotal, name, phone, city, note, mode } = opts;
-  const orderNo = `TL-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
-  const L = (a: string, b: string) => (lang === "ar" ? a : b);
-
-  const rows = lines
-    .map(
-      (l) =>
-        `• ${l.product.id} — ${l.product.name[lang]} × ${l.qty} = ${formatPrice(l.product.price * l.qty, lang)}`,
-    )
-    .join("\n");
-
-  const text = [
-    L(`*طلب جديد من موقع تولين للبضائع الأروبية*`, `*New order from the TOLIN European Goods website*`),
-    `${L("رقم الطلب", "Order no.")}: ${orderNo}`,
-    `${L("التاريخ", "Date")}: ${new Date().toLocaleString(lang === "ar" ? "ar-LY-u-nu-latn" : "en-GB")}`,
-    "",
-    L("*المنتجات:*", "*Items:*"),
-    rows,
-    "",
-    `${L("الإجمالي التقديري", "Estimated total")}: ${formatPrice(subtotal, lang)}`,
-    `${L("طريقة الاستلام", "Collection")}: ${mode === "deliver" ? L("توصيل للمنزل 🚚", "Home delivery 🚚") : L("استلام من المعرض 🏬", "Showroom pick-up 🏬")}`,
-    "",
-    L("*بيانات العميل:*", "*Customer details:*"),
-    `${L("الاسم", "Name")}: ${name || "-"}`,
-    `${L("الهاتف", "Phone")}: ${phone || "-"}`,
-    `${L("العنوان", "Address")}: ${city || "Tripoli, Libya"}`,
-    note ? `${L("ملاحظة", "Note")}: ${note}` : "",
-    "",
-    L("شكراً — ننتظر تأكيدكم.", "Thank you — waiting for your confirmation."),
-  ]
-    .filter(Boolean)
-    .join("\n");
-
-  return {
-    text,
-    orderNo,
-    href: `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`,
-  };
 }

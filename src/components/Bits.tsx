@@ -14,7 +14,7 @@ export function Logo({ compact = false, onDark = false }: { compact?: boolean; o
     >
       <span className="relative inline-flex items-center rounded-[7px] bg-ikea p-[3px] shadow-[0_2px_0_0_#003f77] transition-transform duration-300 group-hover:-rotate-2 group-hover:scale-105">
         <span className="inline-flex items-center rounded-[50%] bg-sun px-2.5 py-[5px] font-display text-[15px] font-black leading-none tracking-tight text-ikea-deep sm:px-3.5 sm:text-[19px]">
-          {lang === "ar" ? "تولين" : "TOLIN"}
+          {lang === "ar" ? "الصداقة" : "ASSADAKA"}
         </span>
       </span>
       {!compact && (
@@ -23,7 +23,7 @@ export function Logo({ compact = false, onDark = false }: { compact?: boolean; o
             {t("brand.full")}
           </span>
           <span className={`mt-0.5 text-[9px] font-medium uppercase tracking-[0.18em] sm:text-[10px] ${onDark ? "text-sun" : "text-ikea"}`}>
-            Tripoli · Libya
+            Sanitary · Building
           </span>
         </span>
       )}
@@ -164,7 +164,7 @@ export function LangSwitch({ dark = false }: { dark?: boolean }) {
 /* ─────────────────────── Marquee ticker ─────────────────────── */
 export function Ticker() {
   const { t } = useStore();
-  const keys = ["ticker.eu", "ticker.original", "ticker.warranty", "ticker.delivery", "ticker.new", "ticker.whatsapp"];
+  const keys = ["ticker.brands", "ticker.original", "ticker.warranty", "ticker.delivery", "ticker.new", "ticker.contact"];
   const items = keys.map((k) => t(k));
   return (
     <div className="relative overflow-hidden border-y border-ink/15 bg-sun py-2.5 select-none">
