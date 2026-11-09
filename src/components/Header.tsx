@@ -16,6 +16,8 @@ import {
   IconX,
 } from "./Icons";
 import { CATEGORIES, PRODUCTS, px } from "../data/catalog";
+import { TOUR_HASH } from "../router";
+import { IconCube } from "./tour/TourIcons";
 
 const NAV = [
   { key: "nav.products", href: "#catalog" },
@@ -102,6 +104,14 @@ export default function Header() {
               <IconWhatsApp className="h-4 w-4" />
               {t("top.help")}
             </a>
+            {/* /visite — page vitrine 360° autour du viewer Pannellum d'origine */}
+            <a
+              href="/visite"
+              className="inline-flex items-center gap-1.5 rounded-full border border-[#c9a86a]/50 px-2.5 py-1.5 font-display text-[11.5px] font-bold text-[#e3cfa2] transition-colors hover:bg-[#c9a86a] hover:text-black"
+            >
+              <IconCube className="h-3.5 w-3.5" />
+              Visite virtuelle 360°
+            </a>
             <span className="mx-1 h-4 w-px bg-white/15" />
             <LangSwitch dark />
           </div>
@@ -152,6 +162,18 @@ export default function Header() {
           </nav>
 
           <div className="ms-auto flex items-center gap-1 lg:ms-0">
+            {/* 360° showroom tour — dedicated page */}
+            <a
+              href={TOUR_HASH}
+              className="group hidden items-center gap-2 rounded-full border border-ikea/20 bg-ikea-soft px-3.5 py-2 font-display text-[12.5px] font-bold text-ikea transition-all duration-300 hover:border-ikea hover:bg-ikea hover:text-white lg:inline-flex"
+            >
+              <IconCube className="h-4 w-4 transition-transform duration-500 group-hover:rotate-12" />
+              {t("nav.tour360")}
+              <span className="grid h-4.5 w-4.5 place-items-center rounded-full bg-ikea text-[9px] font-black tabular text-white transition-colors group-hover:bg-sun group-hover:text-ink">
+                360
+              </span>
+            </a>
+
             {/* desktop search */}
             <form
               onSubmit={(e) => {
@@ -360,6 +382,28 @@ export default function Header() {
             </button>
           </div>
           <nav className="flex-1 overflow-y-auto px-3 py-4">
+            <a
+              href={TOUR_HASH}
+              onClick={() => setMobile(false)}
+              className="mb-3 flex items-center justify-between gap-3 rounded-2xl bg-ikea px-4 py-4 font-display text-[15px] font-black text-white transition-colors hover:bg-ikea-deep"
+            >
+              <span className="flex items-center gap-2.5">
+                <IconCube className="h-5 w-5" />
+                {t("nav.tour360")}
+              </span>
+              <span className="rounded-full bg-sun px-2 py-0.5 font-display text-[10px] font-black tabular text-ink">360°</span>
+            </a>
+            <a
+              href="/visite"
+              onClick={() => setMobile(false)}
+              className="mb-3 flex items-center justify-between gap-3 rounded-2xl border border-[#c9a86a]/45 bg-[#c9a86a]/10 px-4 py-3.5 font-display text-[14.5px] font-bold text-[#8a6d38] transition-colors hover:bg-[#c9a86a]/20"
+            >
+              <span className="flex items-center gap-2.5">
+                <IconCube className="h-5 w-5" />
+                Visite virtuelle 360°
+              </span>
+              <span className="rounded-full bg-[#c9a86a] px-2 py-0.5 font-display text-[10px] font-black tabular text-black">/visite</span>
+            </a>
             {NAV.map((n, i) => (
               <a
                 key={n.key + i}
