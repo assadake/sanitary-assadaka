@@ -249,7 +249,29 @@ async function start() {
     );
   }
 
-  app.listen(port, "0.0.0.0", () => console.info(`Assadaka shop server listening on port ${port}`));
+  const server = app.listen(port, "0.0.0.0", () => console.info(`Assadaka shop server listening on port ${port}`));
+  const shutdown = (signal: NodeJS.Signals) => {
+    console.info(`Received ${signal}; closing the HTTP server.`);
+    const timeout = setTimeout(() => {
+      console.error("Graceful shutdown timed out; exiting.");
+      process.exit(1);
+    }, 10_000);
+    timeout.unref();
+    server.close((error) => {
+      clearTimeout(timeout);
+      if (error) {
+        console.error("HTTP server shutdown failed", error);
+        process.exit(1);
+        return;
+      }
+      void pool.end().then(() => process.exit(0)).catch((poolError) => {
+        console.error("Database pool shutdown failed", poolError);
+        process.exit(1);
+      });
+    });
+  };
+  process.once("SIGTERM", shutdown);
+  process.once("SIGINT", shutdown);
 }
 
 start().catch((error) => {
