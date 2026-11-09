@@ -161,23 +161,73 @@ export function LangSwitch({ dark = false }: { dark?: boolean }) {
   );
 }
 
-/* ─────────────────────── Marquee ticker ─────────────────────── */
+/* ─────────────────────── Brand logo marquee ─────────────────── */
+const PARTNER_BRANDS = [
+  { name: "Bocchi", src: "/brands/bocchi.jpg", className: "w-40 sm:w-48" },
+  { name: "CAPA", src: "/brands/capa.jpg", className: "w-[5.5rem] sm:w-24" },
+  { name: "CeraStyle", src: "/brands/cerastyle.png", className: "w-40 sm:w-48" },
+  { name: "SOPAL", src: "/brands/sopal.png", className: "w-40 sm:w-48" },
+  { name: "SERICO", src: "/brands/serico.jpg", className: "w-40 sm:w-48" },
+  { name: "Turavit Seramik", src: "/brands/turavit.jpg", className: "w-40 sm:w-48" },
+  { name: "Turkuaz Seramik", src: "/brands/turkuaz.png", className: "w-40 sm:w-48" },
+];
+
 export function Ticker() {
-  const { t } = useStore();
-  const keys = ["ticker.eu", "ticker.original", "ticker.warranty", "ticker.delivery", "ticker.new", "ticker.whatsapp"];
-  const items = keys.map((k) => t(k));
-  return (
-    <div className="relative overflow-hidden border-y border-ink/15 bg-sun py-2.5 select-none">
-      <div className="flex w-max shrink-0 animate-marquee items-center gap-10 whitespace-nowrap will-change-transform">
-        {[...items, ...items, ...items, ...items].map((label, i) => (
-          <span key={i} className="flex items-center gap-10 font-display text-[12px] font-bold uppercase tracking-[0.14em] text-ink">
-            {label}
-            <svg viewBox="0 0 12 12" className="h-2.5 w-2.5 text-ikea" aria-hidden>
-              <path d="M6 0 7.4 4.6 12 6 7.4 7.4 6 12 4.6 7.4 0 6l4.6-1.4Z" fill="currentColor" />
-            </svg>
-          </span>
-        ))}
-      </div>
+  const [repeatCount, setRepeatCount] = useState(2);
+  const [duration, setDuration] = useState(40);
+  const marqueeRef = useRef<HTMLElement>(null);
+  const sequenceRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const marquee = marqueeRef.current;
+    const sequence = sequenceRef.current;
+    if (!marquee || !sequence) return;
+
+    const update = () => {
+      const sequenceWidth = sequence.getBoundingClientRect().width;
+      if (!sequenceWidth) return;
+      // Make each half of the belt wider than the viewport before it loops.
+      const count = Math.max(2, Math.ceil(marquee.clientWidth / sequenceWidth) + 1);
+      setRepeatCount(count);
+      setDuration(Math.max(30, Math.round((sequenceWidth * count) / 50)));
+    };
+
+    const observer = new ResizeObserver(update);
+    observer.observe(marquee);
+    update();
+    return () => observer.disconnect();
+  }, []);
+
+  const brandSet = (copy: "primary" | "duplicate") => (
+    <div className="brand-marquee-group" aria-hidden={copy === "duplicate"}>
+      {Array.from({ length: repeatCount }, (_, sequenceIndex) => (
+        <div
+          key={`${copy}-sequence-${sequenceIndex}`}
+          ref={copy === "primary" && sequenceIndex === 0 ? sequenceRef : undefined}
+          className="brand-marquee-sequence"
+          aria-hidden={sequenceIndex > 0}
+        >
+          {PARTNER_BRANDS.map((brand) => (
+            <img
+              key={`${copy}-${sequenceIndex}-${brand.name}`}
+              className={`brand-marquee-logo ${brand.className}`}
+              src={brand.src}
+              alt={copy === "primary" && sequenceIndex === 0 ? brand.name : ""}
+              loading="eager"
+              draggable={false}
+            />
+          ))}
+        </div>
+      ))}
     </div>
+  );
+
+  return (
+    <section ref={marqueeRef} className="brand-marquee" aria-label="Our brands">
+      <div className="brand-marquee-track" style={{ animationDuration: `${duration}s` }}>
+        {brandSet("primary")}
+        {brandSet("duplicate")}
+      </div>
+    </section>
   );
 }
