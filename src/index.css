@@ -40,6 +40,62 @@
     transform: translateX(0);
   }
 }
+
+/* The two identical groups meet exactly at the loop point, so the logo
+   ribbon stays continuously filled at every viewport width. */
+.brand-marquee {
+  --brand-gap: clamp(28px, 4vw, 64px);
+  overflow: hidden;
+  border-block: 1px solid var(--color-line);
+  background: #fff;
+  padding-block: 14px;
+}
+
+.brand-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: brand-marquee 40s linear infinite;
+  will-change: transform;
+}
+
+.brand-marquee-group {
+  display: flex;
+  flex: 0 0 auto;
+  width: max-content;
+  align-items: center;
+  gap: var(--brand-gap);
+  padding-inline: calc(var(--brand-gap) / 2);
+}
+
+.brand-marquee-sequence {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: var(--brand-gap);
+}
+
+.brand-marquee-logo {
+  display: block;
+  flex: 0 0 auto;
+  height: 48px;
+  max-width: 192px;
+  object-fit: contain;
+  user-select: none;
+}
+
+@keyframes brand-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@media (min-width: 640px) {
+  .brand-marquee { padding-block: 18px; }
+  .brand-marquee-logo { height: 58px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-marquee-track { animation-play-state: paused; }
+}
 @keyframes float {
   0%,
   100% {
