@@ -9,8 +9,15 @@ export const HOME_HASH = "#/";
 
 /** Real URL of the standalone /visite landing page (SPA pathname route). */
 export const VISITE_PATH = "/visite";
+/**
+ * `dist/visite/index.html` is a real file generated at build time so static
+ * hosts (Render, Netlify, S3...) can serve /visite without any rewrite. Some
+ * of them redirect /visite → /visite/ or expose /visite/index.html, hence the
+ * accepted aliases below.
+ */
 export function isVisiteRoute(pathname: string) {
-  return pathname.replace(/\/+$/, "") === VISITE_PATH;
+  const p = pathname.replace(/\/+$/, "");
+  return p === VISITE_PATH || p === `${VISITE_PATH}/index.html` || p === `${VISITE_PATH}/index`;
 }
 
 const TOUR_ALIASES = [

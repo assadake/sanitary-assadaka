@@ -129,6 +129,56 @@ Les prix sont affichés en **dinar libyen** (`formatPrice()` dans `src/i18n.ts`)
 
 ---
 
+## 🚀 Déployer sur Render (et diagnostiquer un déploiement « identique »)
+
+`vercel.json` ne concerne **que Vercel** : Render ne lit ni `outputDirectory`, ni ses `rewrites`. Le build génère donc lui-même tout ce dont un hébergeur statique a besoin :
+
+| Fichier produit | Rôle |
+| --- | --- |
+| `dist/index.html` | site complet (JS + CSS inline, `vite-plugin-singlefile`) |
+| `dist/visite/index.html` | **vrai fichier** pour `/visite` : `<html lang="fr" dir="ltr">` + balises SEO statiques. Fonctionne **sans aucune règle de réécriture** |
+| `dist/visite-360/*` | copie exacte des panoramas et du viewer Pannellum d'origine |
+| `dist/deploy-info.json` | diagnostic : commit, branche et date du build réellement déployés |
+
+### Réglages du service Render
+
+Le dépôt est un site **statique** : `package.json` n'a **pas** de script `start`. Un *Web Service* avec `npm start` ne peut donc pas le servir.
+
+| Paramètre | Valeur |
+| --- | --- |
+| Type | **Static Site** (`runtime: static`) |
+| **Branch** | **`main`** |
+| Root Directory | *(vide)* |
+| Build Command | `npm ci && npm run build` |
+| Publish Directory | `dist` |
+| Auto-Deploy | activé |
+| Redirects/Rewrites | `/*` → `/index.html`, type **Rewrite** (utile pour de futures routes ; les fichiers réels restent servis en priorité) |
+
+Ces valeurs sont versionnées dans **`render.yaml`**. Deux pièges : un Blueprint ne s'applique qu'à un service **créé depuis ce fichier**, et toute modification de `render.yaml` demande un **Sync manuel** du Blueprint dans Render (un simple redeploy ne recharge pas la configuration du service).
+
+### Deux déploiements manuels qui donnent le même résultat
+
+La cause la plus fréquente : le service surveille **une autre branche** (un service Render `tolin-shop` a été vu attaché à `arena/a85f3eea-sanitary-assadaka`, une branche avec `server/` + Express/Neon). Un « Manual Deploy » reconstruit alors cette branche, quel que soit le nombre de fois où on le relance.
+
+**Vérification en 10 secondes** : ouvrir `https://<votre-domaine>/deploy-info.json`. Le champ `commit` doit être le SHA de `main` (après la PR #1 : `0277074…`). S'il affiche un autre SHA ou `branch: arena/a85f3eea-…`, corriger **Settings → Branch = main**, faire **Clear build cache**, puis **Manual Deploy**.
+
+Dans le log de build, on doit voir `✓ built` et `dist/index.html  514.94 kB`.
+
+### Checklist après déploiement
+
+| URL | Attendu |
+| --- | --- |
+| `/` | site TOLIN avec le lien « Visite virtuelle 360° » |
+| `/visite` ou `/visite/` | page noir + doré |
+| `/visite/index.html` | la même page (fichier statique) |
+| `/visite-360/index.html` | viewer Pannellum d'origine |
+| `/visite-360/pano1.jpg` | JPEG 930 087 octets |
+| `/deploy-info.json` | SHA de `main` |
+
+> Le viewer charge Pannellum depuis `cdn.jsdelivr.net` et les polices depuis Google Fonts : ces CDN doivent être accessibles depuis le navigateur du visiteur (ils sont bloqués dans le sandbox de test uniquement).
+
+---
+
 ## 📄 Licence
 
 Code fourni à des fins de démonstration. Les visuels proviennent de **Pexels** (licence libre) et les marques citées appartiennent à leurs propriétaires.
