@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Visite Virtuelle 360° - Showroom</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css">
+<style>
+html,body{margin:0;height:100%;font-family:system-ui,Arial;background:#0a0a0a}
+#topbar{position:absolute;top:0;left:0;right:0;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:linear-gradient(to bottom,rgba(0,0,0,.6),transparent);color:#fff;pointer-events:none}
+#topbar strong{font-size:18px}
+#topbar div{pointer-events:auto}
+button{background:#fff;border:0;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;margin-left:8px}
+button.primary{background:#c9a86a;color:#000}
+#panorama{width:100%;height:72vh;min-height:440px}
+#caption{position:absolute;left:50%;transform:translateX(-50%);bottom:92px;background:rgba(0,0,0,.75);color:#fff;padding:12px 20px;border-radius:12px;max-width:92%;text-align:center;font-size:16px;z-index:10}
+#thumbs{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:10;max-width:96%;overflow-x:auto;padding:4px}
+#thumbs img{width:96px;height:54px;object-fit:cover;border-radius:8px;cursor:pointer;opacity:.6;border:2px solid transparent}
+#thumbs img.active{opacity:1;border-color:#fff}
+#arrows{position:absolute;top:50%;width:100%;display:flex;justify-content:space-between;pointer-events:none;z-index:10}
+#arrows span{pointer-events:auto;background:rgba(255,255,255,.9);width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;margin:0 12px}
+</style>
+</head>
+<body>
+<div id="topbar">
+<strong><!-- MODIFIE : NOM MAGASIN --> Visite 360° Showroom</strong>
+<div><button class="primary" onclick="startGuided()">▶ Visite guidée</button><button onclick="stopGuided()">⏸</button><button onclick="viewer.toggleFullscreen()">⛶</button></div>
+</div>
+<div id="panorama"></div>
+<div id="caption">Chargement...</div>
+<div id="arrows"><span onclick="go(-1)">‹</span><span onclick="go(1)">›</span></div>
+<div id="thumbs"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+<script>
+// MODIFIE ICI LES TITRES / TEXTES
+const ORDER = [
+ {id:'s1', file:'pano1.jpg', title:'1. Accueil / Caisse', text:"Bienvenue dans notre showroom."},
+ {id:'s2', file:'pano2.jpg', title:'2. Espace Vasques', text:"Vasques à poser, miroirs et mitigeurs."},
+ {id:'s3', file:'pano3.jpg', title:'3. Robinetterie', text:"Mitigeurs, colonnes de douche et accessoires."},
+ {id:'s4', file:'pano4.jpg', title:'4. Vitrine', text:"Nouveautés côté vitrine."},
+ {id:'s5', file:'pano5.jpg', title:'5. Douche & WC', text:"Douches à l'italienne, WC suspendus, carrelage."},
+ {id:'s6', file:'pano6.jpg', title:'6. Baignoires', text:"Baignoires balnéo et effet marbre."},
+ {id:'s7', file:'pano7.jpg', title:'7. Espace 7', text:"Découvrez cet espace."},
+ {id:'s8', file:'pano8.jpg', title:'8. Espace 8', text:"Fin de visite, contactez-nous."}
+];
+let scenes={};
+ORDER.forEach((s,i)=>{
+  scenes[s.id]={
+    title:s.title, type:'equirectangular', panorama:s.file,
+    haov:360, vaov:59.17, vOffset:0,
+    hfov:90, minHfov:60, maxHfov:100,
+    minPitch:-18, maxPitch:18,
+    autoLoad:true, autoRotate:-1.2,
+    hotSpots:[
+      {pitch:-5,yaw:30,type:'scene',text:'Suivant',sceneId:ORDER[(i+1)%ORDER.length].id},
+      {pitch:-5,yaw:-150,type:'scene',text:'Retour',sceneId:ORDER[(i-1+ORDER.length)%ORDER.length].id}
+    ]
+  };
+});
+var viewer = pannellum.viewer('panorama',{default:{firstScene:'s1',sceneFadeDuration:1000},scenes:scenes});
+let cur=0;
+viewer.on('scenechange',function(id){
+  cur=ORDER.findIndex(o=>o.id===id);
+  let s=ORDER[cur];
+  document.getElementById('caption').innerText=s.title+' — '+s.text;
+  document.querySelectorAll('#thumbs img').forEach(im=>im.classList.toggle('active',im.dataset.id===id));
+});
+let th=document.getElementById('thumbs');
+ORDER.forEach(s=>{
+  let im=document.createElement('img');im.src=s.file;im.dataset.id=s.id;
+  im.onclick=()=>{stopGuided();viewer.loadScene(s.id)};
+  th.appendChild(im);
+});
+function go(d){stopGuided();cur=(cur+d+ORDER.length)%ORDER.length;viewer.loadScene(ORDER[cur].id);}
+let timer=null;
+function startGuided(){
+  stopGuided();
+  viewer.loadScene(ORDER[0].id);
+  timer=setInterval(()=>{cur=(cur+1)%ORDER.length;viewer.loadScene(ORDER[cur].id);},7000);
+}
+function stopGuided(){if(timer)clearInterval(timer);timer=null;}
+</script>
+</body>
+</html>
