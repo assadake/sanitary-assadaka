@@ -1,40 +1,34 @@
 import { useEffect, useState } from "react";
-import { PRODUCTS, px } from "../data/catalog";
-import { WHATSAPP_NUMBER, formatPrice } from "../i18n";
+import { px } from "../data/catalog";
+import { formatPrice } from "../i18n";
 import { useStore } from "../store";
 import { Stars } from "./Bits";
 import { IconArrow, IconBag, IconCheck, IconPin, IconShield, IconTruck, IconWhatsApp } from "./Icons";
 import Reveal from "./Reveal";
 
-const HERO_PRODUCT = PRODUCTS.find((p) => p.id === "TL-2001")!;
-const HERO_IMG_A = 6585763; // living room
-const HERO_IMG_B = 5974048; // tools
-const HERO_IMG_C = 36573009; // espresso
-
-const ROTATING = [HERO_PRODUCT, PRODUCTS.find((p) => p.id === "TL-4001")!, PRODUCTS.find((p) => p.id === "TL-1001")!];
-
 export default function Hero() {
-  const { t, lang, add, waLink } = useStore();
+  const { t, lang, add, contactLink, products, siteContent } = useStore();
   const [idx, setIdx] = useState(0);
 
+  const rotating = ["AS-1001", "AS-4001", "AS-2001"]
+    .map((id) => products.find((product) => product.id === id))
+    .filter((product) => product !== undefined);
+  const featuredProducts = rotating.length ? rotating : products.slice(0, 3);
+
   useEffect(() => {
-    const id = window.setInterval(() => setIdx((i) => (i + 1) % ROTATING.length), 4200);
+    const id = window.setInterval(() => setIdx((i) => (i + 1) % Math.max(1, featuredProducts.length)), 4200);
     return () => window.clearInterval(id);
-  }, []);
+  }, [featuredProducts.length]);
 
-  const featured = ROTATING[idx];
+  const featured = featuredProducts[idx % featuredProducts.length];
+  if (!featured) return null;
 
-  const stats = [
-    { v: "+1,200", k: t("hero.stat1") },
-    { v: "38", k: t("hero.stat2") },
-    { v: "11", k: t("hero.stat3") },
-    { v: "22", k: t("hero.stat4") },
-  ];
+  const stats = siteContent.heroStats.map((stat) => ({ v: stat.value[lang], k: t(stat.key) }));
 
   const perks = [
-    { icon: <IconTruck className="h-4 w-4" />, label: lang === "ar" ? "توصيل 24–48 ساعة في طرابلس" : "24–48h delivery in Tripoli" },
-    { icon: <IconShield className="h-4 w-4" />, label: lang === "ar" ? "ضمان حتى 24 شهر" : "Warranty up to 24 months" },
-    { icon: <IconCheck className="h-4 w-4" />, label: lang === "ar" ? "دفع عند الاستلام" : "Cash on delivery" },
+    { icon: <IconTruck className="h-4 w-4" />, label: t("ui.hero.perkDelivery") },
+    { icon: <IconShield className="h-4 w-4" />, label: t("ui.hero.perkWarranty") },
+    { icon: <IconCheck className="h-4 w-4" />, label: t("ui.hero.perkPrice") },
   ];
 
   return (
@@ -60,7 +54,7 @@ export default function Hero() {
         aria-hidden
         className="pointer-events-none absolute -bottom-10 start-1/2 -translate-x-1/2 font-display text-[22vw] font-black leading-none tracking-tighter text-white/[0.035] select-none"
       >
-        {lang === "ar" ? "تولين" : "TOLIN"}
+        {t("ui.hero.logo")}
       </span>
 
       <div className="relative mx-auto grid max-w-[1440px] gap-10 px-4 pb-14 pt-12 sm:px-6 lg:grid-cols-12 lg:gap-8 lg:px-10 lg:pb-20 lg:pt-16">
@@ -70,7 +64,7 @@ export default function Hero() {
             <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3.5 py-1.5 backdrop-blur">
               <IconPin className="h-4 w-4 text-sun" />
               <span className="font-display text-[11px] font-bold uppercase tracking-[0.2em] text-white/85">
-                {t("hero.kicker")} {lang === "ar" ? "تولين" : "TOLIN"}
+                {t("hero.kicker")} {t("ui.hero.logo")}
               </span>
             </span>
           </Reveal>
@@ -99,16 +93,14 @@ export default function Hero() {
           <Reveal delay={230}>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <a
-                href={waLink(
-                  lang === "ar"
-                    ? "السلام عليكم، نبي نتعرف على المنتجات المتوفرة حالياً في تولين."
-                    : "Hello, I'd like to know what's currently available at TOLIN.",
+                href={contactLink(
+                  t("ui.contact.message"),
                 )}
                 target="_blank"
                 rel="noreferrer noopener"
                 className="group inline-flex items-center gap-2.5 rounded-full bg-sun px-6 py-3.5 font-display text-[15px] font-bold text-ink transition-all duration-300 hover:bg-white hover:shadow-[0_16px_40px_-14px_rgba(255,219,0,0.8)] active:scale-95"
               >
-                <IconWhatsApp className="h-5 w-5 text-leaf transition-transform duration-300 group-hover:scale-110" />
+                <IconWhatsApp className="h-5 w-5 text-ikea transition-transform duration-300 group-hover:scale-110" />
                 {t("hero.cta1")}
               </a>
               <a
@@ -151,8 +143,8 @@ export default function Hero() {
           <Reveal delay={140} className="relative">
             <div className="relative aspect-[4/5] overflow-hidden rounded-[28px] border border-white/10 sm:aspect-[16/13] lg:aspect-[4/4.35]">
               <img
-                src={px(HERO_IMG_A, 1200, 1300)}
-                alt={lang === "ar" ? "صالون أوروبي حديث" : "Modern European living room"}
+                src={px(siteContent.config.heroImages.main, 1200, 1300)}
+                alt={t("ui.hero.imageAlt")}
                 className="h-full w-full animate-kenburns object-cover"
                 loading="eager"
               />
@@ -160,28 +152,28 @@ export default function Hero() {
               <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-5">
                 <div>
                   <p className="font-display text-[11px] font-bold uppercase tracking-[0.2em] text-sun">
-                    {lang === "ar" ? "شحنة هذا الأسبوع" : "This week's shipment"}
+                    {t("ui.hero.beforeEnquire")}
                   </p>
                   <p className="mt-1 font-display text-[17px] font-bold leading-tight text-white">
-                    {lang === "ar" ? "ميلانو ← طرابلس" : "Milan → Tripoli"}
+                    {t("ui.hero.measurement")}
                   </p>
                 </div>
                 <span className="rounded-full bg-white/15 px-3 py-1.5 text-[11px] font-semibold text-white backdrop-blur">
-                  40 {lang === "ar" ? "حاوية/سنة" : "containers/yr"}
+                  {t("ui.hero.askDetails")}
                 </span>
               </div>
             </div>
 
             {/* floating mini images */}
             <img
-              src={px(HERO_IMG_C, 400, 400)}
+              src={px(siteContent.config.heroImages.detailA, 400, 400)}
               alt=""
               className="absolute -start-3 top-6 hidden h-24 w-24 animate-float rounded-2xl border-4 border-ink object-cover shadow-2xl sm:block lg:h-28 lg:w-28"
               style={{ animationDelay: "0.6s" }}
               loading="lazy"
             />
             <img
-              src={px(HERO_IMG_B, 400, 400)}
+              src={px(siteContent.config.heroImages.detailB, 400, 400)}
               alt=""
               className="absolute -end-2 bottom-24 hidden h-20 w-20 animate-float rounded-2xl border-4 border-ink object-cover shadow-2xl lg:block lg:h-24 lg:w-24"
               style={{ animationDelay: "1.4s" }}
@@ -205,12 +197,12 @@ export default function Hero() {
                     {featured.name[lang]}
                   </p>
                   <div className="mt-1 flex items-center gap-1.5">
-                    <Stars rating={featured.rating} className="h-3 w-3" />
-                    <span className="text-[10.5px] text-ink-soft tabular">({featured.reviews})</span>
+                    {featured.rating !== null && <Stars rating={featured.rating} className="h-3 w-3" />}
+                    <span className="text-[10.5px] text-ink-soft tabular">{featured.rating !== null ? `(${featured.reviews})` : ""}</span>
                   </div>
                   <div className="mt-1.5 flex items-center justify-between gap-2">
                     <span className="font-display text-[15px] font-black tabular text-ink">
-                      {formatPrice(featured.price, lang)}
+                      {formatPrice(featured.price === null ? null : featured.price, lang, t("product.priceOnRequest"))}
                     </span>
                     <button
                       type="button"
@@ -218,13 +210,13 @@ export default function Hero() {
                       className="inline-flex items-center gap-1 rounded-full bg-ikea px-3 py-1.5 text-[11.5px] font-bold text-white transition-colors hover:bg-ikea-deep active:scale-95"
                     >
                       <IconBag className="h-3.5 w-3.5" />
-                      {lang === "ar" ? "أضف" : "Add"}
+                      {t("ui.hero.add")}
                     </button>
                   </div>
                 </div>
               </div>
               <div className="mt-2.5 flex gap-1">
-                {ROTATING.map((p, i) => (
+                {featuredProducts.map((p, i) => (
                   <button
                     key={p.id}
                     type="button"
@@ -249,16 +241,16 @@ export default function Hero() {
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-leaf opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-leaf" />
             </span>
-            {lang === "ar" ? "المعرض مفتوح الآن — شارع الجمهورية، طرابلس" : "Showroom open now — Jumhuriya St, Tripoli"}
+            {t("ui.hero.locationConfirm")}
           </span>
           <a
-            href={`https://wa.me/${WHATSAPP_NUMBER}`}
+            href={contactLink()}
             target="_blank"
             rel="noreferrer noopener"
             className="link-sweep inline-flex items-center gap-2 font-semibold text-white/80 hover:text-sun"
           >
             <IconWhatsApp className="h-4 w-4" />
-            <span className="tabular">+{WHATSAPP_NUMBER}</span>
+            <span>{siteContent.config.companyDisplay[lang]}</span>
           </a>
           <span className="hidden items-center gap-2 md:inline-flex">
             {t("hero.scroll")}

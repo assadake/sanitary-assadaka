@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { WHATSAPP_DISPLAY } from "../i18n";
+
 import { useStore } from "../store";
 import { IconArrow, IconBag, IconCheck, IconWhatsApp } from "./Icons";
 
-export function WhatsAppFloat() {
-  const { lang, waLink, t } = useStore();
+export function ContactFloat() {
+  const { contactLink, t } = useStore();
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -21,10 +21,8 @@ export function WhatsAppFloat() {
       }`}
     >
       <a
-        href={waLink(
-          lang === "ar"
-            ? "السلام عليكم، نبي نطلب من تولين للبضائع الأروبية."
-            : "Hello, I'd like to order from TOLIN European Goods.",
+        href={contactLink(
+          t("ui.contact.message"),
         )}
         target="_blank"
         rel="noreferrer noopener"
@@ -37,7 +35,7 @@ export function WhatsAppFloat() {
         <span className="flex flex-col leading-tight">
           <span className="font-display text-[13.5px] font-bold">{t("wa.float")}</span>
           <span className="text-[11px] text-white/70 tabular">
-            {WHATSAPP_DISPLAY} · {t("wa.floatSub")}
+            {t("wa.floatSub")}
           </span>
         </span>
       </a>
@@ -45,7 +43,7 @@ export function WhatsAppFloat() {
       <button
         type="button"
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        aria-label={lang === "ar" ? "الرجوع للأعلى" : "Back to top"}
+        aria-label={t("ui.backTop")}
         className="grid h-10 w-10 place-items-center rounded-full border border-line bg-white text-ink shadow-lg transition-colors hover:bg-ink hover:text-white"
       >
         <IconArrow className="h-4 w-4 -rotate-90 rtl:rotate-90" />

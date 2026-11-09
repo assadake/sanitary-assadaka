@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
-import { CATEGORIES, PRODUCTS, px, type Product } from "../data/catalog";
-import { WHATSAPP_NUMBER, formatPrice } from "../i18n";
+import { px, type Product } from "../data/catalog";
+import { formatPrice } from "../i18n";
 import { useStore } from "../store";
 import { SectionHead, Stars } from "./Bits";
 import {
@@ -18,18 +18,18 @@ import {
 } from "./Icons";
 import Reveal from "./Reveal";
 
-const BADGES: Record<string, { ar: string; en: string; cls: string }> = {
-  new: { ar: "جديد", en: "New", cls: "bg-leaf text-white" },
-  offer: { ar: "عرض", en: "Offer", cls: "bg-brick text-white" },
-  best: { ar: "الأكثر طلباً", en: "Best seller", cls: "bg-ink text-sun" },
-  import: { ar: "استيراد خاص", en: "Special import", cls: "bg-ikea text-white" },
+const BADGES: Record<string, { key: string; cls: string }> = {
+  new: { key: "product.badge.new", cls: "bg-leaf text-white" },
+  offer: { key: "product.badge.offer", cls: "bg-brick text-white" },
+  best: { key: "product.badge.best", cls: "bg-ink text-sun" },
+  import: { key: "product.badge.import", cls: "bg-ikea text-white" },
 };
 
 function ProductCard({ p, index }: { p: Product; index: number }) {
-  const { t, lang, add, favs, toggleFav, setQuick } = useStore();
+  const { t, lang, add, favs, toggleFav, setQuick, siteContent } = useStore();
   const [added, setAdded] = useState(false);
-  const cat = CATEGORIES.find((c) => c.id === p.cat);
-  const off = p.old ? Math.round((1 - p.price / p.old) * 100) : 0;
+  const cat = siteContent.categories.find((c) => c.id === p.cat);
+  const off = p.price !== null && p.old ? Math.round((1 - p.price / p.old) * 100) : 0;
 
   const onAdd = () => {
     add(p.id);
@@ -51,7 +51,7 @@ function ProductCard({ p, index }: { p: Product; index: number }) {
             <div className="flex flex-col gap-1.5">
               {p.badge && (
                 <span className={`rounded-full px-2.5 py-1 font-display text-[10px] font-bold tracking-wide ${BADGES[p.badge].cls}`}>
-                  {BADGES[p.badge][lang]}
+                  {t(BADGES[p.badge].key)}
                 </span>
               )}
               {off > 0 && (
@@ -95,24 +95,20 @@ function ProductCard({ p, index }: { p: Product; index: number }) {
           </h3>
           <p className="mt-1 line-clamp-2 text-[12.5px] leading-relaxed text-ink-soft">{p.desc[lang]}</p>
 
-          <div className="mt-2.5 flex items-center gap-1.5">
-            <Stars rating={p.rating} />
-            <span className="text-[11px] text-ink-soft tabular">
-              {p.rating.toFixed(1)} · {p.reviews}
-            </span>
-            <span className="mx-1 h-3 w-px bg-line" />
-            <span className={`text-[11px] font-semibold ${p.stock <= 5 ? "text-brick" : "text-leaf"}`}>
-              {p.stock <= 5 ? t("product.lowStock") : t("product.inStock")}
+          <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+            {p.rating !== null && <><Stars rating={p.rating} /><span className="text-[11px] text-ink-soft tabular">{p.rating.toFixed(1)} · {p.reviews}</span><span className="mx-1 h-3 w-px bg-line" /></>}
+            <span className={`text-[11px] font-semibold ${p.stock !== null && p.stock <= 5 ? "text-brick" : "text-ink-soft"}`}>
+              {p.stock === null ? t("product.askAvailability") : p.stock <= 5 ? t("product.lowStock") : t("product.inStock")}
             </span>
           </div>
 
           <div className="mt-auto flex items-end justify-between gap-2 pt-4">
             <div className="flex flex-col">
               {p.old && (
-                <span className="text-[12px] text-ink-soft/60 line-through tabular">{formatPrice(p.old, lang)}</span>
+                <span className="text-[12px] text-ink-soft/60 line-through tabular">{formatPrice(p.old, lang, t("product.priceOnRequest"))}</span>
               )}
               <span className="font-display text-[19px] font-black leading-none tabular text-ink">
-                {formatPrice(p.price, lang)}
+                {formatPrice(p.price, lang, t("product.priceOnRequest"))}
               </span>
             </div>
             <button
@@ -134,19 +130,19 @@ function ProductCard({ p, index }: { p: Product; index: number }) {
 
 /* ───────────────────────── Quick view ───────────────────────── */
 function QuickView() {
-  const { quick, setQuick, t, lang, add, favs, toggleFav } = useStore();
+  const { quick, setQuick, t, lang, add, favs, toggleFav, contactLink, siteContent } = useStore();
   const [qty, setQty] = useState(1);
   if (!quick) return null;
   const p = quick;
-  const cat = CATEGORIES.find((c) => c.id === p.cat);
+  const cat = siteContent.categories.find((c) => c.id === p.cat);
 
   const specs = [
     { k: t("product.origin"), v: p.origin[lang] },
-    { k: lang === "ar" ? "الأبعاد" : "Dimensions", v: p.dim },
-    { k: lang === "ar" ? "المادة" : "Material", v: p.mat[lang] },
-    { k: t("product.warranty"), v: `${p.warranty} ${lang === "ar" ? "شهر" : "months"}` },
+    { k: t("ui.product.dimensions"), v: p.dim },
+    { k: t("ui.product.material"), v: p.mat[lang] },
+    { k: t("product.warranty"), v: p.warranty === null ? t("product.warrantyAsk") : `${p.warranty} ${t("ui.product.month")}` },
     { k: t("product.sku"), v: p.id },
-    { k: lang === "ar" ? "القسم" : "Department", v: cat?.name[lang] ?? "" },
+    { k: t("ui.product.department"), v: cat?.name[lang] ?? "" },
   ];
 
   return (
@@ -166,7 +162,7 @@ function QuickView() {
             <img src={px(p.img, 900, 900)} alt={p.name[lang]} className="h-full w-full object-cover" />
             {p.badge && (
               <span className={`absolute start-4 top-4 rounded-full px-3 py-1.5 font-display text-[11px] font-bold ${BADGES[p.badge].cls}`}>
-                {BADGES[p.badge][lang]}
+                {t(BADGES[p.badge].key)}
               </span>
             )}
           </div>
@@ -175,12 +171,7 @@ function QuickView() {
               {cat?.name[lang]} · {p.id}
             </span>
             <h3 className="mt-2 font-display text-[clamp(1.3rem,2.6vw,1.9rem)] font-black leading-tight">{p.name[lang]}</h3>
-            <div className="mt-2 flex items-center gap-2">
-              <Stars rating={p.rating} className="h-4 w-4" />
-              <span className="text-[12.5px] text-ink-soft tabular">
-                {p.rating.toFixed(1)} · {p.reviews} {lang === "ar" ? "تقييم" : "reviews"}
-              </span>
-            </div>
+            {p.rating !== null && <div className="mt-2 flex items-center gap-2"><Stars rating={p.rating} className="h-4 w-4" /><span className="text-[12.5px] text-ink-soft tabular">{p.rating.toFixed(1)} · {p.reviews} {t("ui.product.reviews")}</span></div>}
             <p className="mt-3 text-[14px] leading-relaxed text-ink-soft">{p.desc[lang]}</p>
 
             <div className="mt-5 grid grid-cols-2 gap-x-4 gap-y-2.5 border-y border-line py-4">
@@ -194,8 +185,8 @@ function QuickView() {
 
             <div className="mt-4 flex items-end gap-3">
               <div className="flex flex-col">
-                {p.old && <span className="text-[13px] text-ink-soft/60 line-through tabular">{formatPrice(p.old, lang)}</span>}
-                <span className="font-display text-[26px] font-black leading-none tabular">{formatPrice(p.price, lang)}</span>
+                {p.old && <span className="text-[13px] text-ink-soft/60 line-through tabular">{formatPrice(p.old, lang, t("product.priceOnRequest"))}</span>}
+                <span className="font-display text-[26px] font-black leading-none tabular">{formatPrice(p.price, lang, t("product.priceOnRequest"))}</span>
               </div>
               <div className="ms-auto flex items-center gap-1 rounded-full border border-line bg-mist p-1">
                 <button type="button" onClick={() => setQty((q) => Math.max(1, q - 1))} className="grid h-8 w-8 place-items-center rounded-full bg-white transition-colors hover:bg-ikea hover:text-white" aria-label="-">
@@ -221,11 +212,7 @@ function QuickView() {
                 {t("product.addToCart")}
               </button>
               <a
-                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-                  lang === "ar"
-                    ? `السلام عليكم، نبي نسأل عن المنتج:\n${p.name.ar} (${p.id})\nالسعر المعروض: ${formatPrice(p.price, "ar")}`
-                    : `Hello, I'd like to ask about:\n${p.name.en} (${p.id})\nListed price: ${formatPrice(p.price, "en")}`,
-                )}`}
+                href={contactLink()}
                 target="_blank"
                 rel="noreferrer noopener"
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-leaf px-5 py-3.5 font-display text-[14px] font-bold text-white transition-colors hover:brightness-110 active:scale-95"
@@ -237,10 +224,10 @@ function QuickView() {
 
             <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-[12px] text-ink-soft">
               <span className="inline-flex items-center gap-1.5">
-                <IconTruck className="h-4 w-4 text-ikea" /> {lang === "ar" ? "توصيل وتركيب في طرابلس" : "Delivery & fitting in Tripoli"}
+                <IconTruck className="h-4 w-4 text-ikea" /> {t("ui.product.deliveryConfirm")}
               </span>
               <span className="inline-flex items-center gap-1.5">
-                <IconShield className="h-4 w-4 text-ikea" /> {t("product.warranty")} {p.warranty} {lang === "ar" ? "شهر" : "mo"}
+                <IconShield className="h-4 w-4 text-ikea" /> {p.warranty === null ? t("product.warrantyAsk") : `${t("product.warranty")} ${p.warranty} ${t("ui.product.month")}`}
               </span>
               <button
                 type="button"
@@ -260,21 +247,21 @@ function QuickView() {
 
 /* ───────────────────────── Catalog ───────────────────────── */
 export default function Catalog() {
-  const { t, lang, query, setQuery, cat, setCat, sort, setSort } = useStore();
+  const { t, lang, query, setQuery, cat, setCat, sort, setSort, products, contactLink, siteContent } = useStore();
   const [visible, setVisible] = useState(8);
 
   const list = useMemo(() => {
     const q = query.trim().toLowerCase();
-    let out = PRODUCTS.filter((p) => {
+    let out = products.filter((p) => {
       const okCat = cat === "all" || p.cat === cat;
       const hay = `${p.name.ar} ${p.name.en} ${p.desc.ar} ${p.desc.en} ${p.id} ${p.origin.ar} ${p.origin.en} ${p.cat}`.toLowerCase();
       return okCat && (!q || hay.includes(q));
     });
-    if (sort === "low") out = [...out].sort((a, b) => a.price - b.price);
-    if (sort === "high") out = [...out].sort((a, b) => b.price - a.price);
-    if (sort === "featured") out = [...out].sort((a, b) => Number(Boolean(b.badge)) - Number(Boolean(a.badge)) || b.rating - a.rating);
+    if (sort === "low") out = [...out].sort((a, b) => (a.price ?? Number.MAX_SAFE_INTEGER) - (b.price ?? Number.MAX_SAFE_INTEGER));
+    if (sort === "high") out = [...out].sort((a, b) => (b.price ?? -1) - (a.price ?? -1));
+    if (sort === "featured") out = [...out].sort((a, b) => Number(Boolean(b.badge)) - Number(Boolean(a.badge)) || (b.rating ?? 0) - (a.rating ?? 0));
     return out;
-  }, [query, cat, sort]);
+  }, [query, cat, sort, products]);
 
   const shown = list.slice(0, visible);
 
@@ -282,7 +269,7 @@ export default function Catalog() {
     <section id="catalog" className="relative scroll-mt-24 bg-white py-16 lg:py-24">
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-10">
         <SectionHead
-          kicker={lang === "ar" ? "الكتالوج" : "Catalogue"}
+          kicker={t("grid.title")}
           title={t("grid.title")}
           text={t("grid.text")}
           action={
@@ -326,9 +313,9 @@ export default function Catalog() {
 
         {/* category chips */}
         <div className="no-bar -mx-4 mb-8 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0">
-          {[{ id: "all", name: { ar: t("product.all"), en: t("product.all") } }, ...CATEGORIES].map((c) => {
+          {[{ id: "all", name: { ar: t("product.all"), en: t("product.all") } }, ...siteContent.categories].map((c) => {
             const active = cat === c.id;
-            const n = c.id === "all" ? PRODUCTS.length : PRODUCTS.filter((p) => p.cat === c.id).length;
+            const n = c.id === "all" ? products.length : products.filter((p) => p.cat === c.id).length;
             return (
               <button
                 key={c.id}
@@ -356,7 +343,7 @@ export default function Catalog() {
             <>
               {" · "}
               <button type="button" onClick={() => setQuery("")} className="link-sweep font-semibold text-ikea">
-                {lang === "ar" ? "مسح البحث" : "clear search"}
+                {t("ui.product.clearSearch")}
               </button>
             </>
           )}
@@ -369,15 +356,13 @@ export default function Catalog() {
             </span>
             <p className="font-display text-[18px] font-bold">{t("search.none")}</p>
             <a
-              href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-                lang === "ar" ? `السلام عليكم، نبي نسأل عن منتج: ${query}` : `Hello, I'm looking for: ${query}`,
-              )}`}
+              href={contactLink()}
               target="_blank"
               rel="noreferrer noopener"
               className="inline-flex items-center gap-2 rounded-full bg-leaf px-5 py-3 font-display text-[13.5px] font-bold text-white"
             >
               <IconWhatsApp className="h-4.5 w-4.5" />
-              {lang === "ar" ? "اسألنا على واتساب" : "Ask us on WhatsApp"}
+              {t("ui.product.contactNoResult")}
             </a>
           </div>
         ) : (

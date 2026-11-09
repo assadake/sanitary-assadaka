@@ -1,14 +1,14 @@
-import { WHATSAPP_NUMBER } from "../i18n";
+import { px } from "../data/catalog";
 import { useStore } from "../store";
 import { SectionHead } from "./Bits";
-import { IconChat, IconShip, IconShield, IconTag, IconTruck, IconWrench } from "./Icons";
+import { IconChat, IconShield, IconTag, IconTruck, IconWrench } from "./Icons";
 import Reveal from "./Reveal";
 
 export default function Services() {
-  const { t, lang } = useStore();
+  const { t, contactLink, siteContent } = useStore();
 
   const items = [
-    { icon: <IconShip className="h-6 w-6" />, t: t("srv1.t"), d: t("srv1.d") },
+    { icon: <IconTag className="h-6 w-6" />, t: t("srv1.t"), d: t("srv1.d") },
     { icon: <IconTruck className="h-6 w-6" />, t: t("srv2.t"), d: t("srv2.d") },
     { icon: <IconShield className="h-6 w-6" />, t: t("srv3.t"), d: t("srv3.d") },
     { icon: <IconTag className="h-6 w-6" />, t: t("srv4.t"), d: t("srv4.d") },
@@ -22,7 +22,7 @@ export default function Services() {
         <div className="lg:col-span-4">
           <div className="lg:sticky lg:top-32">
             <SectionHead
-              kicker={lang === "ar" ? "خدمات" : "Services"}
+              kicker={t("ui.services.kicker")}
               title={t("services.title")}
               text={t("services.text")}
             />
@@ -30,28 +30,24 @@ export default function Services() {
               <div className="overflow-hidden rounded-[22px] border border-line">
                 <div className="relative aspect-[4/3]">
                   <img
-                    src="https://images.pexels.com/photos/6790821/pexels-photo-6790821.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=800&h=600"
-                    alt={lang === "ar" ? "فني يركّب الأثاث" : "Technician assembling furniture"}
+                    src={px(siteContent.config.serviceImage, 800, 600)}
+                    alt={t("ui.services.imageAlt")}
                     loading="lazy"
                     className="h-full w-full object-cover"
                   />
                   <span className="absolute inset-0 bg-gradient-to-t from-ikea-deep/85 to-transparent" />
                   <p className="absolute inset-x-4 bottom-4 font-display text-[14px] font-bold leading-snug text-white">
-                    {lang === "ar"
-                      ? "فريق تركيب محلي مدرَّب على المعايير الأوروبية."
-                      : "A local fitting crew trained to European standards."}
+                    {t("ui.services.message")}
                   </p>
                 </div>
               </div>
               <a
-                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-                  lang === "ar" ? "السلام عليكم، نبي نسأل على خدمات التوصيل والتركيب." : "Hello, I'd like to ask about delivery & installation.",
-                )}`}
+                href={contactLink()}
                 target="_blank"
                 rel="noreferrer noopener"
                 className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full border-2 border-ink px-5 py-3.5 font-display text-[14px] font-bold transition-colors hover:bg-ink hover:text-white"
               >
-                {lang === "ar" ? "اطلب خدمة" : "Request a service"}
+                {t("ui.services.request")}
               </a>
             </Reveal>
           </div>

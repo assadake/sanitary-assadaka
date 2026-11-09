@@ -1,4 +1,4 @@
-import { ROOMS, px } from "../data/catalog";
+import { px } from "../data/catalog";
 import { useStore } from "../store";
 import { SectionHead } from "./Bits";
 import { RailArrows, RailProgress, useRail } from "./Carousel";
@@ -6,7 +6,7 @@ import { IconArrow } from "./Icons";
 import Reveal from "./Reveal";
 
 export default function Rooms() {
-  const { t, lang, setCat, setQuery } = useStore();
+  const { t, lang, setCat, setQuery, siteContent } = useStore();
   const rail = useRail();
 
   const open = (cat: string) => {
@@ -19,7 +19,7 @@ export default function Rooms() {
     <section id="rooms" className="relative scroll-mt-24 py-16 lg:py-24">
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-10">
         <SectionHead
-          kicker={lang === "ar" ? "أفكار وإلهام" : "Ideas & inspiration"}
+          kicker={t("ui.rooms.kicker")}
           title={t("rooms.title")}
           text={t("rooms.text")}
           action={
@@ -37,7 +37,7 @@ export default function Rooms() {
         ref={rail.ref}
         className="no-bar snap-x-mand flex gap-4 overflow-x-auto scroll-smooth px-4 pb-2 sm:px-6 lg:px-10"
       >
-        {ROOMS.map((r, i) => (
+        {siteContent.rooms.map((r, i) => (
           <Reveal
             key={r.id}
             delay={i * 55}
@@ -53,7 +53,7 @@ export default function Rooms() {
                 />
                 <span className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/5 to-transparent" />
                 <span className="absolute start-4 top-4 rounded-full bg-white/90 px-3 py-1 font-display text-[10.5px] font-black uppercase tracking-[0.14em] text-ikea tabular backdrop-blur">
-                  {r.pieces} {t("rooms.pieces")}
+                  {t("rooms.pieces")}
                 </span>
                 <div className="absolute inset-x-0 bottom-0 p-4">
                   <h3 className="font-display text-[19px] font-black leading-tight text-white">{r.title[lang]}</h3>

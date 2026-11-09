@@ -1,23 +1,17 @@
 import { useState } from "react";
-import { STORIES, px, type Bi } from "../data/catalog";
-import { WHATSAPP_NUMBER } from "../i18n";
+import { px } from "../data/catalog";
+
 import { useStore } from "../store";
 import { SectionHead } from "./Bits";
 import { RailArrows, RailProgress, useRail } from "./Carousel";
 import { IconCheck, IconWhatsApp, IconX } from "./Icons";
 import Reveal from "./Reveal";
 
-const STEPS: Bi[] = [
-  { ar: "نختار المورد الأوروبي ونعاين العيّنة قبل الشراء.", en: "We pick the European supplier and inspect the sample before buying." },
-  { ar: "الشحنة تُفحص وتُغلَّف وتُوثَّق بالصور في المخزن.", en: "The shipment is tested, packed and photographed at the warehouse." },
-  { ar: "توصلك لبيتك مع التركيب والضمان المكتوب.", en: "It reaches your home with installation and a written warranty." },
-];
-
 export default function Stories() {
-  const { t, lang } = useStore();
+  const { t, lang, contactLink, siteContent } = useStore();
   const rail = useRail();
   const [openId, setOpenId] = useState<string | null>(null);
-  const story = STORIES.find((s) => s.id === openId) ?? null;
+  const story = siteContent.stories.find((s) => s.id === openId) ?? null;
 
   return (
     <section id="stories" className="relative scroll-mt-24 overflow-hidden bg-ink py-16 text-white lg:py-24">
@@ -31,7 +25,7 @@ export default function Stories() {
       <div className="relative mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-10">
         <SectionHead
           dark
-          kicker={lang === "ar" ? "من المصنع لبيتك" : "Factory to home"}
+          kicker={t("ui.stories.kicker")}
           title={t("stories.title")}
           text={t("stories.text")}
           action={
@@ -50,7 +44,7 @@ export default function Stories() {
         ref={rail.ref}
         className="no-bar snap-x-mand relative flex gap-4 overflow-x-auto scroll-smooth px-4 pb-2 sm:px-6 lg:px-10"
       >
-        {STORIES.map((s, i) => (
+        {siteContent.stories.map((s, i) => (
           <Reveal
             key={s.id}
             delay={i * 60}
@@ -75,7 +69,7 @@ export default function Stories() {
               </span>
               <span className="flex flex-1 flex-col p-5">
                 <span className="font-display text-[10px] font-bold uppercase tracking-[0.2em] text-white/35 tabular">
-                  {lang === "ar" ? `قصة 0${i + 1}` : `Story 0${i + 1}`}
+                  {`${t("ui.stories.story")} 0${i + 1}`}
                 </span>
                 <span className="mt-2 block font-display text-[17px] font-black leading-snug text-white">{s.title[lang]}</span>
                 <span className="mt-2 line-clamp-2 text-[12.5px] leading-relaxed text-white/55">{s.text[lang]}</span>
@@ -119,7 +113,7 @@ export default function Stories() {
             <div className="p-5 sm:p-7">
               <p className="text-[14.5px] leading-relaxed text-ink-soft">{story.text[lang]}</p>
               <ol className="mt-6 space-y-3">
-                {STEPS.map((s, i) => (
+                {siteContent.steps.map((s, i) => (
                   <li key={i} className="flex gap-3 rounded-2xl border border-line bg-mist p-4">
                     <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-ikea text-white">
                       <IconCheck className="h-4 w-4" />
@@ -129,15 +123,13 @@ export default function Stories() {
                 ))}
               </ol>
               <a
-                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-                  lang === "ar" ? `قرأت قصة «${story.title.ar}» ونبي تفاصيل أكثر.` : `I read "${story.title.en}" and would like more details.`,
-                )}`}
+                href={contactLink()}
                 target="_blank"
                 rel="noreferrer noopener"
                 className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-leaf px-5 py-3.5 font-display text-[14px] font-bold text-white transition-transform hover:scale-[1.01] active:scale-95"
               >
                 <IconWhatsApp className="h-5 w-5" />
-                {lang === "ar" ? "ناقش معنا على واتساب" : "Discuss with us on WhatsApp"}
+                {t("ui.stories.whatsapp")}
               </a>
             </div>
           </div>
