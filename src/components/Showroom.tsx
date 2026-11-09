@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { FAQ_KEYS } from "../data/catalog";
+import { TOUR_SCENES, thumbPosition, tourSrc } from "../data/tour";
 import { WHATSAPP_DISPLAY, WHATSAPP_NUMBER } from "../i18n";
+import { TOUR_HASH } from "../router";
 import { useStore } from "../store";
+import { IconCube } from "./tour/TourIcons";
 import { SectionHead } from "./Bits";
 import { IconArrow, IconCheck, IconChevron, IconClock, IconPhone, IconPin, IconWhatsApp } from "./Icons";
 import Reveal from "./Reveal";
@@ -249,6 +252,47 @@ export default function Showroom() {
             </Reveal>
           </div>
         </div>
+
+        {/* 360° tour entry banner */}
+        <Reveal>
+          <a
+            href={TOUR_HASH}
+            className="group relative mt-14 block overflow-hidden rounded-[26px] border border-ikea/15 bg-ink sm:mt-20"
+          >
+            <img
+              src={tourSrc(TOUR_SCENES[0].file)}
+              alt=""
+              loading="lazy"
+              className="absolute inset-0 h-full w-full object-cover opacity-75 transition-transform duration-[1200ms] ease-out group-hover:scale-[1.06]"
+              style={{ objectPosition: thumbPosition(TOUR_SCENES[0].facing) }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/25 rtl:bg-gradient-to-l" />
+            <div className="relative flex flex-col gap-6 p-6 sm:p-9 lg:flex-row lg:items-center lg:justify-between lg:p-10">
+              <div className="max-w-xl">
+                <span className="inline-flex items-center gap-2 rounded-full bg-sun px-3 py-1.5 font-display text-[10.5px] font-black uppercase tracking-[0.18em] text-ink">
+                  <IconCube className="h-3.5 w-3.5" />
+                  {t("tour.bannerKicker")}
+                </span>
+                <h3 className="mt-4 font-display text-[clamp(1.3rem,2.8vw,2.1rem)] font-black leading-tight text-white">
+                  {t("tour.bannerTitle")}
+                </h3>
+                <p className="mt-2 max-w-lg text-[13px] leading-relaxed text-white/65">{t("tour.bannerText")}</p>
+              </div>
+              <div className="flex shrink-0 items-center gap-4">
+                <span className="hidden rounded-2xl border border-white/20 px-4 py-3 text-center sm:block">
+                  <span className="block font-display text-[24px] font-black leading-none tabular text-sun">08</span>
+                  <span className="mt-1 block font-display text-[9.5px] font-bold uppercase tracking-[0.16em] text-white/55">
+                    360°
+                  </span>
+                </span>
+                <span className="inline-flex items-center gap-2 rounded-full bg-sun px-5 py-3.5 font-display text-[13px] font-black text-ink transition-transform duration-300 group-hover:scale-[1.04]">
+                  {t("tour.bannerCta")}
+                  <IconArrow className="h-4 w-4 transition-transform group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" />
+                </span>
+              </div>
+            </div>
+          </a>
+        </Reveal>
       </div>
     </section>
   );
