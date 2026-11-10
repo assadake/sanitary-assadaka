@@ -129,6 +129,28 @@ Les prix sont affichés en **dinar libyen** (`formatPrice()` dans `src/i18n.ts`)
 
 ---
 
+## ⚠️ Deux bases de code dans ce dépôt — ne pas les confondre
+
+Le dépôt contient **deux applications différentes** selon la branche :
+
+| | **`main`** (site déployé sur `sanitary-assadaka.onrender.com`) | **`arena/a85f3eea-sanitary-assadaka`** (ancien service `tolin-shop`) |
+| --- | --- | --- |
+| Type | **Static Site** Render, Publish `dist` | **Web Service** Node/Express |
+| Base de données | **Aucune** — catalogue local dans `src/data/catalog.ts` | **Neon PostgreSQL** via `DATABASE_URL`, tables `products` / `orders` / `app_settings` |
+| Identité | TOLIN — بضائع أوروبية (nom et articles d'origine) | **الصداقة الراقية / Assadaka Alraqia** — مواد صحية وسيراميك |
+| Visite 360° | ✅ `/visite` + viewer intact `/visite-360/index.html` | ❌ absente |
+
+👉 Si un domaine affiche « l'ancien nom de société et les anciens articles », c'est qu'il
+pointe vers **l'autre service** : vérifier `Settings → Branch` et la section
+**Custom Domains** de chaque service. Ce n'est **pas** un problème de base de
+données côté site statique : il n'en utilise aucune, et aucune migration n'a été
+faite (consigne : ne pas toucher à la BDD).
+
+Les coordonnées réelles de la société utilisées par `/visite` sont regroupées
+dans `app/visite/config.ts` : `Assadaka Alraqia`, `Tripoli`, WhatsApp
+`218913150095`, lien Google Maps Assadaka. Elles proviennent de
+`src/site-content.ts` de la branche Assadaka, sans lecture de la BDD.
+
 ## 🚀 Déployer sur Render (et diagnostiquer un déploiement « identique »)
 
 `vercel.json` ne concerne **que Vercel** : Render ne lit ni `outputDirectory`, ni ses `rewrites`. Le build génère donc lui-même tout ce dont un hébergeur statique a besoin :

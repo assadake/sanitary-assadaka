@@ -5,6 +5,7 @@ import { useStore } from "../store";
 import { Stars } from "./Bits";
 import { IconArrow, IconBag, IconCheck, IconPin, IconShield, IconTruck, IconWhatsApp } from "./Icons";
 import Reveal from "./Reveal";
+import { IconCube } from "./tour/TourIcons";
 
 const HERO_PRODUCT = PRODUCTS.find((p) => p.id === "TL-2001")!;
 const HERO_IMG_A = 6585763; // living room
@@ -117,6 +118,15 @@ export default function Hero() {
               >
                 {t("hero.cta2")}
                 <IconArrow className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 rtl:rotate-180" />
+              </a>
+              {/* Accès direct et bien visible à la page /visite (viewer Pannellum) */}
+              <a
+                href="/visite"
+                className="group inline-flex items-center gap-2.5 rounded-full border border-[#c9a86a] bg-[#c9a86a]/15 px-5 py-3.5 font-display text-[15px] font-bold text-[#e3cfa2] transition-all duration-300 hover:bg-[#c9a86a] hover:text-black"
+              >
+                <IconCube className="h-5 w-5 transition-transform duration-500 group-hover:rotate-12" />
+                Visite virtuelle 360°
+                <IconArrow className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" />
               </a>
             </div>
           </Reveal>

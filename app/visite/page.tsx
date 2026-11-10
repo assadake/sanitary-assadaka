@@ -356,7 +356,7 @@ export default function VisitePage() {
               </div>
               <div className="visite-info-line">
                 <Icon name="pin" />
-                {CITY} · adresse exacte à préciser
+                {CITY}, Libye · adresse exacte à confirmer sur WhatsApp
               </div>
             </div>
 
