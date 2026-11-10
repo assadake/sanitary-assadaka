@@ -253,10 +253,9 @@ export default function Showroom() {
           </div>
         </div>
 
-        {/* 360° tour entry banner */}
+        {/* 360° tour entry banner — deux accès distincts : ancienne visite guidée + page /visite */}
         <Reveal>
-          <a
-            href={TOUR_HASH}
+          <div
             className="group relative mt-14 block overflow-hidden rounded-[26px] border border-ikea/15 bg-ink sm:mt-20"
           >
             <img
@@ -268,7 +267,7 @@ export default function Showroom() {
             />
             <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/25 rtl:bg-gradient-to-l" />
             <div className="relative flex flex-col gap-6 p-6 sm:p-9 lg:flex-row lg:items-center lg:justify-between lg:p-10">
-              <div className="max-w-xl">
+              <a href={TOUR_HASH} className="max-w-xl">
                 <span className="inline-flex items-center gap-2 rounded-full bg-sun px-3 py-1.5 font-display text-[10.5px] font-black uppercase tracking-[0.18em] text-ink">
                   <IconCube className="h-3.5 w-3.5" />
                   {t("tour.bannerKicker")}
@@ -277,21 +276,33 @@ export default function Showroom() {
                   {t("tour.bannerTitle")}
                 </h3>
                 <p className="mt-2 max-w-lg text-[13px] leading-relaxed text-white/65">{t("tour.bannerText")}</p>
-              </div>
-              <div className="flex shrink-0 items-center gap-4">
+              </a>
+              <div className="flex shrink-0 flex-wrap items-center gap-3">
                 <span className="hidden rounded-2xl border border-white/20 px-4 py-3 text-center sm:block">
                   <span className="block font-display text-[24px] font-black leading-none tabular text-sun">08</span>
                   <span className="mt-1 block font-display text-[9.5px] font-bold uppercase tracking-[0.16em] text-white/55">
                     360°
                   </span>
                 </span>
-                <span className="inline-flex items-center gap-2 rounded-full bg-sun px-5 py-3.5 font-display text-[13px] font-black text-ink transition-transform duration-300 group-hover:scale-[1.04]">
+                <a
+                  href={TOUR_HASH}
+                  className="inline-flex items-center gap-2 rounded-full bg-sun px-5 py-3.5 font-display text-[13px] font-black text-ink transition-transform duration-300 hover:scale-[1.04]"
+                >
                   {t("tour.bannerCta")}
                   <IconArrow className="h-4 w-4 transition-transform group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" />
-                </span>
+                </a>
+                {/* Nouvelle page vitrine autour du viewer Pannellum d'origine */}
+                <a
+                  href="/visite"
+                  className="inline-flex items-center gap-2 rounded-full border border-[#c9a86a] bg-[#c9a86a] px-5 py-3.5 font-display text-[13px] font-black text-black transition-transform duration-300 hover:scale-[1.04]"
+                >
+                  <IconCube className="h-4 w-4" />
+                  Visite virtuelle 360°
+                  <span className="rounded-full bg-black/15 px-2 py-0.5 text-[10px]">/visite</span>
+                </a>
               </div>
             </div>
-          </a>
+          </div>
         </Reveal>
       </div>
     </section>

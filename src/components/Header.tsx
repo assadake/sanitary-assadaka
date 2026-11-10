@@ -173,6 +173,14 @@ export default function Header() {
                 360
               </span>
             </a>
+            {/* /visite — accès visible dans la barre principale (le 1er lien reste /#/showroom) */}
+            <a
+              href="/visite"
+              className="hidden items-center gap-2 rounded-full border border-[#c9a86a]/60 bg-[#c9a86a]/10 px-3.5 py-2 font-display text-[12.5px] font-bold text-[#8a6d38] transition-all duration-300 hover:bg-[#c9a86a] hover:text-black md:inline-flex"
+            >
+              <IconCube className="h-4 w-4" />
+              Visite virtuelle 360°
+            </a>
 
             {/* desktop search */}
             <form
