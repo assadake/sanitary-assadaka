@@ -7,6 +7,10 @@
 #   Publish = dist, et Redirects/Rewrites → Rewrite /* → /index.html.
 # ⚠️ Une modification de render.yaml demande un "Sync" manuel du Blueprint
 # dans Render : un simple redeploy ne recharge pas la config du service.
+# ⚠️ Alternative si vous gardez l'ancien Web Service (type non modifiable) :
+#   Settings → Branch = main, Root Directory vide,
+#   Build = npm ci && npm run build, Start Command = npm start.
+#   Le script `start` fourni sert dist/ avec fallback SPA, sans dépendance.
 services:
   - type: web
     name: tolin-showroom-360

@@ -156,6 +156,21 @@ Le dépôt est un site **statique** : `package.json` n'a **pas** de script `star
 
 Ces valeurs sont versionnées dans **`render.yaml`**. Deux pièges : un Blueprint ne s'applique qu'à un service **créé depuis ce fichier**, et toute modification de `render.yaml` demande un **Sync manuel** du Blueprint dans Render (un simple redeploy ne recharge pas la configuration du service).
 
+### Si vous gardez le Web Service existant (sans créer de Static Site)
+
+Render ne permet **pas** de transformer un Web Service en Static Site après coup. Pour éviter de créer un nouveau projet, vous pouvez garder le service actuel à condition de corriger sa source :
+
+| Champ | Valeur |
+| --- | --- |
+| **Branch** | **`main`** |
+| Root Directory | **champ vide** (ne pas écrire `vide`) |
+| Build Command | `npm ci && npm run build` |
+| Start Command | `npm start` |
+
+Le script `start` (`scripts/serve.mjs`) est fourni : **zéro dépendance**, Node natif, il sert `dist/` sur `0.0.0.0:$PORT` avec fallback SPA (`/visite`, `/…` → `index.html`) et `no-cache` sur `index.html` / `deploy-info.json`. Render injecte `PORT` automatiquement : aucune variable d'environnement à créer.
+
+Si ce service reste sur l'ancienne branche `arena/a85f3eea-…`, il continuera à construire l'ancien site quel que soit le nombre de "Manual Deploy".
+
 ### Deux déploiements manuels qui donnent le même résultat
 
 La cause la plus fréquente : le service surveille **une autre branche** (un service Render `tolin-shop` a été vu attaché à `arena/a85f3eea-sanitary-assadaka`, une branche avec `server/` + Express/Neon). Un « Manual Deploy » reconstruit alors cette branche, quel que soit le nombre de fois où on le relance.
