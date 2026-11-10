@@ -1,0 +1,27 @@
+# Blueprint Render — site STATIQUE TOLIN + page /visite.
+#
+# ⚠️ Un Blueprint ne configure QUE les services créés depuis ce fichier. Si le
+# service existe déjà (créé à la main dans le Dashboard), reporter ces valeurs
+# dans Settings, en particulier :
+#   Branch = main, Runtime = Static, Build = npm ci && npm run build,
+#   Publish = dist, et Redirects/Rewrites → Rewrite /* → /index.html.
+# ⚠️ Une modification de render.yaml demande un "Sync" manuel du Blueprint
+# dans Render : un simple redeploy ne recharge pas la config du service.
+services:
+  - type: web
+    name: tolin-showroom-360
+    runtime: static
+    branch: main
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /index.html
+        name: Cache-Control
+        value: no-cache
+      - path: /deploy-info.json
+        name: Cache-Control
+        value: no-cache

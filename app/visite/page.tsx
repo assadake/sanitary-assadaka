@@ -1,26 +1,16 @@
 import { useEffect, useRef, useState } from "react";
+import {
+  CITY,
+  MAPS_URL,
+  OPENING_HOURS,
+  SHOP_NAME,
+  VISITE_SEO,
+  WHATSAPP_NUMBER,
+} from "./config";
 
-/* -------------------------------------------------------------------------- */
-/* ⚠️ VALEURS GÉNÉRIQUES — le seul endroit à personnaliser avant production.  */
-/* [NOM MAGASIN] → SHOP_NAME   ·  [VILLE] → CITY                              */
-/* [TON_NUMERO]  → WHATSAPP_NUMBER (chiffres uniquement, sans + ni espaces)    */
-/* [TON_LIEN]    → MAPS_URL     ·  [HORAIRES] → OPENING_HOURS                  */
-/* -------------------------------------------------------------------------- */
-const SHOP_NAME = "Votre Showroom";
-const CITY = "Votre Ville";
-const WHATSAPP_NUMBER = "000000000000";
-const MAPS_URL = "https://www.google.com/maps/search/?api=1&query=showroom+sanitaire";
-const OPENING_HOURS = [
-  { days: "Lundi – Samedi", hours: "09:00 – 19:00" },
-  { days: "Dimanche", hours: "Sur rendez-vous" },
-];
-
-/** SEO de la page (aussi appliqué à <head> au montage, voir l'effet plus bas). */
-export const metadata = {
-  title: `Visite 360° Showroom Sanitaire ${CITY} | ${SHOP_NAME}`,
-  description:
-    "Visitez en 360° notre showroom : vasques, robinetterie, douche, WC, baignoires...",
-};
+/* Les valeurs génériques à personnaliser sont regroupées dans ./config.ts. */
+/** SEO (appliqué au montage, et injecté statiquement au build par vite.config.ts). */
+export const metadata = VISITE_SEO;
 
 /** Le viewer Pannellum d'origine n'est ni modifié, ni déplacé, ni recompressé. */
 const VIEWER_SRC = "/visite-360/index.html";
