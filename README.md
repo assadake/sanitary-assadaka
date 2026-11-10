@@ -164,7 +164,7 @@ dans `app/visite/config.ts` : `Assadaka Alraqia`, `Tripoli`, WhatsApp
 
 ### Réglages du service Render
 
-Le dépôt est un site **statique** : `package.json` n'a **pas** de script `start`. Un *Web Service* avec `npm start` ne peut donc pas le servir.
+Le déploiement recommandé est un **Static Site** (`runtime: static`). Le script `npm start` fourni (`scripts/serve.mjs`, zéro dépendance) permet aussi de servir `dist/` depuis un ancien *Web Service* si l'on ne peut pas créer un nouveau service.
 
 | Paramètre | Valeur |
 | --- | --- |
@@ -197,7 +197,9 @@ Si ce service reste sur l'ancienne branche `arena/a85f3eea-…`, il continuera �
 
 La cause la plus fréquente : le service surveille **une autre branche** (un service Render `tolin-shop` a été vu attaché à `arena/a85f3eea-sanitary-assadaka`, une branche avec `server/` + Express/Neon). Un « Manual Deploy » reconstruit alors cette branche, quel que soit le nombre de fois où on le relance.
 
-**Vérification en 10 secondes** : ouvrir `https://<votre-domaine>/deploy-info.json`. Le champ `commit` doit être le SHA de `main` (après la PR #1 : `0277074…`). S'il affiche un autre SHA ou `branch: arena/a85f3eea-…`, corriger **Settings → Branch = main**, faire **Clear build cache**, puis **Manual Deploy**.
+**Vérification en 10 secondes** : ouvrir `https://<votre-domaine>/deploy-info.json`. Le champ `commit` doit être le SHA courant de `main`. S'il affiche un autre SHA ou `branch: arena/a85f3eea-…`, corriger **Settings → Branch = main**, faire **Clear build cache**, puis **Manual Deploy**.
+
+⚠️ Sur un **Static Site créé à la main dans le Dashboard**, `render.yaml` (et donc ses en-têtes `no-cache`) ne s'applique **pas** : `deploy-info.json` peut rester en cache CDN alors que le nouveau build est déjà en ligne. Dans ce cas, ajouter manuellement la règle d'en-tête `Cache-Control: no-cache` pour `/deploy-info.json`, ou vérifier directement le contenu de `/visite` et l'onglet **Events** du Dashboard.
 
 Dans le log de build, on doit voir `✓ built` et `dist/index.html  514.94 kB`.
 
