@@ -21,7 +21,7 @@ import Reveal from "./Reveal";
 const BADGES: Record<string, { ar: string; en: string; cls: string }> = {
   new: { ar: "جديد", en: "New", cls: "bg-leaf text-white" },
   offer: { ar: "عرض", en: "Offer", cls: "bg-brick text-white" },
-  best: { ar: "الأكثر طلباً", en: "Best seller", cls: "bg-ink text-sun" },
+  best: { ar: "الأكثر طلباً", en: "Best seller", cls: "bg-dark-panel text-sun" },
   import: { ar: "تشكيلة مميزة", en: "Featured range", cls: "bg-ikea text-white" },
 };
 
@@ -39,7 +39,7 @@ function ProductCard({ p, index }: { p: Product; index: number }) {
 
   return (
     <Reveal delay={(index % 4) * 70}>
-      <article className="group relative flex h-full flex-col overflow-hidden rounded-[20px] border border-line bg-white transition-all duration-400 hover:-translate-y-1.5 hover:border-ikea/40 hover:shadow-[0_28px_50px_-30px_rgba(122,92,46,0.75)]">
+      <article className="group relative flex h-full flex-col overflow-hidden rounded-[20px] border border-line bg-surface transition-all duration-400 hover:-translate-y-1.5 hover:border-ikea/40 hover:shadow-[0_28px_50px_-30px_rgba(var(--color-ikea-rgb),0.75)]">
         <div className="relative aspect-square overflow-hidden bg-mist">
           <img
             src={px(p.img, 700, 700)}
@@ -55,7 +55,7 @@ function ProductCard({ p, index }: { p: Product; index: number }) {
                 </span>
               )}
               {off > 0 && (
-                <span className="rounded-full bg-sun px-2.5 py-1 font-display text-[10px] font-black text-ink tabular">
+                <span className="rounded-full bg-sun px-2.5 py-1 font-display text-[10px] font-black text-on-accent tabular">
                   −{off}%
                 </span>
               )}
@@ -65,7 +65,7 @@ function ProductCard({ p, index }: { p: Product; index: number }) {
               onClick={() => toggleFav(p.id)}
               aria-label={t("fav.title")}
               className={`grid h-9 w-9 place-items-center rounded-full backdrop-blur transition-all duration-300 active:scale-90 ${
-                favs.includes(p.id) ? "bg-brick text-white" : "bg-white/85 text-ink-soft hover:bg-white hover:text-brick"
+                favs.includes(p.id) ? "bg-brick text-white" : "bg-surface/85 text-ink-soft hover:bg-surface hover:text-brick"
               }`}
             >
               <IconHeart className="h-4.5 w-4.5" filled={favs.includes(p.id)} />
@@ -75,7 +75,7 @@ function ProductCard({ p, index }: { p: Product; index: number }) {
           <button
             type="button"
             onClick={() => setQuick(p)}
-            className="absolute inset-x-3 bottom-3 translate-y-[130%] rounded-full bg-ink/90 py-2.5 font-display text-[12px] font-bold text-white opacity-0 backdrop-blur transition-all duration-400 group-hover:translate-y-0 group-hover:opacity-100"
+            className="absolute inset-x-3 bottom-3 translate-y-[130%] rounded-full bg-dark-panel/90 py-2.5 font-display text-[12px] font-bold text-white opacity-0 backdrop-blur transition-all duration-400 group-hover:translate-y-0 group-hover:opacity-100"
           >
             {t("product.quick")}
           </button>
@@ -123,7 +123,7 @@ function ProductCard({ p, index }: { p: Product; index: number }) {
               type="button"
               onClick={onAdd}
               className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-2.5 font-display text-[12px] font-bold transition-all duration-300 active:scale-95 ${
-                added ? "bg-leaf text-white" : "bg-ikea text-white hover:bg-ikea-deep hover:shadow-[0_10px_22px_-12px_rgba(122,92,46,1)]"
+                added ? "bg-leaf text-white" : "bg-ikea text-white hover:bg-ikea-deep hover:shadow-[0_10px_22px_-12px_rgba(var(--color-ikea-rgb),1)]"
               }`}
             >
               {added ? <IconCheck className="h-4 w-4" /> : <IconBag className="h-4 w-4" />}
@@ -155,13 +155,13 @@ function QuickView() {
 
   return (
     <div className="fixed inset-0 z-[60] flex items-end justify-center sm:items-center">
-      <div className="absolute inset-0 bg-ink/65 backdrop-blur-sm" onClick={() => setQuick(null)} />
-      <div className="relative max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-t-[26px] bg-white shadow-2xl sm:rounded-[26px]">
+      <div className="absolute inset-0 bg-dark-panel/65 backdrop-blur-sm" onClick={() => setQuick(null)} />
+      <div className="relative max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-t-[26px] bg-surface shadow-2xl sm:rounded-[26px]">
         <button
           type="button"
           onClick={() => setQuick(null)}
           aria-label={t("close")}
-          className="absolute end-4 top-4 z-10 grid h-9 w-9 place-items-center rounded-full bg-white/90 text-ink shadow transition-colors hover:bg-brick hover:text-white"
+          className="absolute end-4 top-4 z-10 grid h-9 w-9 place-items-center rounded-full bg-surface/90 text-ink shadow transition-colors hover:bg-brick hover:text-white"
         >
           <IconX className="h-4.5 w-4.5" />
         </button>
@@ -206,11 +206,11 @@ function QuickView() {
                 <span className="font-display text-[26px] font-black leading-none tabular">{formatPrice(p.price, lang)}</span>
               </div>
               <div className="ms-auto flex items-center gap-1 rounded-full border border-line bg-mist p-1">
-                <button type="button" onClick={() => setQty((q) => Math.max(1, q - 1))} className="grid h-8 w-8 place-items-center rounded-full bg-white transition-colors hover:bg-ikea hover:text-white" aria-label="-">
+                <button type="button" onClick={() => setQty((q) => Math.max(1, q - 1))} className="grid h-8 w-8 place-items-center rounded-full bg-surface transition-colors hover:bg-ikea hover:text-white" aria-label="-">
                   <IconMinus />
                 </button>
                 <span className="w-7 text-center font-display text-[14px] font-bold tabular">{qty}</span>
-                <button type="button" onClick={() => setQty((q) => Math.min(99, q + 1))} className="grid h-8 w-8 place-items-center rounded-full bg-white transition-colors hover:bg-ikea hover:text-white" aria-label="+">
+                <button type="button" onClick={() => setQty((q) => Math.min(99, q + 1))} className="grid h-8 w-8 place-items-center rounded-full bg-surface transition-colors hover:bg-ikea hover:text-white" aria-label="+">
                   <IconPlus />
                 </button>
               </div>
@@ -288,7 +288,7 @@ export default function Catalog() {
   const shown = list.slice(0, visible);
 
   return (
-    <section id="catalog" className="relative scroll-mt-24 bg-white py-16 lg:py-24">
+    <section id="catalog" className="relative scroll-mt-24 bg-surface py-16 lg:py-24">
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-10">
         <SectionHead
           kicker={lang === "ar" ? "الكتالوج" : "Catalogue"}
@@ -317,7 +317,7 @@ export default function Catalog() {
                 <select
                   value={sort}
                   onChange={(e) => setSort(e.target.value as typeof sort)}
-                  className="appearance-none rounded-full border border-line bg-white px-4 py-2.5 pe-9 font-display text-[12.5px] font-bold text-ink outline-none transition-colors hover:border-ikea focus:border-ikea"
+                  className="appearance-none rounded-full border border-line bg-surface px-4 py-2.5 pe-9 font-display text-[12.5px] font-bold text-ink outline-none transition-colors hover:border-ikea focus:border-ikea"
                 >
                   <option value="featured">{t("product.sortFeatured")}</option>
                   <option value="low">{t("product.sortLowHigh")}</option>
@@ -348,8 +348,8 @@ export default function Catalog() {
                 }}
                 className={`inline-flex shrink-0 items-center gap-2 rounded-full border px-4 py-2.5 font-display text-[12.5px] font-bold transition-all duration-300 active:scale-95 ${
                   active
-                    ? "border-ikea bg-ikea text-white shadow-[0_10px_22px_-14px_rgba(122,92,46,1)]"
-                    : "border-line bg-white text-ink-soft hover:border-ikea/50 hover:text-ikea"
+                    ? "border-ikea bg-ikea text-white shadow-[0_10px_22px_-14px_rgba(var(--color-ikea-rgb),1)]"
+                    : "border-line bg-surface text-ink-soft hover:border-ikea/50 hover:text-ikea"
                 }`}
               >
                 {c.name[lang]}
@@ -373,7 +373,7 @@ export default function Catalog() {
 
         {list.length === 0 ? (
           <div className="flex flex-col items-center gap-4 rounded-[24px] border border-dashed border-line bg-mist px-6 py-20 text-center">
-            <span className="grid h-14 w-14 place-items-center rounded-full bg-white text-ink-soft">
+            <span className="grid h-14 w-14 place-items-center rounded-full bg-surface text-ink-soft">
               <IconSearch className="h-6 w-6" />
             </span>
             <p className="font-display text-[18px] font-bold">{t("search.none")}</p>
@@ -402,7 +402,7 @@ export default function Catalog() {
                 <button
                   type="button"
                   onClick={() => setVisible((v) => v + 8)}
-                  className="group inline-flex items-center gap-2 rounded-full border-2 border-ink px-7 py-3.5 font-display text-[14px] font-bold transition-all duration-300 hover:bg-ink hover:text-white active:scale-95"
+                  className="group inline-flex items-center gap-2 rounded-full border-2 border-dark-panel px-7 py-3.5 font-display text-[14px] font-bold transition-all duration-300 hover:bg-dark-panel hover:text-white active:scale-95"
                 >
                   {t("grid.more")}
                   <span className="text-[12px] text-ink-soft tabular group-hover:text-white/70">

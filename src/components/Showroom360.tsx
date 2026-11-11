@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { LangSwitch, SectionHead } from "./Bits";
+import ThemeControls from "./ThemeControls";
 import { IconArrow, IconClock, IconPhone, IconPin, IconWhatsApp } from "./Icons";
 import PanoCanvas, { type HotspotSpec, type PanoCanvasHandle } from "./tour/PanoCanvas";
 import { prefetchPano, type EngineView } from "./tour/panoEngine";
@@ -62,7 +63,7 @@ function Ctrl({
 
 function Stat({ value, label }: { value: string; label: string }) {
   return (
-    <div className="rounded-2xl border border-line bg-white px-4 py-3.5 shadow-[0_12px_30px_-24px_rgba(79,58,28,0.9)]">
+    <div className="rounded-2xl border border-line bg-surface px-4 py-3.5 shadow-[0_12px_30px_-24px_rgba(var(--color-ikea-rgb),0.9)]">
       <p className="font-display text-[22px] font-black leading-none tabular text-ikea sm:text-[26px]">{value}</p>
       <p className="mt-1.5 text-[11.5px] font-medium leading-tight text-ink-soft">{label}</p>
     </div>
@@ -71,7 +72,7 @@ function Stat({ value, label }: { value: string; label: string }) {
 
 function Tip({ icon, title, text }: { icon: ReactNode; title: string; text: string }) {
   return (
-    <div className="group flex gap-4 rounded-[20px] border border-line bg-white p-5 transition-all duration-300 hover:-translate-y-1 hover:border-ikea/40 hover:shadow-[0_26px_50px_-32px_rgba(122,92,46,0.9)]">
+    <div className="group flex gap-4 rounded-[20px] border border-line bg-surface p-5 transition-all duration-300 hover:-translate-y-1 hover:border-ikea/40 hover:shadow-[0_26px_50px_-32px_rgba(var(--color-ikea-rgb),0.9)]">
       <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-ikea-soft text-ikea transition-colors group-hover:bg-ikea group-hover:text-white">
         {icon}
       </span>
@@ -363,7 +364,7 @@ export default function Showroom360() {
   return (
     <div className="min-h-screen bg-mist">
       {/* compact top bar */}
-      <div className="sticky top-0 z-40 border-b border-line bg-white/92 backdrop-blur-xl">
+      <div className="sticky top-0 z-40 border-b border-line bg-surface/92 backdrop-blur-xl">
         <div className="mx-auto flex max-w-[1440px] items-center gap-3 px-4 py-2.5 sm:px-6 lg:px-10">
           <button
             type="button"
@@ -375,7 +376,7 @@ export default function Showroom360() {
           </button>
 
           <div className="mx-auto flex items-center gap-2.5">
-            <span className="inline-flex items-center rounded-[7px] bg-ikea p-[3px] shadow-[0_2px_0_0_#4f3a1c]">
+            <span className="inline-flex items-center rounded-[7px] bg-ikea p-[3px] shadow-[0_2px_0_0_var(--color-ikea-deep)]">
               <span className="inline-flex items-center rounded-[50%] bg-sun px-2.5 py-[5px] font-display text-[14px] font-black leading-none text-ikea-deep">
                 {rtl ? "الصداقة" : "ASSADAKA"}
               </span>
@@ -391,6 +392,7 @@ export default function Showroom360() {
               360°
             </span>
             <LangSwitch />
+            <ThemeControls lang={lang} variant="tour" />
             <a
               href={bookLink}
               target="_blank"
@@ -600,7 +602,7 @@ export default function Showroom360() {
                   <button
                     type="button"
                     onClick={() => goTo(index)}
-                    className="mt-4 rounded-full bg-sun px-5 py-2.5 font-display text-[12.5px] font-black text-ink"
+                    className="mt-4 rounded-full bg-sun px-5 py-2.5 font-display text-[12.5px] font-black text-on-accent"
                   >
                     {t("tour.replay")}
                   </button>
@@ -611,9 +613,9 @@ export default function Showroom360() {
 
           {/* ── right column ── */}
           <aside className="flex flex-col gap-4">
-            <div className="rounded-[22px] border border-line bg-white p-5">
+            <div className="rounded-[22px] border border-line bg-surface p-5">
               <div className="flex items-center gap-2.5">
-                <span className="grid h-9 w-9 place-items-center rounded-xl bg-sun text-ink">
+                <span className="grid h-9 w-9 place-items-center rounded-xl bg-sun text-on-accent">
                   <IconSpark className="h-5 w-5" />
                 </span>
                 <div>
@@ -640,7 +642,7 @@ export default function Showroom360() {
               )}
             </div>
 
-            <div className="flex-1 rounded-[22px] border border-line bg-white p-4">
+            <div className="flex-1 rounded-[22px] border border-line bg-surface p-4">
               <div className="mb-3 flex items-baseline justify-between gap-2 px-1">
                 <h2 className="font-display text-[13.5px] font-black text-ink">{t("tour.program")}</h2>
                 <span className="font-display text-[10px] font-bold uppercase tracking-[0.16em] text-ink-soft/55 tabular">
@@ -690,7 +692,7 @@ export default function Showroom360() {
                   href={bookLink}
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-white px-4 py-3 font-display text-[12.5px] font-bold text-ink transition-colors hover:bg-sun"
+                  className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-surface px-4 py-3 font-display text-[12.5px] font-bold text-ink transition-colors hover:bg-sun"
                 >
                   <IconWhatsApp className="h-4.5 w-4.5 text-leaf" />
                   {t("tour.book")}
@@ -718,7 +720,7 @@ export default function Showroom360() {
           {TOUR_SCENES.map((s: TourScene, i) => (
             <article
               key={s.id}
-              className="group overflow-hidden rounded-[20px] border border-line bg-white transition-all duration-300 hover:-translate-y-1 hover:border-ikea/40 hover:shadow-[0_30px_60px_-38px_rgba(79,58,28,0.95)]"
+              className="group overflow-hidden rounded-[20px] border border-line bg-surface transition-all duration-300 hover:-translate-y-1 hover:border-ikea/40 hover:shadow-[0_30px_60px_-38px_rgba(var(--color-ikea-rgb),0.95)]"
             >
               <div className="relative aspect-[16/10] overflow-hidden bg-[#0b1220]">
                 <img
@@ -729,10 +731,10 @@ export default function Showroom360() {
                   style={{ objectPosition: thumbPosition(s.facing) }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-black/10" />
-                <span className="absolute start-3 top-3 grid h-8 min-w-8 place-items-center rounded-full bg-white/92 px-2 font-display text-[12px] font-black tabular text-ikea">
+                <span className="absolute start-3 top-3 grid h-8 min-w-8 place-items-center rounded-full bg-surface/92 px-2 font-display text-[12px] font-black tabular text-ikea">
                   {pad(i + 1)}
                 </span>
-                <span className="absolute end-3 top-3 inline-flex items-center gap-1 rounded-full bg-ink/70 px-2.5 py-1 font-display text-[9.5px] font-black tracking-[0.14em] text-white backdrop-blur">
+                <span className="absolute end-3 top-3 inline-flex items-center gap-1 rounded-full bg-dark-panel/70 px-2.5 py-1 font-display text-[9.5px] font-black tracking-[0.14em] text-white backdrop-blur">
                   <IconCube className="h-3 w-3" />
                   360°
                 </span>
@@ -756,7 +758,7 @@ export default function Showroom360() {
 
       {/* real visit band */}
       <section className="mx-auto mt-16 max-w-[1440px] px-4 sm:px-6 lg:px-10">
-        <div className="relative overflow-hidden rounded-[28px] bg-ink p-6 text-white sm:p-9 lg:p-10">
+        <div className="relative overflow-hidden rounded-[28px] bg-dark-panel p-6 text-white sm:p-9 lg:p-10">
           <span aria-hidden className="pointer-events-none absolute -bottom-[5vw] end-[4%] font-display text-[18vw] font-black leading-none tracking-tighter text-white/[0.045]">
             360°
           </span>
@@ -810,7 +812,7 @@ export default function Showroom360() {
       </section>
 
       {/* compact footer */}
-      <footer className="mt-16 border-t border-line bg-white">
+      <footer className="mt-16 border-t border-line bg-surface">
         <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-4 px-4 py-7 sm:px-6 lg:px-10">
           <button
             type="button"

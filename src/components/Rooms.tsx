@@ -43,7 +43,7 @@ export default function Rooms() {
             delay={i * 55}
             className="snap-start-i w-[78vw] shrink-0 sm:w-[46vw] lg:w-[30vw] xl:w-[24vw]"
           >
-            <article className="group relative overflow-hidden rounded-[22px] border border-line bg-white">
+            <article className="group relative overflow-hidden rounded-[22px] border border-line bg-surface">
               <div className="relative aspect-[4/5] overflow-hidden bg-mist">
                 <img
                   src={px(r.img, 700, 875)}
@@ -51,8 +51,8 @@ export default function Rooms() {
                   loading="lazy"
                   className="h-full w-full object-cover transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.09]"
                 />
-                <span className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/5 to-transparent" />
-                <span className="absolute start-4 top-4 rounded-full bg-white/90 px-3 py-1 font-display text-[10.5px] font-black uppercase tracking-[0.14em] text-ikea tabular backdrop-blur">
+                <span className="absolute inset-0 bg-gradient-to-t from-dark-panel/80 via-dark-panel/5 to-transparent" />
+                <span className="absolute start-4 top-4 rounded-full bg-surface/90 px-3 py-1 font-display text-[10.5px] font-black uppercase tracking-[0.14em] text-ikea tabular backdrop-blur">
                   {PRODUCTS.filter((p) => p.cat === r.cat).length} {t("rooms.pieces")}
                 </span>
                 <div className="absolute inset-x-0 bottom-0 p-4">

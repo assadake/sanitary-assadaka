@@ -12,7 +12,7 @@ export function Logo({ compact = false, onDark = false }: { compact?: boolean; o
       className="group inline-flex items-center gap-2.5"
       aria-label={t("brand.full")}
     >
-      <span className="relative inline-flex items-center rounded-[7px] bg-ikea p-[3px] shadow-[0_2px_0_0_#4f3a1c] transition-transform duration-300 group-hover:-rotate-2 group-hover:scale-105">
+      <span className="relative inline-flex items-center rounded-[7px] bg-ikea p-[3px] shadow-[0_2px_0_0_var(--color-ikea-deep)] transition-transform duration-300 group-hover:-rotate-2 group-hover:scale-105">
         <span className="inline-flex items-center rounded-[50%] bg-sun px-2.5 py-[5px] font-display text-[15px] font-black leading-none tracking-tight text-ikea-deep sm:px-3.5 sm:text-[19px]">
           {lang === "ar" ? "الصداقة" : "ASSADAKA"}
         </span>
@@ -127,7 +127,7 @@ export function LangSwitch({ dark = false }: { dark?: boolean }) {
       </button>
 
       <div
-        className={`absolute end-0 top-[calc(100%+8px)] z-50 w-60 origin-top overflow-hidden rounded-xl border border-line bg-white p-1.5 shadow-[0_24px_60px_-12px_rgba(17,17,20,0.35)] transition-all duration-200 ${
+        className={`absolute end-0 top-[calc(100%+8px)] z-50 w-60 origin-top overflow-hidden rounded-xl border border-line bg-surface p-1.5 shadow-[0_24px_60px_-12px_rgba(17,17,20,0.35)] transition-all duration-200 ${
           open ? "pointer-events-auto scale-100 opacity-100" : "pointer-events-none scale-95 opacity-0"
         }`}
       >

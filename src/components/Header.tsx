@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { WHATSAPP_DISPLAY, WHATSAPP_NUMBER } from "../i18n";
 import { useStore } from "../store";
 import { LangSwitch, Logo } from "./Bits";
+import ThemeControls from "./ThemeControls";
 import {
   IconArrow,
   IconBag,
@@ -75,7 +76,7 @@ export default function Header() {
   return (
     <header id="top" className="sticky top-0 z-40">
       {/* utility bar */}
-      <div className="relative z-40 hidden bg-ink text-white md:block">
+      <div className="relative z-50 hidden bg-dark-panel text-white md:block">
         <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-6 px-6 py-2 text-[12px] lg:px-10">
           <div className="flex items-center gap-6">
             <span className="inline-flex items-center gap-1.5 text-white/85">
@@ -107,11 +108,12 @@ export default function Header() {
             {/* /visite — page vitrine 360° autour du viewer Pannellum d'origine */}
             <a
               href="/visite"
-              className="inline-flex items-center gap-1.5 rounded-full border border-[#c9a86a]/50 px-2.5 py-1.5 font-display text-[11.5px] font-bold text-[#e3cfa2] transition-colors hover:bg-[#c9a86a] hover:text-black"
+              className="accent-outline inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1.5 font-display text-[11.5px] font-bold transition-colors"
             >
               <IconCube className="h-3.5 w-3.5" />
               Visite virtuelle 360°
             </a>
+            <ThemeControls lang={lang} variant="header" />
             <span className="mx-1 h-4 w-px bg-white/15" />
             <LangSwitch dark />
           </div>
@@ -120,8 +122,8 @@ export default function Header() {
 
       {/* main bar */}
       <div
-        className={`relative border-b transition-all duration-300 ${
-          scrolled ? "border-line bg-white/95 shadow-[0_10px_30px_-18px_rgba(17,17,20,0.6)] backdrop-blur" : "border-transparent bg-white"
+        className={`relative z-10 border-b transition-all duration-300 ${
+          scrolled ? "border-line bg-surface/95 shadow-[0_10px_30px_-18px_rgba(17,17,20,0.6)] backdrop-blur" : "border-transparent bg-surface"
         }`}
       >
         <div className="relative z-40 mx-auto flex max-w-[1440px] items-center gap-3 px-4 py-3 sm:px-6 lg:px-10">
@@ -169,14 +171,14 @@ export default function Header() {
             >
               <IconCube className="h-4 w-4 transition-transform duration-500 group-hover:rotate-12" />
               {t("nav.tour360")}
-              <span className="grid h-4.5 w-4.5 place-items-center rounded-full bg-ikea text-[9px] font-black tabular text-white transition-colors group-hover:bg-sun group-hover:text-ink">
+              <span className="grid h-4.5 w-4.5 place-items-center rounded-full bg-ikea text-[9px] font-black tabular text-white transition-colors group-hover:bg-sun group-hover:text-on-accent">
                 360
               </span>
             </a>
             {/* /visite — accès visible dans la barre principale (le 1er lien reste /#/showroom) */}
             <a
               href="/visite"
-              className="hidden items-center gap-2 rounded-full border border-[#c9a86a]/60 bg-[#c9a86a]/10 px-3 py-2 font-display text-[12.5px] font-bold text-[#8a6d38] transition-all duration-300 hover:bg-[#c9a86a] hover:text-black xl:inline-flex"
+              className="accent-chip hidden items-center gap-2 rounded-full border px-3 py-2 font-display text-[12.5px] font-bold transition-all duration-300 xl:inline-flex"
             >
               <IconCube className="h-4 w-4" />
               Visite virtuelle 360°
@@ -190,7 +192,7 @@ export default function Header() {
               }}
               className="hidden items-center xl:flex"
             >
-              <label className="group flex items-center gap-2 rounded-full border border-line bg-mist px-3.5 py-2 transition-all duration-300 focus-within:border-ikea focus-within:bg-white focus-within:shadow-[0_0_0_3px_rgba(122,92,46,0.12)]">
+              <label className="group flex items-center gap-2 rounded-full border border-line bg-mist px-3.5 py-2 transition-all duration-300 focus-within:border-ikea focus-within:bg-surface focus-within:shadow-[0_0_0_3px_rgba(var(--color-ikea-rgb),0.12)]">
                 <IconSearch className="h-4 w-4 text-ink-soft transition-colors group-focus-within:text-ikea" />
                 <input
                   value={query}
@@ -235,13 +237,13 @@ export default function Header() {
             <button
               type="button"
               onClick={() => setCartOpen(true)}
-              className="group relative ms-1 inline-flex items-center gap-2 rounded-full bg-ikea px-4 py-2.5 font-display text-[13px] font-bold text-white transition-all duration-300 hover:bg-ikea-deep hover:shadow-[0_10px_24px_-10px_rgba(122,92,46,0.9)] active:scale-95"
+              className="group relative ms-1 inline-flex items-center gap-2 rounded-full bg-ikea px-4 py-2.5 font-display text-[13px] font-bold text-white transition-all duration-300 hover:bg-ikea-deep hover:shadow-[0_10px_24px_-10px_rgba(var(--color-ikea-rgb),0.9)] active:scale-95"
             >
               <IconBag className="h-5 w-5 transition-transform duration-300 group-hover:-rotate-6" />
               <span className="hidden sm:inline">{t("cart.button")}</span>
               <span
                 key={count}
-                className="grid h-5 min-w-5 animate-pop place-items-center rounded-full bg-sun px-1 text-[11px] font-black tabular text-ink"
+                className="grid h-5 min-w-5 animate-pop place-items-center rounded-full bg-sun px-1 text-[11px] font-black tabular text-on-accent"
               >
                 {count}
               </span>
@@ -251,7 +253,7 @@ export default function Header() {
 
         {/* mobile search */}
         <div
-          className={`overflow-hidden border-t border-line bg-white transition-all duration-300 xl:hidden ${
+          className={`overflow-hidden border-t border-line bg-surface transition-all duration-300 xl:hidden ${
             searchOpen ? "max-h-24 opacity-100" : "max-h-0 opacity-0"
           }`}
         >
@@ -274,7 +276,7 @@ export default function Header() {
           }`}
         >
           <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-10">
-            <div className="overflow-hidden rounded-b-[26px] border border-t-0 border-line bg-white shadow-[0_44px_80px_-42px_rgba(17,17,20,0.7)]">
+            <div className="overflow-hidden rounded-b-[26px] border border-t-0 border-line bg-surface shadow-[0_44px_80px_-42px_rgba(17,17,20,0.7)]">
               <div className="grid gap-7 p-5 sm:p-6 lg:grid-cols-12">
                 <div className="lg:col-span-8">
                   <p className="mb-4 font-display text-[10.5px] font-black uppercase tracking-[0.2em] text-ink-soft/60">
@@ -315,7 +317,7 @@ export default function Header() {
                       AS
                     </span>
                     <div className="relative">
-                      <span className="inline-flex items-center gap-2 rounded-full bg-sun px-3 py-1 font-display text-[10px] font-black uppercase tracking-[0.16em] text-ink">
+                      <span className="inline-flex items-center gap-2 rounded-full bg-sun px-3 py-1 font-display text-[10px] font-black uppercase tracking-[0.16em] text-on-accent">
                         <IconTruck className="h-3.5 w-3.5" />
                         {lang === "ar" ? "تشكيلة جديدة" : "New range"}
                       </span>
@@ -336,7 +338,7 @@ export default function Header() {
                       )}`}
                       target="_blank"
                       rel="noreferrer noopener"
-                      className="relative mt-5 inline-flex items-center justify-center gap-2 rounded-full bg-white px-4 py-3 font-display text-[13px] font-bold text-ink transition-colors hover:bg-sun"
+                      className="relative mt-5 inline-flex items-center justify-center gap-2 rounded-full bg-surface px-4 py-3 font-display text-[13px] font-bold text-ink transition-colors hover:bg-sun"
                     >
                       <IconWhatsApp className="h-4.5 w-4.5 text-leaf" />
                       {lang === "ar" ? "استفسر على واتساب" : "Enquire on WhatsApp"}
@@ -351,7 +353,7 @@ export default function Header() {
         {/* mega menu backdrop */}
         <div
           onClick={() => setMega(false)}
-          className={`fixed inset-0 top-0 z-30 hidden bg-ink/25 transition-opacity duration-300 lg:block ${
+          className={`fixed inset-0 top-0 z-30 hidden bg-dark-panel/25 transition-opacity duration-300 lg:block ${
             mega ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
           }`}
         />
@@ -369,12 +371,12 @@ export default function Header() {
       <div className={`fixed inset-0 z-50 lg:hidden ${mobile ? "" : "pointer-events-none"}`}>
         <div
           onClick={() => setMobile(false)}
-          className={`absolute inset-0 bg-ink/55 backdrop-blur-sm transition-opacity duration-300 ${
+          className={`absolute inset-0 bg-dark-panel/55 backdrop-blur-sm transition-opacity duration-300 ${
             mobile ? "opacity-100" : "opacity-0"
           }`}
         />
         <div
-          className={`absolute inset-y-0 start-0 flex w-[86%] max-w-sm flex-col bg-white transition-transform duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          className={`absolute inset-y-0 start-0 flex w-[86%] max-w-sm flex-col bg-surface transition-transform duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] ${
             mobile ? "translate-x-0" : "ltr:-translate-x-full rtl:translate-x-full"
           }`}
         >
@@ -399,18 +401,18 @@ export default function Header() {
                 <IconCube className="h-5 w-5" />
                 {t("nav.tour360")}
               </span>
-              <span className="rounded-full bg-sun px-2 py-0.5 font-display text-[10px] font-black tabular text-ink">360°</span>
+              <span className="rounded-full bg-sun px-2 py-0.5 font-display text-[10px] font-black tabular text-on-accent">360°</span>
             </a>
             <a
               href="/visite"
               onClick={() => setMobile(false)}
-              className="mb-3 flex items-center justify-between gap-3 rounded-2xl border border-[#c9a86a]/45 bg-[#c9a86a]/10 px-4 py-3.5 font-display text-[14.5px] font-bold text-[#8a6d38] transition-colors hover:bg-[#c9a86a]/20"
+              className="accent-chip mb-3 flex items-center justify-between gap-3 rounded-2xl border px-4 py-3.5 font-display text-[14.5px] font-bold transition-colors"
             >
               <span className="flex items-center gap-2.5">
                 <IconCube className="h-5 w-5" />
                 Visite virtuelle 360°
               </span>
-              <span className="rounded-full bg-[#c9a86a] px-2 py-0.5 font-display text-[10px] font-black tabular text-black">/visite</span>
+              <span className="accent-badge rounded-full px-2 py-0.5 font-display text-[10px] font-black tabular">/visite</span>
             </a>
             {NAV.map((n, i) => (
               <a
@@ -425,6 +427,7 @@ export default function Header() {
             ))}
           </nav>
           <div className="space-y-3 border-t border-line bg-mist px-5 py-5">
+            <ThemeControls lang={lang} variant="mobile" placement="up" />
             <LangSwitch />
             <div className="flex items-center gap-2 text-[13px] text-ink-soft">
               <IconPin className="h-4 w-4 text-ikea" />
