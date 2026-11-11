@@ -1,4 +1,6 @@
-# Blueprint Render — site STATIQUE TOLIN + page /visite.
+# Blueprint Render — site STATIQUE ASSADAKA (مواد صحية وسيراميك) + page /visite.
+# ⚠️ Le nom du service ci-dessous est conservé tel quel : le renommer lors d'un
+#    « Sync » Blueprint créerait un NOUVEAU service Render et casserait le déploiement.
 #
 # ⚠️ Un Blueprint ne configure QUE les services créés depuis ce fichier. Si le
 # service existe déjà (créé à la main dans le Dashboard), reporter ces valeurs

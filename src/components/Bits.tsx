@@ -12,9 +12,9 @@ export function Logo({ compact = false, onDark = false }: { compact?: boolean; o
       className="group inline-flex items-center gap-2.5"
       aria-label={t("brand.full")}
     >
-      <span className="relative inline-flex items-center rounded-[7px] bg-ikea p-[3px] shadow-[0_2px_0_0_#003f77] transition-transform duration-300 group-hover:-rotate-2 group-hover:scale-105">
+      <span className="relative inline-flex items-center rounded-[7px] bg-ikea p-[3px] shadow-[0_2px_0_0_#4f3a1c] transition-transform duration-300 group-hover:-rotate-2 group-hover:scale-105">
         <span className="inline-flex items-center rounded-[50%] bg-sun px-2.5 py-[5px] font-display text-[15px] font-black leading-none tracking-tight text-ikea-deep sm:px-3.5 sm:text-[19px]">
-          {lang === "ar" ? "تولين" : "TOLIN"}
+          {lang === "ar" ? "الصداقة" : "ASSADAKA"}
         </span>
       </span>
       {!compact && (
@@ -23,7 +23,7 @@ export function Logo({ compact = false, onDark = false }: { compact?: boolean; o
             {t("brand.full")}
           </span>
           <span className={`mt-0.5 text-[9px] font-medium uppercase tracking-[0.18em] sm:text-[10px] ${onDark ? "text-sun" : "text-ikea"}`}>
-            Tripoli · Libya
+            {lang === "ar" ? "مواد صحية وسيراميك" : "Sanitary · Ceramics"}
           </span>
         </span>
       )}

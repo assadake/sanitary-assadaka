@@ -99,6 +99,10 @@ function visite360Alias() {
         path.join(visiteDir, "index.html"),
         staticVisiteHtml(fs.readFileSync(indexHtml, "utf8")),
       );
+      // index.html référence ./favicon.svg après vite-plugin-singlefile :
+      // fournir ce fichier dans /visite/ pour éviter un 404 sur la page statique.
+      const favicon = path.join(distDir, "favicon.svg");
+      if (fs.existsSync(favicon)) fs.copyFileSync(favicon, path.join(visiteDir, "favicon.svg"));
 
       // Diagnostic: GET /deploy-info.json on the deployed site reveals exactly
       // which commit/branch is live — useful when a manual deploy looks stale.

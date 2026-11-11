@@ -28,7 +28,7 @@ import { goHome } from "../router";
 import { useStore } from "../store";
 
 const N = TOUR_SCENES.length;
-const MAPS = "https://www.google.com/maps/dir/?api=1&destination=Jumhuriya%20Street%2C%20Tripoli%2C%20Libya";
+const MAPS = "https://www.google.com/maps/search/?api=1&query=Assadaka%20Alraqia%20sanitary%20ware%20Tripoli%20Libya";
 const pad = (n: number) => String(n).padStart(2, "0");
 
 /* ── small building blocks ─────────────────────────────────────────── */
@@ -62,7 +62,7 @@ function Ctrl({
 
 function Stat({ value, label }: { value: string; label: string }) {
   return (
-    <div className="rounded-2xl border border-line bg-white px-4 py-3.5 shadow-[0_12px_30px_-24px_rgba(0,63,119,0.9)]">
+    <div className="rounded-2xl border border-line bg-white px-4 py-3.5 shadow-[0_12px_30px_-24px_rgba(79,58,28,0.9)]">
       <p className="font-display text-[22px] font-black leading-none tabular text-ikea sm:text-[26px]">{value}</p>
       <p className="mt-1.5 text-[11.5px] font-medium leading-tight text-ink-soft">{label}</p>
     </div>
@@ -71,7 +71,7 @@ function Stat({ value, label }: { value: string; label: string }) {
 
 function Tip({ icon, title, text }: { icon: ReactNode; title: string; text: string }) {
   return (
-    <div className="group flex gap-4 rounded-[20px] border border-line bg-white p-5 transition-all duration-300 hover:-translate-y-1 hover:border-ikea/40 hover:shadow-[0_26px_50px_-32px_rgba(0,88,163,0.9)]">
+    <div className="group flex gap-4 rounded-[20px] border border-line bg-white p-5 transition-all duration-300 hover:-translate-y-1 hover:border-ikea/40 hover:shadow-[0_26px_50px_-32px_rgba(122,92,46,0.9)]">
       <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-ikea-soft text-ikea transition-colors group-hover:bg-ikea group-hover:text-white">
         {icon}
       </span>
@@ -375,9 +375,9 @@ export default function Showroom360() {
           </button>
 
           <div className="mx-auto flex items-center gap-2.5">
-            <span className="inline-flex items-center rounded-[7px] bg-ikea p-[3px] shadow-[0_2px_0_0_#003f77]">
+            <span className="inline-flex items-center rounded-[7px] bg-ikea p-[3px] shadow-[0_2px_0_0_#4f3a1c]">
               <span className="inline-flex items-center rounded-[50%] bg-sun px-2.5 py-[5px] font-display text-[14px] font-black leading-none text-ikea-deep">
-                {rtl ? "تولين" : "TOLIN"}
+                {rtl ? "الصداقة" : "ASSADAKA"}
               </span>
             </span>
             <span className="hidden flex-col leading-none sm:flex">
@@ -682,7 +682,7 @@ export default function Showroom360() {
               </span>
               <div className="relative">
                 <p className="font-display text-[10.5px] font-black uppercase tracking-[0.2em] text-sun">
-                  TOLIN · Tripoli
+                  ASSADAKA · Tripoli
                 </p>
                 <h2 className="mt-2 font-display text-[16px] font-black leading-snug">{t("tour.visit")}</h2>
                 <p className="mt-2 text-[12px] leading-relaxed text-white/70">{t("tour.visitText")}</p>
@@ -718,7 +718,7 @@ export default function Showroom360() {
           {TOUR_SCENES.map((s: TourScene, i) => (
             <article
               key={s.id}
-              className="group overflow-hidden rounded-[20px] border border-line bg-white transition-all duration-300 hover:-translate-y-1 hover:border-ikea/40 hover:shadow-[0_30px_60px_-38px_rgba(0,63,119,0.95)]"
+              className="group overflow-hidden rounded-[20px] border border-line bg-white transition-all duration-300 hover:-translate-y-1 hover:border-ikea/40 hover:shadow-[0_30px_60px_-38px_rgba(79,58,28,0.95)]"
             >
               <div className="relative aspect-[16/10] overflow-hidden bg-[#0b1220]">
                 <img

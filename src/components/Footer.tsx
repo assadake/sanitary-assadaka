@@ -61,7 +61,7 @@ export default function Footer() {
         aria-hidden
         className="pointer-events-none absolute -bottom-[6vw] start-1/2 -translate-x-1/2 font-display text-[24vw] font-black leading-none tracking-tighter text-white/[0.04] select-none"
       >
-        {lang === "ar" ? "أوروبا" : "EUROPE"}
+        {lang === "ar" ? "الصداقة" : "ASSADAKA"}
       </span>
 
       <div className="relative mx-auto max-w-[1440px] px-4 py-14 sm:px-6 lg:px-10 lg:py-20">
@@ -83,22 +83,22 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href={wa(lang === "ar" ? "السلام عليكم، نبي نستفسر عن منتج." : "Hello, I'd like to enquire about a product.")}
+                  href="https://www.facebook.com/AssadakaARAQIA/"
                   target="_blank"
                   rel="noreferrer noopener"
                   className="flex items-center gap-2.5 transition-colors hover:text-sun"
                 >
                   <IconMail className="h-4 w-4 shrink-0 text-sun" />
-                  info@tolin-goods.ly
+                  {lang === "ar" ? "صفحة الشركة على فيسبوك" : "Company page on Facebook"}
                 </a>
               </li>
             </ul>
 
             <div className="mt-6 flex items-center gap-2">
               {[
-                { icon: <IconFacebook className="h-4.5 w-4.5" />, label: "Facebook", href: "https://facebook.com" },
-                { icon: <IconInstagram className="h-4.5 w-4.5" />, label: "Instagram", href: "https://instagram.com" },
-                { icon: <IconTiktok className="h-4.5 w-4.5" />, label: "TikTok", href: "https://tiktok.com" },
+                { icon: <IconFacebook className="h-4.5 w-4.5" />, label: "Facebook", href: "https://www.facebook.com/AssadakaARAQIA/" },
+                { icon: <IconInstagram className="h-4.5 w-4.5" />, label: "Instagram", href: "https://www.facebook.com/AssadakaARAQIA/" },
+                { icon: <IconTiktok className="h-4.5 w-4.5" />, label: "TikTok", href: "https://www.facebook.com/AssadakaARAQIA/" },
                 {
                   icon: <IconWhatsApp className="h-4.5 w-4.5" />,
                   label: "WhatsApp",

@@ -4,11 +4,11 @@
   --font-display: "Noto Kufi Arabic", "Archivo", ui-sans-serif, system-ui;
   --font-sans: "IBM Plex Sans Arabic", "Helvetica Neue", Helvetica, sans-serif;
 
-  --color-ikea: #0058a3;
-  --color-ikea-deep: #003f77;
-  --color-ikea-soft: #e6eef6;
-  --color-sun: #ffdb00;
-  --color-sun-deep: #e6c500;
+  --color-ikea: #7a5c2e;
+  --color-ikea-deep: #4f3a1c;
+  --color-ikea-soft: #f3ead9;
+  --color-sun: #c9a86a;
+  --color-sun-deep: #a9874c;
   --color-ink: #111114;
   --color-ink-soft: #4a4a52;
   --color-mist: #f4f4f2;
@@ -148,9 +148,9 @@ body {
   z-index: 0;
   pointer-events: none;
   background-image:
-    radial-gradient(60rem 40rem at 110% -10%, rgba(0, 88, 163, 0.13), transparent 60%),
-    radial-gradient(48rem 34rem at -15% 12%, rgba(255, 219, 0, 0.18), transparent 62%),
-    radial-gradient(40rem 30rem at 50% 120%, rgba(0, 88, 163, 0.1), transparent 60%);
+    radial-gradient(60rem 40rem at 110% -10%, rgba(122, 92, 46, 0.13), transparent 60%),
+    radial-gradient(48rem 34rem at -15% 12%, rgba(201, 168, 106, 0.18), transparent 62%),
+    radial-gradient(40rem 30rem at 50% 120%, rgba(122, 92, 46, 0.1), transparent 60%);
 }
 .ambient::after {
   content: "";
@@ -217,7 +217,7 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 :focus-visible {
-  outline: 3px solid rgba(0, 88, 163, 0.55);
+  outline: 3px solid rgba(122, 92, 46, 0.55);
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -225,7 +225,7 @@ input[type="number"]::-webkit-inner-spin-button {
 /* ══════════════════ 360° showroom tour ══════════════════ */
 .tour-frame {
   height: clamp(470px, 76vh, 790px);
-  box-shadow: 0 40px 90px -55px rgba(0, 30, 70, 0.85);
+  box-shadow: 0 40px 90px -55px rgba(17, 17, 20, 0.85);
 }
 .tour-frame:fullscreen {
   width: 100vw;
@@ -254,8 +254,8 @@ input[type="number"]::-webkit-inner-spin-button {
   width: 100%;
   transform: scaleX(0);
   transform-origin: left center;
-  background: linear-gradient(90deg, #ffdb00, #ffffff, #ffdb00);
-  box-shadow: 0 0 14px rgba(255, 219, 0, 0.75);
+  background: linear-gradient(90deg, #c9a86a, #ffffff, #c9a86a);
+  box-shadow: 0 0 14px rgba(201, 168, 106, 0.75);
 }
 [dir="rtl"] .tour-progress-fill {
   transform-origin: right center;
@@ -280,8 +280,8 @@ input[type="number"]::-webkit-inner-spin-button {
 .tour-chip-warn {
   max-width: 230px;
   white-space: normal;
-  color: #ffdb00;
-  border-color: rgba(255, 219, 0, 0.35);
+  color: #c9a86a;
+  border-color: rgba(201, 168, 106, 0.35);
 }
 .tour-ctrl {
   display: inline-grid;
@@ -296,14 +296,14 @@ input[type="number"]::-webkit-inner-spin-button {
   transition: background 0.22s, color 0.22s, transform 0.22s, border-color 0.22s;
 }
 .tour-ctrl:hover:not(:disabled) {
-  border-color: #ffdb00;
+  border-color: #c9a86a;
   color: #111114;
-  background: #ffdb00;
+  background: #c9a86a;
   transform: translateY(-2px);
 }
 .tour-ctrl.is-active {
-  background: #ffdb00;
-  border-color: #ffdb00;
+  background: #c9a86a;
+  border-color: #c9a86a;
   color: #111114;
 }
 .tour-ctrl:disabled {
@@ -342,7 +342,7 @@ input[type="number"]::-webkit-inner-spin-button {
   transform: translateX(-50%);
   border-left: 3.5px solid transparent;
   border-right: 3.5px solid transparent;
-  border-bottom: 7px solid #ffdb00;
+  border-bottom: 7px solid #c9a86a;
 }
 .tour-compass-deg {
   font-size: 10.5px;
@@ -367,7 +367,7 @@ input[type="number"]::-webkit-inner-spin-button {
   transition: background 0.25s, color 0.25s, transform 0.25s;
 }
 .tour-edge:hover {
-  background: #ffdb00;
+  background: #c9a86a;
   color: #111114;
   transform: translateY(-50%) scale(1.08);
 }
@@ -394,7 +394,7 @@ input[type="number"]::-webkit-inner-spin-button {
   animation: tour-caption-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 .tour-caption-kicker {
-  color: #ffdb00;
+  color: #c9a86a;
   font-size: 10.5px;
   font-weight: 800;
   letter-spacing: 0.14em;
@@ -429,9 +429,9 @@ input[type="number"]::-webkit-inner-spin-button {
   width: 40px;
   height: 40px;
   border-radius: 999px;
-  background: #ffdb00;
+  background: #c9a86a;
   color: #111114;
-  box-shadow: 0 6px 20px -8px rgba(255, 219, 0, 0.9);
+  box-shadow: 0 6px 20px -8px rgba(201, 168, 106, 0.9);
   transition: transform 0.22s, background 0.22s;
 }
 .tour-play-round:hover {
@@ -454,8 +454,8 @@ input[type="number"]::-webkit-inner-spin-button {
 .tour-segment.is-done { background: rgba(255, 255, 255, 0.55); }
 .tour-segment.is-current {
   width: 27px;
-  background: #ffdb00;
-  box-shadow: 0 0 10px rgba(255, 219, 0, 0.6);
+  background: #c9a86a;
+  box-shadow: 0 0 10px rgba(201, 168, 106, 0.6);
 }
 .tour-zoom {
   min-width: 34px;
@@ -488,7 +488,7 @@ input[type="number"]::-webkit-inner-spin-button {
   position: absolute;
   inset: 1px;
   border-radius: 50%;
-  border: 1px solid rgba(255, 219, 0, 0.85);
+  border: 1px solid rgba(201, 168, 106, 0.85);
   animation: tour-ring 2.4s ease-out infinite;
 }
 .tour-info-dot {
@@ -498,9 +498,9 @@ input[type="number"]::-webkit-inner-spin-button {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: #ffdb00;
+  background: #c9a86a;
   color: #111114;
-  box-shadow: 0 4px 18px rgba(255, 219, 0, 0.65), 0 0 0 4px rgba(10, 18, 32, 0.5);
+  box-shadow: 0 4px 18px rgba(201, 168, 106, 0.65), 0 0 0 4px rgba(10, 18, 32, 0.5);
   transition: transform 0.25s, background 0.25s;
 }
 .tour-hs-info:hover .tour-info-dot,
@@ -544,7 +544,7 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 .tour-tip-title {
   display: block;
-  color: #ffdb00;
+  color: #c9a86a;
   font-size: 12.5px;
   font-weight: 800;
   line-height: 1.35;
@@ -592,7 +592,7 @@ input[type="number"]::-webkit-inner-spin-button {
   transition: background 0.25s, color 0.25s, transform 0.25s;
 }
 .tour-hs-nav:hover .tour-nav-disc {
-  background: #ffdb00;
+  background: #c9a86a;
   color: #111114;
   transform: scale(1.1);
 }
@@ -631,8 +631,8 @@ input[type="number"]::-webkit-inner-spin-button {
   height: 42px;
   border-radius: 50%;
   border: 3px solid rgba(255, 255, 255, 0.12);
-  border-top-color: #ffdb00;
-  border-right-color: #ffdb00;
+  border-top-color: #c9a86a;
+  border-right-color: #c9a86a;
   animation: tour-spin 0.85s linear infinite;
 }
 
@@ -644,7 +644,7 @@ input[type="number"]::-webkit-inner-spin-button {
   gap: 9px;
   padding: 12px 18px;
   border-radius: 999px;
-  background: #ffdb00;
+  background: #c9a86a;
   color: #111114;
   font-size: 13px;
   font-weight: 800;
@@ -682,7 +682,7 @@ input[type="number"]::-webkit-inner-spin-button {
 [dir="ltr"] .tour-prog-row:hover { transform: translateX(2px); }
 .tour-prog-row.is-active {
   background: var(--color-ikea-soft);
-  border-color: rgba(0, 88, 163, 0.18);
+  border-color: rgba(122, 92, 46, 0.18);
 }
 .tour-prog-num {
   flex: none;
@@ -730,7 +730,7 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 .tour-prog-row:hover .tour-prog-arrow,
 .tour-prog-row.is-active .tour-prog-arrow { opacity: 1; }
-.tour-contact { box-shadow: 0 26px 50px -34px rgba(0, 63, 119, 0.95); }
+.tour-contact { box-shadow: 0 26px 50px -34px rgba(79, 58, 28, 0.95); }
 
 @keyframes tour-spin { to { transform: rotate(360deg); } }
 @keyframes tour-ring {

@@ -69,7 +69,7 @@ export default function Header() {
   }, [mobile, mega]);
 
   const waGeneral = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-    lang === "ar" ? "السلام عليكم، عندي سؤال بخصوص منتجات تولين." : "Hello, I have a question about TOLIN products.",
+    lang === "ar" ? "السلام عليكم، عندي استفسار بخصوص المواد الصحية والسيراميك." : "Hello, I have a question about sanitary ware and ceramics.",
   )}`;
 
   return (
@@ -154,7 +154,7 @@ export default function Header() {
                 key={n.key + n.href}
                 href={n.href}
                 onMouseEnter={() => setMega(false)}
-                className="rounded-full px-3 py-2 font-display text-[13px] font-medium text-ink-soft transition-colors hover:bg-ikea-soft hover:text-ikea"
+                className="rounded-full px-2 xl:px-3 py-2 font-display text-[13px] font-medium text-ink-soft transition-colors hover:bg-ikea-soft hover:text-ikea"
               >
                 {t(n.key)}
               </a>
@@ -165,7 +165,7 @@ export default function Header() {
             {/* 360° showroom tour — dedicated page */}
             <a
               href={TOUR_HASH}
-              className="group hidden items-center gap-2 rounded-full border border-ikea/20 bg-ikea-soft px-3.5 py-2 font-display text-[12.5px] font-bold text-ikea transition-all duration-300 hover:border-ikea hover:bg-ikea hover:text-white lg:inline-flex"
+              className="group hidden items-center gap-2 rounded-full border border-ikea/20 bg-ikea-soft px-3 py-2 font-display text-[12.5px] font-bold text-ikea transition-all duration-300 hover:border-ikea hover:bg-ikea hover:text-white 2xl:inline-flex"
             >
               <IconCube className="h-4 w-4 transition-transform duration-500 group-hover:rotate-12" />
               {t("nav.tour360")}
@@ -176,7 +176,7 @@ export default function Header() {
             {/* /visite — accès visible dans la barre principale (le 1er lien reste /#/showroom) */}
             <a
               href="/visite"
-              className="hidden items-center gap-2 rounded-full border border-[#c9a86a]/60 bg-[#c9a86a]/10 px-3.5 py-2 font-display text-[12.5px] font-bold text-[#8a6d38] transition-all duration-300 hover:bg-[#c9a86a] hover:text-black md:inline-flex"
+              className="hidden items-center gap-2 rounded-full border border-[#c9a86a]/60 bg-[#c9a86a]/10 px-3 py-2 font-display text-[12.5px] font-bold text-[#8a6d38] transition-all duration-300 hover:bg-[#c9a86a] hover:text-black xl:inline-flex"
             >
               <IconCube className="h-4 w-4" />
               Visite virtuelle 360°
@@ -190,13 +190,13 @@ export default function Header() {
               }}
               className="hidden items-center xl:flex"
             >
-              <label className="group flex items-center gap-2 rounded-full border border-line bg-mist px-3.5 py-2 transition-all duration-300 focus-within:border-ikea focus-within:bg-white focus-within:shadow-[0_0_0_3px_rgba(0,88,163,0.12)]">
+              <label className="group flex items-center gap-2 rounded-full border border-line bg-mist px-3.5 py-2 transition-all duration-300 focus-within:border-ikea focus-within:bg-white focus-within:shadow-[0_0_0_3px_rgba(122,92,46,0.12)]">
                 <IconSearch className="h-4 w-4 text-ink-soft transition-colors group-focus-within:text-ikea" />
                 <input
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder={t("search.placeholder")}
-                  className="w-52 bg-transparent text-[13px] text-ink outline-none placeholder:text-ink-soft/55 2xl:w-72"
+                  className="w-36 bg-transparent text-[13px] text-ink outline-none placeholder:text-ink-soft/55 2xl:w-72"
                   aria-label={t("search.placeholder")}
                 />
                 {query && (
@@ -235,7 +235,7 @@ export default function Header() {
             <button
               type="button"
               onClick={() => setCartOpen(true)}
-              className="group relative ms-1 inline-flex items-center gap-2 rounded-full bg-ikea px-4 py-2.5 font-display text-[13px] font-bold text-white transition-all duration-300 hover:bg-ikea-deep hover:shadow-[0_10px_24px_-10px_rgba(0,88,163,0.9)] active:scale-95"
+              className="group relative ms-1 inline-flex items-center gap-2 rounded-full bg-ikea px-4 py-2.5 font-display text-[13px] font-bold text-white transition-all duration-300 hover:bg-ikea-deep hover:shadow-[0_10px_24px_-10px_rgba(122,92,46,0.9)] active:scale-95"
             >
               <IconBag className="h-5 w-5 transition-transform duration-300 group-hover:-rotate-6" />
               <span className="hidden sm:inline">{t("cart.button")}</span>
@@ -312,34 +312,34 @@ export default function Header() {
                       aria-hidden
                       className="pointer-events-none absolute -end-6 -top-8 font-display text-[7rem] font-black leading-none text-white/[0.07]"
                     >
-                      EU
+                      AS
                     </span>
                     <div className="relative">
                       <span className="inline-flex items-center gap-2 rounded-full bg-sun px-3 py-1 font-display text-[10px] font-black uppercase tracking-[0.16em] text-ink">
                         <IconTruck className="h-3.5 w-3.5" />
-                        {lang === "ar" ? "شحنة جديدة" : "New shipment"}
+                        {lang === "ar" ? "تشكيلة جديدة" : "New range"}
                       </span>
                       <p className="mt-3 font-display text-[17px] font-black leading-snug">
-                        {lang === "ar" ? "حاوية ميلانو وصلت المخزن" : "The Milan container just landed"}
+                        {lang === "ar" ? "أدوات صحية وسيراميك لمشروعك" : "Sanitary ware & tiles for your project"}
                       </p>
                       <p className="mt-1.5 text-[12.5px] leading-relaxed text-white/65">
                         {lang === "ar"
-                          ? "أجهزة مطبخ وأثاث بكميات محدودة — احجز قطعتك قبل ما تخلص."
-                          : "Kitchen appliances and furniture in limited quantities — reserve yours before it's gone."}
+                          ? "موديلات ومقاسات متعددة — أرسل قياساتك واستفسر عن المتوفر."
+                          : "Several models and sizes — send your measurements and ask what's available."}
                       </p>
                     </div>
                     <a
                       href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
                         lang === "ar"
-                          ? "السلام عليكم، نبي نشوف منتجات شحنة ميلانو الجديدة."
-                          : "Hello, I'd like to see the new Milan shipment.",
+                          ? "السلام عليكم، نبي نستفسر عن تشكيلة الأدوات الصحية والسيراميك الجديدة."
+                          : "Hello, I'd like to enquire about the new sanitary ware and ceramics range.",
                       )}`}
                       target="_blank"
                       rel="noreferrer noopener"
                       className="relative mt-5 inline-flex items-center justify-center gap-2 rounded-full bg-white px-4 py-3 font-display text-[13px] font-bold text-ink transition-colors hover:bg-sun"
                     >
                       <IconWhatsApp className="h-4.5 w-4.5 text-leaf" />
-                      {lang === "ar" ? "احجز على واتساب" : "Reserve on WhatsApp"}
+                      {lang === "ar" ? "استفسر على واتساب" : "Enquire on WhatsApp"}
                     </a>
                   </div>
                 </div>

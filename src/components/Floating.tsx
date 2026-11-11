@@ -23,8 +23,8 @@ export function WhatsAppFloat() {
       <a
         href={waLink(
           lang === "ar"
-            ? "السلام عليكم، نبي نطلب من تولين للبضائع الأروبية."
-            : "Hello, I'd like to order from TOLIN European Goods.",
+            ? "السلام عليكم، نبي نستفسر عن المواد الصحية والسيراميك لدى شركة الصداقة الراقية."
+            : "Hello, I'd like to enquire about sanitary ware and ceramics at Assadaka Alraqia.",
         )}
         target="_blank"
         rel="noreferrer noopener"

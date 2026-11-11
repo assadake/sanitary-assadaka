@@ -31,27 +31,27 @@ export default function Services() {
                 <div className="relative aspect-[4/3]">
                   <img
                     src="https://images.pexels.com/photos/6790821/pexels-photo-6790821.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=800&h=600"
-                    alt={lang === "ar" ? "فني يركّب الأثاث" : "Technician assembling furniture"}
+                    alt={lang === "ar" ? "فني يركّب أدوات صحية وبلاط" : "Technician installing sanitary ware and tiles"}
                     loading="lazy"
                     className="h-full w-full object-cover"
                   />
                   <span className="absolute inset-0 bg-gradient-to-t from-ikea-deep/85 to-transparent" />
                   <p className="absolute inset-x-4 bottom-4 font-display text-[14px] font-bold leading-snug text-white">
                     {lang === "ar"
-                      ? "فريق تركيب محلي مدرَّب على المعايير الأوروبية."
-                      : "A local fitting crew trained to European standards."}
+                      ? "استشر فريق الصداقة قبل التأسيس والتبليط لاختيار القطع المناسبة."
+                      : "Ask the Assadaka team before rough-in and tiling to choose the right parts."}
                   </p>
                 </div>
               </div>
               <a
                 href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-                  lang === "ar" ? "السلام عليكم، نبي نسأل على خدمات التوصيل والتركيب." : "Hello, I'd like to ask about delivery & installation.",
+                  lang === "ar" ? "السلام عليكم، نبي نسأل عن الموديلات والتوصيل والتركيب." : "Hello, I'd like to ask about models, delivery & installation.",
                 )}`}
                 target="_blank"
                 rel="noreferrer noopener"
                 className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full border-2 border-ink px-5 py-3.5 font-display text-[14px] font-bold transition-colors hover:bg-ink hover:text-white"
               >
-                {lang === "ar" ? "اطلب خدمة" : "Request a service"}
+                {lang === "ar" ? "استفسر الآن" : "Enquire now"}
               </a>
             </Reveal>
           </div>
