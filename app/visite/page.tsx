@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import ThemeControls from "../../src/components/ThemeControls";
 import {
   CITY,
   MAPS_URL,
@@ -215,6 +216,7 @@ export default function VisitePage() {
             <a href="#viewer" className="is-active">Visite virtuelle 360°</a>
             <a href="#infos">Informations</a>
           </nav>
+          <ThemeControls lang="fr" variant="visite" />
           <a href={WHATSAPP_DIRECT} target="_blank" rel="noreferrer noopener" className="visite-top-cta">
             Nous contacter
           </a>

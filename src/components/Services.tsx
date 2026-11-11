@@ -17,7 +17,7 @@ export default function Services() {
   ];
 
   return (
-    <section id="services" className="relative scroll-mt-24 bg-white py-16 lg:py-24">
+    <section id="services" className="relative scroll-mt-24 bg-surface py-16 lg:py-24">
       <div className="mx-auto grid max-w-[1440px] gap-10 px-4 sm:px-6 lg:grid-cols-12 lg:gap-14 lg:px-10">
         <div className="lg:col-span-4">
           <div className="lg:sticky lg:top-32">
@@ -49,7 +49,7 @@ export default function Services() {
                 )}`}
                 target="_blank"
                 rel="noreferrer noopener"
-                className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full border-2 border-ink px-5 py-3.5 font-display text-[14px] font-bold transition-colors hover:bg-ink hover:text-white"
+                className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full border-2 border-dark-panel px-5 py-3.5 font-display text-[14px] font-bold transition-colors hover:bg-dark-panel hover:text-white"
               >
                 {lang === "ar" ? "استفسر الآن" : "Enquire now"}
               </a>

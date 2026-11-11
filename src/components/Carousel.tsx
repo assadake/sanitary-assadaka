@@ -61,8 +61,8 @@ export function RailArrows({
 }) {
   const base = `grid h-11 w-11 place-items-center rounded-full border transition-all duration-300 active:scale-90 disabled:cursor-not-allowed disabled:opacity-30`;
   const skin = dark
-    ? "border-white/25 text-white hover:border-sun hover:bg-sun hover:text-ink"
-    : "border-line bg-white text-ink hover:border-ikea hover:bg-ikea hover:text-white";
+    ? "border-white/25 text-white hover:border-sun hover:bg-sun hover:text-on-accent"
+    : "border-line bg-surface text-ink hover:border-ikea hover:bg-ikea hover:text-white";
   return (
     <div className="flex items-center gap-2">
       <button type="button" onClick={onPrev} disabled={disabledPrev} aria-label="previous" className={`${base} ${skin}`}>

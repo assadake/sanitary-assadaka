@@ -37,7 +37,7 @@ export default function Showroom() {
             <ul className="space-y-3">
               {facts.map((f, i) => (
                 <Reveal as="li" key={f.k} delay={i * 80}>
-                  <div className="group flex items-start gap-4 rounded-2xl border border-line bg-white p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-ikea/45 hover:shadow-[0_20px_40px_-28px_rgba(122,92,46,0.9)]">
+                  <div className="group flex items-start gap-4 rounded-2xl border border-line bg-surface p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-ikea/45 hover:shadow-[0_20px_40px_-28px_rgba(var(--color-ikea-rgb),0.9)]">
                     <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-ikea-soft text-ikea transition-colors duration-300 group-hover:bg-ikea group-hover:text-white">
                       {f.icon}
                     </span>
@@ -57,7 +57,7 @@ export default function Showroom() {
                   href={MAPS}
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="group inline-flex items-center gap-2 rounded-full bg-ink px-5 py-3.5 font-display text-[13.5px] font-bold text-white transition-colors hover:bg-ikea"
+                  className="group inline-flex items-center gap-2 rounded-full bg-dark-panel px-5 py-3.5 font-display text-[13.5px] font-bold text-white transition-colors hover:bg-ikea"
                 >
                   <IconPin className="h-4.5 w-4.5" />
                   {t("showroom.call")}
@@ -92,18 +92,18 @@ export default function Showroom() {
               <svg className="absolute inset-0 h-full w-full" viewBox="0 0 800 550" preserveAspectRatio="none" aria-hidden>
                 <defs>
                   <pattern id="streets" width="70" height="70" patternUnits="userSpaceOnUse">
-                    <path d="M0 0H70M0 0V70" stroke="rgba(79,58,28,0.22)" strokeWidth="1.5" fill="none" />
+                    <path d="M0 0H70M0 0V70" stroke="rgba(var(--color-ikea-rgb),0.22)" strokeWidth="1.5" fill="none" />
                   </pattern>
                 </defs>
                 <rect width="800" height="550" fill="url(#streets)" />
-                <path d="M0 150 H800" stroke="#7a5c2e" strokeWidth="7" opacity="0.65" />
+                <path d="M0 150 H800" stroke="var(--color-ikea)" strokeWidth="7" opacity="0.65" />
                 <path d="M0 168 H800" stroke="#ffffff" strokeWidth="2" strokeDasharray="14 12" opacity="0.9" />
-                <path d="M240 0 V550" stroke="#7a5c2e" strokeWidth="4" opacity="0.35" />
-                <path d="M560 0 V550" stroke="#7a5c2e" strokeWidth="4" opacity="0.35" />
-                <path d="M0 60 H800 V0 H0Z" fill="#7a5c2e" opacity="0.22" />
+                <path d="M240 0 V550" stroke="var(--color-ikea)" strokeWidth="4" opacity="0.35" />
+                <path d="M560 0 V550" stroke="var(--color-ikea)" strokeWidth="4" opacity="0.35" />
+                <path d="M0 60 H800 V0 H0Z" fill="var(--color-ikea)" opacity="0.22" />
               </svg>
 
-              <span className="absolute start-6 top-5 rounded-full bg-white/90 px-3 py-1.5 font-display text-[10.5px] font-black uppercase tracking-[0.18em] text-ikea backdrop-blur">
+              <span className="absolute start-6 top-5 rounded-full bg-surface/90 px-3 py-1.5 font-display text-[10.5px] font-black uppercase tracking-[0.18em] text-ikea backdrop-blur">
                 {lang === "ar" ? "البحر المتوسط" : "Mediterranean Sea"}
               </span>
               <span className="absolute inset-x-6 top-[27%] text-center font-display text-[11px] font-bold uppercase tracking-[0.3em] text-ikea-deep/70">
@@ -120,7 +120,7 @@ export default function Showroom() {
               </div>
 
               <div className="absolute inset-x-4 bottom-4 flex flex-wrap items-end justify-between gap-3 sm:inset-x-6 sm:bottom-6">
-                <div className="max-w-sm rounded-2xl border border-white/60 bg-white/92 p-4 backdrop-blur">
+                <div className="max-w-sm rounded-2xl border border-white/60 bg-surface/92 p-4 backdrop-blur">
                   <p className="font-display text-[11px] font-black uppercase tracking-[0.18em] text-ikea">ASSADAKA · Tripoli</p>
                   <p className="mt-1.5 font-display text-[15px] font-bold leading-snug text-ink">{t("showroom.addressVal")}</p>
                   <a
@@ -133,7 +133,7 @@ export default function Showroom() {
                     <IconArrow className="h-3.5 w-3.5 rtl:rotate-180" />
                   </a>
                 </div>
-                <div className="rounded-2xl bg-ink px-4 py-3 text-white">
+                <div className="rounded-2xl bg-dark-panel px-4 py-3 text-white">
                   <p className="text-[10.5px] uppercase tracking-[0.18em] text-white/50">{lang === "ar" ? "اليوم" : "Today"}</p>
                   <p className="mt-1 font-display text-[15px] font-black tabular text-sun">
                     {new Date().toLocaleTimeString(lang === "ar" ? "ar-LY-u-nu-latn" : "en-GB", {
@@ -151,7 +151,7 @@ export default function Showroom() {
         <div className="mt-16 grid gap-10 lg:mt-24 lg:grid-cols-12 lg:gap-12">
           <div className="lg:col-span-7">
             <SectionHead kicker={lang === "ar" ? "مساعدة" : "Help"} title={t("faq.title")} />
-            <div className="divide-y divide-line overflow-hidden rounded-[22px] border border-line bg-white">
+            <div className="divide-y divide-line overflow-hidden rounded-[22px] border border-line bg-surface">
               {FAQ_KEYS.map((k, i) => {
                 const open = openFaq === k;
                 return (
@@ -216,11 +216,11 @@ export default function Showroom() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder={t("newsletter.ph")}
-                      className="w-full rounded-full border border-ink/15 bg-white px-4 py-3 text-[13.5px] outline-none transition-shadow focus:shadow-[0_0_0_3px_rgba(122,92,46,0.25)]"
+                      className="w-full rounded-full border border-line bg-surface px-4 py-3 text-[13.5px] outline-none transition-shadow focus:shadow-[0_0_0_3px_rgba(var(--color-ikea-rgb),0.25)]"
                     />
                     <button
                       type="submit"
-                      className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-ink px-6 py-3 font-display text-[13.5px] font-bold text-white transition-transform hover:scale-[1.03] active:scale-95"
+                      className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-dark-panel px-6 py-3 font-display text-[13.5px] font-bold text-white transition-transform hover:scale-[1.03] active:scale-95"
                     >
                       {done ? <IconCheck className="h-4 w-4 text-sun" /> : null}
                       {done ? t("newsletter.done") : t("newsletter.cta")}
@@ -236,13 +236,13 @@ export default function Showroom() {
 
             <Reveal delay={120}>
               <div className="mt-4 grid grid-cols-2 gap-4">
-                <div className="rounded-[22px] border border-line bg-white p-5">
+                <div className="rounded-[22px] border border-line bg-surface p-5">
                   <p className="font-display text-[34px] font-black leading-none text-ikea tabular">35</p>
                   <p className="mt-2 text-[12.5px] leading-snug text-ink-soft">
                     {lang === "ar" ? "صنف ضمن التشكيلة" : "Items in the range"}
                   </p>
                 </div>
-                <div className="rounded-[22px] border border-line bg-white p-5">
+                <div className="rounded-[22px] border border-line bg-surface p-5">
                   <p className="font-display text-[34px] font-black leading-none text-ikea tabular">8</p>
                   <p className="mt-2 text-[12.5px] leading-snug text-ink-soft">
                     {lang === "ar" ? "أقسام للمواد الصحية" : "Sanitary departments"}
@@ -256,7 +256,7 @@ export default function Showroom() {
         {/* 360° tour entry banner — deux accès distincts : ancienne visite guidée + page /visite */}
         <Reveal>
           <div
-            className="group relative mt-14 block overflow-hidden rounded-[26px] border border-ikea/15 bg-ink sm:mt-20"
+            className="group relative mt-14 block overflow-hidden rounded-[26px] border border-ikea/15 bg-dark-panel sm:mt-20"
           >
             <img
               src={tourSrc(TOUR_SCENES[0].file)}
@@ -265,10 +265,10 @@ export default function Showroom() {
               className="absolute inset-0 h-full w-full object-cover opacity-75 transition-transform duration-[1200ms] ease-out group-hover:scale-[1.06]"
               style={{ objectPosition: thumbPosition(TOUR_SCENES[0].facing) }}
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/25 rtl:bg-gradient-to-l" />
+            <div className="absolute inset-0 bg-gradient-to-r from-dark-panel via-dark-panel/85 to-dark-panel/25 rtl:bg-gradient-to-l" />
             <div className="relative flex flex-col gap-6 p-6 sm:p-9 lg:flex-row lg:items-center lg:justify-between lg:p-10">
               <a href={TOUR_HASH} className="max-w-xl">
-                <span className="inline-flex items-center gap-2 rounded-full bg-sun px-3 py-1.5 font-display text-[10.5px] font-black uppercase tracking-[0.18em] text-ink">
+                <span className="inline-flex items-center gap-2 rounded-full bg-sun px-3 py-1.5 font-display text-[10.5px] font-black uppercase tracking-[0.18em] text-on-accent">
                   <IconCube className="h-3.5 w-3.5" />
                   {t("tour.bannerKicker")}
                 </span>
@@ -286,7 +286,7 @@ export default function Showroom() {
                 </span>
                 <a
                   href={TOUR_HASH}
-                  className="inline-flex items-center gap-2 rounded-full bg-sun px-5 py-3.5 font-display text-[13px] font-black text-ink transition-transform duration-300 hover:scale-[1.04]"
+                  className="inline-flex items-center gap-2 rounded-full bg-sun px-5 py-3.5 font-display text-[13px] font-black text-on-accent transition-transform duration-300 hover:scale-[1.04]"
                 >
                   {t("tour.bannerCta")}
                   <IconArrow className="h-4 w-4 transition-transform group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" />
@@ -294,7 +294,7 @@ export default function Showroom() {
                 {/* Nouvelle page vitrine autour du viewer Pannellum d'origine */}
                 <a
                   href="/visite"
-                  className="inline-flex items-center gap-2 rounded-full border border-[#c9a86a] bg-[#c9a86a] px-5 py-3.5 font-display text-[13px] font-black text-black transition-transform duration-300 hover:scale-[1.04]"
+                  className="accent-fill inline-flex items-center gap-2 rounded-full border px-5 py-3.5 font-display text-[13px] font-black transition-transform duration-300 hover:scale-[1.04]"
                 >
                   <IconCube className="h-4 w-4" />
                   Visite virtuelle 360°

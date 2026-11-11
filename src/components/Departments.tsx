@@ -22,7 +22,7 @@ export default function Departments() {
         title={t("cat.title")}
         text={t("cat.text")}
         action={
-          <div className="flex items-center gap-3 rounded-2xl border border-line bg-white px-4 py-3">
+          <div className="flex items-center gap-3 rounded-2xl border border-line bg-surface px-4 py-3">
             <span className="font-display text-[26px] font-black leading-none text-ikea tabular">{PRODUCTS.length}</span>
             <span className="text-[12px] leading-tight text-ink-soft">
               {t("ui.departments.countSuffix")}
@@ -40,7 +40,7 @@ export default function Departments() {
               <button
                 type="button"
                 onClick={() => go(c.id)}
-                className="group relative flex h-full w-full flex-col justify-end overflow-hidden rounded-[22px] border border-line bg-ink text-start"
+                className="group relative flex h-full w-full flex-col justify-end overflow-hidden rounded-[22px] border border-line bg-dark-panel text-start"
               >
                 <img
                   src={px(c.img, big ? 1000 : 700, big ? 1000 : 520)}
@@ -48,7 +48,7 @@ export default function Departments() {
                   loading="lazy"
                   className="absolute inset-0 h-full w-full object-cover transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.08]"
                 />
-                <span className="absolute inset-0 bg-gradient-to-t from-ink/92 via-ink/45 to-transparent transition-opacity duration-500 group-hover:from-ikea-deep/95" />
+                <span className="absolute inset-0 bg-gradient-to-t from-dark-panel/92 via-dark-panel/45 to-transparent transition-opacity duration-500 group-hover:from-ikea-deep/95" />
                 <span
                   className="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 transition-transform duration-500 group-hover:scale-x-100 rtl:origin-right"
                   style={{ background: c.accent }}
@@ -70,7 +70,7 @@ export default function Departments() {
                     </span>
                     <span className={`mt-1 block text-white/60 ${big ? "text-[14px]" : "text-[12px]"}`}>{c.tagline[lang]}</span>
                   </span>
-                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/25 text-white transition-all duration-300 group-hover:border-sun group-hover:bg-sun group-hover:text-ink">
+                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/25 text-white transition-all duration-300 group-hover:border-sun group-hover:bg-sun group-hover:text-on-accent">
                     <IconArrow className="h-4 w-4 rtl:rotate-180" />
                   </span>
                 </span>
