@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FAQ_KEYS } from "../data/catalog";
 import { TOUR_SCENES, thumbPosition, tourSrc } from "../data/tour";
-import { WHATSAPP_DISPLAY, WHATSAPP_NUMBER } from "../i18n";
+import { WHATSAPP_DISPLAY } from "../i18n";
 import { TOUR_HASH } from "../router";
 import { useStore } from "../store";
 import { IconCube } from "./tour/TourIcons";
@@ -9,7 +9,7 @@ import { SectionHead } from "./Bits";
 import { IconArrow, IconCheck, IconChevron, IconClock, IconPhone, IconPin, IconWhatsApp } from "./Icons";
 import Reveal from "./Reveal";
 
-const MAPS = "https://www.google.com/maps/dir/?api=1&destination=Jumhuriya%20Street%2C%20Tripoli%2C%20Libya";
+const MAPS = "https://www.google.com/maps/search/?api=1&query=Assadaka%20Alraqia%20sanitary%20ware%20Tripoli%20Libya";
 
 export default function Showroom() {
   const { t, lang, waLink } = useStore();
@@ -20,7 +20,7 @@ export default function Showroom() {
   const facts = [
     { icon: <IconPin className="h-5 w-5" />, k: t("showroom.address"), v: t("showroom.addressVal") },
     { icon: <IconClock className="h-5 w-5" />, k: t("showroom.hours"), v: t("showroom.hoursVal") },
-    { icon: <IconPhone className="h-5 w-5" />, k: t("showroom.phone"), v: `+${WHATSAPP_NUMBER}` },
+    { icon: <IconPhone className="h-5 w-5" />, k: t("showroom.phone"), v: WHATSAPP_DISPLAY },
   ];
 
   return (
@@ -37,7 +37,7 @@ export default function Showroom() {
             <ul className="space-y-3">
               {facts.map((f, i) => (
                 <Reveal as="li" key={f.k} delay={i * 80}>
-                  <div className="group flex items-start gap-4 rounded-2xl border border-line bg-white p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-ikea/45 hover:shadow-[0_20px_40px_-28px_rgba(0,88,163,0.9)]">
+                  <div className="group flex items-start gap-4 rounded-2xl border border-line bg-white p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-ikea/45 hover:shadow-[0_20px_40px_-28px_rgba(122,92,46,0.9)]">
                     <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-ikea-soft text-ikea transition-colors duration-300 group-hover:bg-ikea group-hover:text-white">
                       {f.icon}
                     </span>
@@ -92,22 +92,22 @@ export default function Showroom() {
               <svg className="absolute inset-0 h-full w-full" viewBox="0 0 800 550" preserveAspectRatio="none" aria-hidden>
                 <defs>
                   <pattern id="streets" width="70" height="70" patternUnits="userSpaceOnUse">
-                    <path d="M0 0H70M0 0V70" stroke="rgba(0,63,119,0.22)" strokeWidth="1.5" fill="none" />
+                    <path d="M0 0H70M0 0V70" stroke="rgba(79,58,28,0.22)" strokeWidth="1.5" fill="none" />
                   </pattern>
                 </defs>
                 <rect width="800" height="550" fill="url(#streets)" />
-                <path d="M0 150 H800" stroke="#0058a3" strokeWidth="7" opacity="0.65" />
+                <path d="M0 150 H800" stroke="#7a5c2e" strokeWidth="7" opacity="0.65" />
                 <path d="M0 168 H800" stroke="#ffffff" strokeWidth="2" strokeDasharray="14 12" opacity="0.9" />
-                <path d="M240 0 V550" stroke="#0058a3" strokeWidth="4" opacity="0.35" />
-                <path d="M560 0 V550" stroke="#0058a3" strokeWidth="4" opacity="0.35" />
-                <path d="M0 60 H800 V0 H0Z" fill="#0058a3" opacity="0.22" />
+                <path d="M240 0 V550" stroke="#7a5c2e" strokeWidth="4" opacity="0.35" />
+                <path d="M560 0 V550" stroke="#7a5c2e" strokeWidth="4" opacity="0.35" />
+                <path d="M0 60 H800 V0 H0Z" fill="#7a5c2e" opacity="0.22" />
               </svg>
 
               <span className="absolute start-6 top-5 rounded-full bg-white/90 px-3 py-1.5 font-display text-[10.5px] font-black uppercase tracking-[0.18em] text-ikea backdrop-blur">
                 {lang === "ar" ? "البحر المتوسط" : "Mediterranean Sea"}
               </span>
               <span className="absolute inset-x-6 top-[27%] text-center font-display text-[11px] font-bold uppercase tracking-[0.3em] text-ikea-deep/70">
-                {lang === "ar" ? "شارع الجمهورية" : "Jumhuriya Street"}
+                {lang === "ar" ? "طرابلس، ليبيا" : "Tripoli, Libya"}
               </span>
 
               {/* pin */}
@@ -121,7 +121,7 @@ export default function Showroom() {
 
               <div className="absolute inset-x-4 bottom-4 flex flex-wrap items-end justify-between gap-3 sm:inset-x-6 sm:bottom-6">
                 <div className="max-w-sm rounded-2xl border border-white/60 bg-white/92 p-4 backdrop-blur">
-                  <p className="font-display text-[11px] font-black uppercase tracking-[0.18em] text-ikea">TOLIN · Tripoli</p>
+                  <p className="font-display text-[11px] font-black uppercase tracking-[0.18em] text-ikea">ASSADAKA · Tripoli</p>
                   <p className="mt-1.5 font-display text-[15px] font-bold leading-snug text-ink">{t("showroom.addressVal")}</p>
                   <a
                     href={MAPS}
@@ -216,7 +216,7 @@ export default function Showroom() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder={t("newsletter.ph")}
-                      className="w-full rounded-full border border-ink/15 bg-white px-4 py-3 text-[13.5px] outline-none transition-shadow focus:shadow-[0_0_0_3px_rgba(0,88,163,0.25)]"
+                      className="w-full rounded-full border border-ink/15 bg-white px-4 py-3 text-[13.5px] outline-none transition-shadow focus:shadow-[0_0_0_3px_rgba(122,92,46,0.25)]"
                     />
                     <button
                       type="submit"

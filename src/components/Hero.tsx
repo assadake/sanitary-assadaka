@@ -1,18 +1,19 @@
 import { useEffect, useState } from "react";
-import { PRODUCTS, px } from "../data/catalog";
-import { WHATSAPP_NUMBER, formatPrice } from "../i18n";
+import { HERO_STATS, PRODUCTS, px } from "../data/catalog";
+import { WHATSAPP_DISPLAY, WHATSAPP_NUMBER, formatPrice } from "../i18n";
 import { useStore } from "../store";
-import { Stars } from "./Bits";
 import { IconArrow, IconBag, IconCheck, IconPin, IconShield, IconTruck, IconWhatsApp } from "./Icons";
 import Reveal from "./Reveal";
 import { IconCube } from "./tour/TourIcons";
 
-const HERO_PRODUCT = PRODUCTS.find((p) => p.id === "TL-2001")!;
-const HERO_IMG_A = 6585763; // living room
-const HERO_IMG_B = 5974048; // tools
-const HERO_IMG_C = 36573009; // espresso
+/** Trois produits sanitaires mis en avant, issus du catalogue Assadaka. */
+const HERO_IMG_A = 11701114; // salle de bain / sanitaire
+const HERO_IMG_B = 8135115; // robinetterie
+const HERO_IMG_C = 12340558; // carrelage / céramique
 
-const ROTATING = [HERO_PRODUCT, PRODUCTS.find((p) => p.id === "TL-4001")!, PRODUCTS.find((p) => p.id === "TL-1001")!];
+const ROTATING = ["AS-1001", "AS-4001", "AS-2001"].map(
+  (id) => PRODUCTS.find((p) => p.id === id)!,
+);
 
 export default function Hero() {
   const { t, lang, add, waLink } = useStore();
@@ -24,18 +25,12 @@ export default function Hero() {
   }, []);
 
   const featured = ROTATING[idx];
-
-  const stats = [
-    { v: "+1,200", k: t("hero.stat1") },
-    { v: "38", k: t("hero.stat2") },
-    { v: "11", k: t("hero.stat3") },
-    { v: "22", k: t("hero.stat4") },
-  ];
+  const stats = HERO_STATS.map((s) => ({ v: s.value[lang], k: t(s.key) }));
 
   const perks = [
-    { icon: <IconTruck className="h-4 w-4" />, label: lang === "ar" ? "توصيل 24–48 ساعة في طرابلس" : "24–48h delivery in Tripoli" },
-    { icon: <IconShield className="h-4 w-4" />, label: lang === "ar" ? "ضمان حتى 24 شهر" : "Warranty up to 24 months" },
-    { icon: <IconCheck className="h-4 w-4" />, label: lang === "ar" ? "دفع عند الاستلام" : "Cash on delivery" },
+    { icon: <IconCheck className="h-4 w-4" />, label: lang === "ar" ? "استفسر عن الموديل والسعر" : "Ask about models & prices" },
+    { icon: <IconShield className="h-4 w-4" />, label: lang === "ar" ? "ماركات IDEAL · TURKUAZ · CeraStyle" : "IDEAL · TURKUAZ · CeraStyle" },
+    { icon: <IconTruck className="h-4 w-4" />, label: lang === "ar" ? "معاينة في المعرض بطرابلس" : "See it in our Tripoli showroom" },
   ];
 
   return (
@@ -45,7 +40,7 @@ export default function Hero() {
         className="pointer-events-none absolute inset-0 opacity-70"
         style={{
           backgroundImage:
-            "radial-gradient(50rem 30rem at 85% 10%, rgba(0,88,163,0.55), transparent 60%), radial-gradient(38rem 26rem at 10% 90%, rgba(255,219,0,0.22), transparent 60%)",
+            "radial-gradient(50rem 30rem at 85% 10%, rgba(122,92,46,0.55), transparent 60%), radial-gradient(38rem 26rem at 10% 90%, rgba(201,168,106,0.22), transparent 60%)",
         }}
       />
       <div
@@ -61,7 +56,7 @@ export default function Hero() {
         aria-hidden
         className="pointer-events-none absolute -bottom-10 start-1/2 -translate-x-1/2 font-display text-[22vw] font-black leading-none tracking-tighter text-white/[0.035] select-none"
       >
-        {lang === "ar" ? "تولين" : "TOLIN"}
+        {lang === "ar" ? "الصداقة" : "ASSADAKA"}
       </span>
 
       <div className="relative mx-auto grid max-w-[1440px] gap-10 px-4 pb-14 pt-12 sm:px-6 lg:grid-cols-12 lg:gap-8 lg:px-10 lg:pb-20 lg:pt-16">
@@ -71,7 +66,7 @@ export default function Hero() {
             <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3.5 py-1.5 backdrop-blur">
               <IconPin className="h-4 w-4 text-sun" />
               <span className="font-display text-[11px] font-bold uppercase tracking-[0.2em] text-white/85">
-                {t("hero.kicker")} {lang === "ar" ? "تولين" : "TOLIN"}
+                {t("hero.kicker")} {lang === "ar" ? "الصداقة الراقية" : "ASSADAKA"}
               </span>
             </span>
           </Reveal>
@@ -102,12 +97,12 @@ export default function Hero() {
               <a
                 href={waLink(
                   lang === "ar"
-                    ? "السلام عليكم، نبي نتعرف على المنتجات المتوفرة حالياً في تولين."
-                    : "Hello, I'd like to know what's currently available at TOLIN.",
+                    ? "السلام عليكم، نبي نستفسر عن الموديلات والأسعار والتوفر لدى شركة الصداقة الراقية."
+                    : "Hello, I'd like to ask Assadaka Alraqia about models, prices and availability.",
                 )}
                 target="_blank"
                 rel="noreferrer noopener"
-                className="group inline-flex items-center gap-2.5 rounded-full bg-sun px-6 py-3.5 font-display text-[15px] font-bold text-ink transition-all duration-300 hover:bg-white hover:shadow-[0_16px_40px_-14px_rgba(255,219,0,0.8)] active:scale-95"
+                className="group inline-flex items-center gap-2.5 rounded-full bg-sun px-6 py-3.5 font-display text-[15px] font-bold text-ink transition-all duration-300 hover:bg-white hover:shadow-[0_16px_40px_-14px_rgba(201,168,106,0.8)] active:scale-95"
               >
                 <IconWhatsApp className="h-5 w-5 text-leaf transition-transform duration-300 group-hover:scale-110" />
                 {t("hero.cta1")}
@@ -162,7 +157,7 @@ export default function Hero() {
             <div className="relative aspect-[4/5] overflow-hidden rounded-[28px] border border-white/10 sm:aspect-[16/13] lg:aspect-[4/4.35]">
               <img
                 src={px(HERO_IMG_A, 1200, 1300)}
-                alt={lang === "ar" ? "صالون أوروبي حديث" : "Modern European living room"}
+                alt={lang === "ar" ? "حمام عصري بأدوات صحية" : "Modern bathroom with sanitary ware"}
                 className="h-full w-full animate-kenburns object-cover"
                 loading="eager"
               />
@@ -170,14 +165,14 @@ export default function Hero() {
               <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-5">
                 <div>
                   <p className="font-display text-[11px] font-bold uppercase tracking-[0.2em] text-sun">
-                    {lang === "ar" ? "شحنة هذا الأسبوع" : "This week's shipment"}
+                    {lang === "ar" ? "تشكيلة هذا الأسبوع" : "This week's range"}
                   </p>
                   <p className="mt-1 font-display text-[17px] font-bold leading-tight text-white">
-                    {lang === "ar" ? "ميلانو ← طرابلس" : "Milan → Tripoli"}
+                    {lang === "ar" ? "مواد صحية وسيراميك" : "Sanitary ware & ceramics"}
                   </p>
                 </div>
                 <span className="rounded-full bg-white/15 px-3 py-1.5 text-[11px] font-semibold text-white backdrop-blur">
-                  40 {lang === "ar" ? "حاوية/سنة" : "containers/yr"}
+                  IDEAL · TURKUAZ
                 </span>
               </div>
             </div>
@@ -209,15 +204,12 @@ export default function Hero() {
                 />
                 <div className="min-w-0 flex-1">
                   <p className="font-display text-[10px] font-bold uppercase tracking-[0.16em] text-ikea">
-                    {t("product.imported")}
+                    {featured.origin[lang]}
                   </p>
                   <p className="mt-0.5 truncate font-display text-[13.5px] font-bold leading-tight">
                     {featured.name[lang]}
                   </p>
-                  <div className="mt-1 flex items-center gap-1.5">
-                    <Stars rating={featured.rating} className="h-3 w-3" />
-                    <span className="text-[10.5px] text-ink-soft tabular">({featured.reviews})</span>
-                  </div>
+                  <p className="mt-1 text-[10.5px] text-ink-soft">{t("product.askAvailability")}</p>
                   <div className="mt-1.5 flex items-center justify-between gap-2">
                     <span className="font-display text-[15px] font-black tabular text-ink">
                       {formatPrice(featured.price, lang)}
@@ -259,7 +251,7 @@ export default function Hero() {
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-leaf opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-leaf" />
             </span>
-            {lang === "ar" ? "المعرض مفتوح الآن — شارع الجمهورية، طرابلس" : "Showroom open now — Jumhuriya St, Tripoli"}
+            {lang === "ar" ? "معرضنا في طرابلس، ليبيا — تواصل لتأكيد الموقع" : "Our showroom in Tripoli, Libya — contact us for the exact address"}
           </span>
           <a
             href={`https://wa.me/${WHATSAPP_NUMBER}`}
@@ -268,7 +260,7 @@ export default function Hero() {
             className="link-sweep inline-flex items-center gap-2 font-semibold text-white/80 hover:text-sun"
           >
             <IconWhatsApp className="h-4 w-4" />
-            <span className="tabular">+{WHATSAPP_NUMBER}</span>
+            <span className="tabular">{WHATSAPP_DISPLAY}</span>
           </a>
           <span className="hidden items-center gap-2 md:inline-flex">
             {t("hero.scroll")}

@@ -22,14 +22,14 @@ const BADGES: Record<string, { ar: string; en: string; cls: string }> = {
   new: { ar: "جديد", en: "New", cls: "bg-leaf text-white" },
   offer: { ar: "عرض", en: "Offer", cls: "bg-brick text-white" },
   best: { ar: "الأكثر طلباً", en: "Best seller", cls: "bg-ink text-sun" },
-  import: { ar: "استيراد خاص", en: "Special import", cls: "bg-ikea text-white" },
+  import: { ar: "تشكيلة مميزة", en: "Featured range", cls: "bg-ikea text-white" },
 };
 
 function ProductCard({ p, index }: { p: Product; index: number }) {
   const { t, lang, add, favs, toggleFav, setQuick } = useStore();
   const [added, setAdded] = useState(false);
   const cat = CATEGORIES.find((c) => c.id === p.cat);
-  const off = p.old ? Math.round((1 - p.price / p.old) * 100) : 0;
+  const off = p.price !== null && p.old ? Math.round((1 - p.price / p.old) * 100) : 0;
 
   const onAdd = () => {
     add(p.id);
@@ -39,7 +39,7 @@ function ProductCard({ p, index }: { p: Product; index: number }) {
 
   return (
     <Reveal delay={(index % 4) * 70}>
-      <article className="group relative flex h-full flex-col overflow-hidden rounded-[20px] border border-line bg-white transition-all duration-400 hover:-translate-y-1.5 hover:border-ikea/40 hover:shadow-[0_28px_50px_-30px_rgba(0,88,163,0.75)]">
+      <article className="group relative flex h-full flex-col overflow-hidden rounded-[20px] border border-line bg-white transition-all duration-400 hover:-translate-y-1.5 hover:border-ikea/40 hover:shadow-[0_28px_50px_-30px_rgba(122,92,46,0.75)]">
         <div className="relative aspect-square overflow-hidden bg-mist">
           <img
             src={px(p.img, 700, 700)}
@@ -96,13 +96,17 @@ function ProductCard({ p, index }: { p: Product; index: number }) {
           <p className="mt-1 line-clamp-2 text-[12.5px] leading-relaxed text-ink-soft">{p.desc[lang]}</p>
 
           <div className="mt-2.5 flex items-center gap-1.5">
-            <Stars rating={p.rating} />
-            <span className="text-[11px] text-ink-soft tabular">
-              {p.rating.toFixed(1)} · {p.reviews}
-            </span>
-            <span className="mx-1 h-3 w-px bg-line" />
-            <span className={`text-[11px] font-semibold ${p.stock <= 5 ? "text-brick" : "text-leaf"}`}>
-              {p.stock <= 5 ? t("product.lowStock") : t("product.inStock")}
+            {p.rating !== null && (
+              <>
+                <Stars rating={p.rating} />
+                <span className="text-[11px] text-ink-soft tabular">
+                  {p.rating.toFixed(1)} · {p.reviews}
+                </span>
+                <span className="mx-1 h-3 w-px bg-line" />
+              </>
+            )}
+            <span className={`text-[11px] font-semibold ${p.stock === null ? "text-ikea" : p.stock <= 5 ? "text-brick" : "text-leaf"}`}>
+              {p.stock === null ? t("product.askAvailability") : p.stock <= 5 ? t("product.lowStock") : t("product.inStock")}
             </span>
           </div>
 
@@ -119,7 +123,7 @@ function ProductCard({ p, index }: { p: Product; index: number }) {
               type="button"
               onClick={onAdd}
               className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-2.5 font-display text-[12px] font-bold transition-all duration-300 active:scale-95 ${
-                added ? "bg-leaf text-white" : "bg-ikea text-white hover:bg-ikea-deep hover:shadow-[0_10px_22px_-12px_rgba(0,88,163,1)]"
+                added ? "bg-leaf text-white" : "bg-ikea text-white hover:bg-ikea-deep hover:shadow-[0_10px_22px_-12px_rgba(122,92,46,1)]"
               }`}
             >
               {added ? <IconCheck className="h-4 w-4" /> : <IconBag className="h-4 w-4" />}
@@ -144,7 +148,7 @@ function QuickView() {
     { k: t("product.origin"), v: p.origin[lang] },
     { k: lang === "ar" ? "الأبعاد" : "Dimensions", v: p.dim },
     { k: lang === "ar" ? "المادة" : "Material", v: p.mat[lang] },
-    { k: t("product.warranty"), v: `${p.warranty} ${lang === "ar" ? "شهر" : "months"}` },
+    { k: t("product.warranty"), v: p.warranty !== null ? `${p.warranty} ${lang === "ar" ? "شهر" : "months"}` : t("product.askAvailability") },
     { k: t("product.sku"), v: p.id },
     { k: lang === "ar" ? "القسم" : "Department", v: cat?.name[lang] ?? "" },
   ];
@@ -176,10 +180,14 @@ function QuickView() {
             </span>
             <h3 className="mt-2 font-display text-[clamp(1.3rem,2.6vw,1.9rem)] font-black leading-tight">{p.name[lang]}</h3>
             <div className="mt-2 flex items-center gap-2">
-              <Stars rating={p.rating} className="h-4 w-4" />
-              <span className="text-[12.5px] text-ink-soft tabular">
-                {p.rating.toFixed(1)} · {p.reviews} {lang === "ar" ? "تقييم" : "reviews"}
-              </span>
+              {p.rating !== null && (
+                <>
+                  <Stars rating={p.rating} className="h-4 w-4" />
+                  <span className="text-[12.5px] text-ink-soft tabular">
+                    {p.rating.toFixed(1)} · {p.reviews} {lang === "ar" ? "تقييم" : "reviews"}
+                  </span>
+                </>
+              )}
             </div>
             <p className="mt-3 text-[14px] leading-relaxed text-ink-soft">{p.desc[lang]}</p>
 
@@ -223,8 +231,8 @@ function QuickView() {
               <a
                 href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
                   lang === "ar"
-                    ? `السلام عليكم، نبي نسأل عن المنتج:\n${p.name.ar} (${p.id})\nالسعر المعروض: ${formatPrice(p.price, "ar")}`
-                    : `Hello, I'd like to ask about:\n${p.name.en} (${p.id})\nListed price: ${formatPrice(p.price, "en")}`,
+                    ? `السلام عليكم، نبي نسأل عن الصنف:\n${p.name.ar} (${p.id})\nالسعر: ${formatPrice(p.price, "ar")}`
+                    : `Hello, I'd like to ask about:\n${p.name.en} (${p.id})\nPrice: ${formatPrice(p.price, "en")}`,
                 )}`}
                 target="_blank"
                 rel="noreferrer noopener"
@@ -240,7 +248,7 @@ function QuickView() {
                 <IconTruck className="h-4 w-4 text-ikea" /> {lang === "ar" ? "توصيل وتركيب في طرابلس" : "Delivery & fitting in Tripoli"}
               </span>
               <span className="inline-flex items-center gap-1.5">
-                <IconShield className="h-4 w-4 text-ikea" /> {t("product.warranty")} {p.warranty} {lang === "ar" ? "شهر" : "mo"}
+                <IconShield className="h-4 w-4 text-ikea" /> {p.warranty !== null ? `${t("product.warranty")} ${p.warranty} ${lang === "ar" ? "شهر" : "mo"}` : t("product.askAvailability")}
               </span>
               <button
                 type="button"
@@ -270,11 +278,12 @@ export default function Catalog() {
       const hay = `${p.name.ar} ${p.name.en} ${p.desc.ar} ${p.desc.en} ${p.id} ${p.origin.ar} ${p.origin.en} ${p.cat}`.toLowerCase();
       return okCat && (!q || hay.includes(q));
     });
-    if (sort === "low") out = [...out].sort((a, b) => a.price - b.price);
-    if (sort === "high") out = [...out].sort((a, b) => b.price - a.price);
-    if (sort === "featured") out = [...out].sort((a, b) => Number(Boolean(b.badge)) - Number(Boolean(a.badge)) || b.rating - a.rating);
+    // Aucun prix publié : le tri « bas / haut » devient un tri par nom, utile et honnête.
+    if (sort === "low") out = [...out].sort((a, b) => a.name[lang].localeCompare(b.name[lang], lang));
+    if (sort === "high") out = [...out].sort((a, b) => b.name[lang].localeCompare(a.name[lang], lang));
+    if (sort === "featured") out = [...out].sort((a, b) => Number(Boolean(b.badge)) - Number(Boolean(a.badge)) || (b.rating ?? 0) - (a.rating ?? 0));
     return out;
-  }, [query, cat, sort]);
+  }, [query, cat, sort, lang]);
 
   const shown = list.slice(0, visible);
 
@@ -339,7 +348,7 @@ export default function Catalog() {
                 }}
                 className={`inline-flex shrink-0 items-center gap-2 rounded-full border px-4 py-2.5 font-display text-[12.5px] font-bold transition-all duration-300 active:scale-95 ${
                   active
-                    ? "border-ikea bg-ikea text-white shadow-[0_10px_22px_-14px_rgba(0,88,163,1)]"
+                    ? "border-ikea bg-ikea text-white shadow-[0_10px_22px_-14px_rgba(122,92,46,1)]"
                     : "border-line bg-white text-ink-soft hover:border-ikea/50 hover:text-ikea"
                 }`}
               >

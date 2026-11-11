@@ -8,6 +8,9 @@ export default function CartDrawer() {
   const { t, lang, cartOpen, setCartOpen, lines, count, subtotal, setQty, remove, clear, setCat } = useStore();
   const [form, setForm] = useState({ name: "", phone: "", city: "", note: "", mode: "deliver" as "deliver" | "pickup" });
   const [sent, setSent] = useState<string | null>(null);
+  /** Tous les articles Assadaka sont affichés « prix sur demande » : ne jamais montrer 0 د.ل. */
+  const hasPricedItem = lines.some(({ product }) => product.price !== null);
+  const subtotalText = hasPricedItem ? formatPrice(subtotal, lang) : t("product.priceOnRequest");
 
   useEffect(() => {
     if (!cartOpen) return;
@@ -47,7 +50,7 @@ export default function CartDrawer() {
             <div>
               <h2 className="font-display text-[16px] font-black leading-none">{t("cart.title")}</h2>
               <p className="mt-1.5 text-[11.5px] text-ink-soft tabular">
-                {count} {t("cart.items")} · {formatPrice(subtotal, lang)}
+                {count} {t("cart.items")} · {subtotalText}
               </p>
             </div>
           </div>
@@ -162,7 +165,7 @@ export default function CartDrawer() {
                           </button>
                         </div>
                         <span className="font-display text-[14.5px] font-black tabular">
-                          {formatPrice(p.price * qty, lang)}
+                          {formatPrice(p.price === null ? null : p.price * qty, lang)}
                         </span>
                       </div>
                     </div>
@@ -209,7 +212,7 @@ export default function CartDrawer() {
                           value={form[key]}
                           onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
                           placeholder={ph}
-                          className="w-full resize-none rounded-xl border border-line bg-mist px-3.5 py-2.5 text-[13px] outline-none transition-all placeholder:text-ink-soft/50 focus:border-ikea focus:bg-white focus:shadow-[0_0_0_3px_rgba(0,88,163,0.12)]"
+                          className="w-full resize-none rounded-xl border border-line bg-mist px-3.5 py-2.5 text-[13px] outline-none transition-all placeholder:text-ink-soft/50 focus:border-ikea focus:bg-white focus:shadow-[0_0_0_3px_rgba(122,92,46,0.12)]"
                         />
                       ) : (
                         <input
@@ -217,7 +220,7 @@ export default function CartDrawer() {
                           value={form[key]}
                           onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
                           placeholder={ph}
-                          className="w-full rounded-xl border border-line bg-mist px-3.5 py-2.5 text-[13px] outline-none transition-all placeholder:text-ink-soft/50 focus:border-ikea focus:bg-white focus:shadow-[0_0_0_3px_rgba(0,88,163,0.12)]"
+                          className="w-full rounded-xl border border-line bg-mist px-3.5 py-2.5 text-[13px] outline-none transition-all placeholder:text-ink-soft/50 focus:border-ikea focus:bg-white focus:shadow-[0_0_0_3px_rgba(122,92,46,0.12)]"
                         />
                       )}
                     </label>
@@ -231,7 +234,7 @@ export default function CartDrawer() {
               <dl className="space-y-1.5 text-[13px]">
                 <div className="flex items-center justify-between">
                   <dt className="text-ink-soft">{t("cart.subtotal")}</dt>
-                  <dd className="font-semibold tabular">{formatPrice(subtotal, lang)}</dd>
+                  <dd className="font-semibold tabular">{subtotalText}</dd>
                 </div>
                 <div className="flex items-center justify-between">
                   <dt className="text-ink-soft">{t("cart.delivery")}</dt>
@@ -241,7 +244,7 @@ export default function CartDrawer() {
                 </div>
                 <div className="flex items-center justify-between border-t border-line pt-2">
                   <dt className="font-display text-[14px] font-black">{t("cart.total")}</dt>
-                  <dd className="font-display text-[19px] font-black tabular text-ikea">{formatPrice(subtotal, lang)}</dd>
+                  <dd className="font-display text-[19px] font-black tabular text-ikea">{subtotalText}</dd>
                 </div>
               </dl>
               <p className="mt-2 text-[11px] leading-relaxed text-ink-soft/75">{t("cart.deliveryNote")}</p>

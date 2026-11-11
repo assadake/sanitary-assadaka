@@ -7,11 +7,10 @@
  * WhatsApp et lien Google Maps. Aucune lecture de la base Neon, aucune
  * migration, aucune variable d'environnement.
  *
- * [NOM MAGASIN] → SHOP_NAME
- * [VILLE]       → CITY
- * [TON_NUMERO]  → WHATSAPP_NUMBER (chiffres uniquement, sans + ni espaces)
- * [TON_LIEN]    → MAPS_URL
- * [HORAIRES]    → OPENING_HOURS
+ * SHOP_NAME / CITY : identité affichée dans le hero et le SEO.
+ * WHATSAPP_NUMBER  : chiffres uniquement, sans + ni espaces (wa.me).
+ * MAPS_URL         : recherche Google Maps Assadaka à Tripoli.
+ * OPENING_HOURS    : non figés, à confirmer sur WhatsApp.
  */
 export const SHOP_NAME = "Assadaka Alraqia";
 export const CITY = "Tripoli";

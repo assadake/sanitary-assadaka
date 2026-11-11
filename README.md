@@ -1,10 +1,16 @@
-# تولين للبضائع الأروبية · TOLIN European Goods
+# شركة الصداقة الراقية · Assadaka Alraqia
 
-Boutique en ligne mono-page (SPA) pour un magasin libyen de **produits de maison**, **électroménager importé d'Europe** et **outillage / bricolage** — basée à **Tripoli, Libye**.
+Site vitrine statique, mono-page (SPA), pour **شركة الصداقة الراقية / Assadaka Alraqia**
+à **Tripoli, Libye** : **مواد صحية وسيراميك** (articles sanitaires, carrelage,
+robinetterie, douches, WC, baignoires, matériaux de finition), avec **visite
+virtuelle 360°** du showroom.
 
-Le catalogue est bilingue **arabe (RTL, langue principale) ⇄ anglais (LTR)**, et le panier d'achat se transforme en **commande détaillée envoyée sur WhatsApp** au **+218 91 344 2640** (aucun paiement en ligne).
+Catalogue bilingue **arabe (RTL, langue principale) ⇄ anglais (LTR)**. Les
+demandes de renseignement / devis partent sur **WhatsApp +218 91-3150095**
+(`wa.me/218913150095`) ; **aucun paiement en ligne**, **aucun prix publié** :
+modèles, prix et disponibilités se confirment avec la société.
 
-> Ar · متجر ليبي متخصص في منتجات المنزل، الأجهزة الكهربائية الأوروبية وعدّة البريكولاج — طرابلس، ليبيا. الطلبات تُرسَل مباشرة عبر واتساب.
+> Ar · شركة ليبية متخصصة في المواد الصحية والسيراميك ومواد البناء — طرابلس، ليبيا. الاستفسارات تُرسَل مباشرة عبر واتساب.
 
 ---
 
@@ -17,9 +23,9 @@ Le catalogue est bilingue **arabe (RTL, langue principale) ⇄ anglais (LTR)**, 
 | Style | **Tailwind CSS 4** (thème maison : `--color-ikea`, `--color-sun`, polices `font-display` / `font-sans`) |
 | Typo | Noto Kufi Arabic (display) + IBM Plex Sans Arabic (texte) via Google Fonts |
 | État | Context React maison (`src/store.tsx`) — langue, panier, favoris persistés en `localStorage` |
-| Images | Pexels CDN (aucun binaire dans le dépôt) |
+| Images | Pexels CDN + `public/brands/` + panoramas `public/visite360/` (intouchables) |
 
-Aucune dépendance backend, aucune variable d'environnement requise.
+Aucune dépendance backend, **aucune base de données**, aucune migration, aucune variable d'environnement requise.
 
 ---
 
@@ -30,9 +36,9 @@ Aucune dépendance backend, aucune variable d'environnement requise.
 ```bash
 git init
 git add .
-git commit -m "feat: TOLIN European Goods — boutique bilingue AR/EN avec commande WhatsApp"
+git commit -m "feat: Assadaka Alraqia — site bilingue AR/EN + visite 360°"
 git branch -M main
-git remote add origin https://github.com/<VOTRE-COMPTE>/tolin-european-goods.git
+git remote add origin https://github.com/<VOTRE-COMPTE>/sanitary-assadaka.git
 git push -u origin main
 ```
 
@@ -58,7 +64,7 @@ git push -u origin main
 
 ### 3. Domaine personnalisé (optionnel)
 
-Vercel → projet → **Settings → Domains** → ajouter `tolin-goods.ly` (ou `.com`), puis créer chez votre registrar :
+Vercel → projet → **Settings → Domains** → ajouter votre nom de domaine Assadaka, puis créer chez votre registrar :
 
 - `A` → `76.76.21.21` ( apex ) ou
 - `CNAME` → `cname.vercel-dns.com` ( `www` / sous-domaine )
@@ -77,10 +83,12 @@ vercel --prod   # production
 
 ```bash
 npm install
-npm run dev       # http://localhost:5173
-npm run build     # génère dist/index.html (fichier unique)
+npm install
+npm run dev       # http://localhost:5173 → / , /visite , /visite-360/index.html
+npm run typecheck # vérification de types
+npm run build     # génère dist/index.html + dist/visite/index.html + dist/visite-360/*
 npm run preview   # sert le build de production
-npx tsc --noEmit  # vérification de types
+npm start         # serveur statique natif pour Render (PORT)
 ```
 
 Un workflow **GitHub Actions** (`.github/workflows/ci.yml`) rejoue `npm install` + type-check + build à chaque push et conserve `dist/` comme artefact — utile pour vérifier un déploiement avant de le merger.
@@ -92,64 +100,85 @@ Un workflow **GitHub Actions** (`.github/workflows/ci.yml`) rejoue `npm install`
 | Ce que vous voulez changer | Fichier |
 | --- | --- |
 | **Numéro WhatsApp** | `src/i18n.ts` → `WHATSAPP_NUMBER` / `WHATSAPP_DISPLAY` |
-| **Produits** (nom, prix, stock, origine, garantie…) | `src/data/catalog.ts` → `PRODUCTS` |
+| **Produits** (nom, modèle, prix sur demande, disponibilité…) | `src/data/catalog.ts` → `PRODUCTS` |
 | **Rayons / départements** | `src/data/catalog.ts` → `CATEGORIES` |
-| **Pièces & carrousels d'inspiration** | `src/data/catalog.ts` → `ROOMS`, `STORIES` |
+| **Idées de salles de bain & guides d'achat** | `src/data/catalog.ts` → `ROOMS`, `STORIES` |
 | **Textes de l'interface** (AR + EN) | `src/i18n.ts` → objets `ar` et `en` (mêmes clés) |
-| **Adresse, horaires, FAQ** | `src/i18n.ts` (`showroom.*`, `faq*`) + `src/components/Showroom.tsx` (lien Google Maps) |
+| **Adresse, horaires, FAQ** | `src/i18n.ts` (`showroom.*`, `faq*`) + `app/visite/config.ts` et `src/components/Showroom.tsx` (lien Google Maps) |
 | **Couleurs & polices** | `src/index.css` → bloc `@theme` |
-| **Modèle du message de commande** | `src/store.tsx` → `buildOrderMessage()` |
+| **Modèle du message de demande / devis** | `src/store.tsx` → `buildOrderMessage()` |
 
-### Ajouter un produit
+### Ajouter un article sanitaire
 
 ```ts
-{ id: "TL-9001", cat: "diy",
+{ id: "AS-9001", cat: "sanitary",
   name: { ar: "اسم المنتج", en: "Product name" },
-  desc: { ar: "الوصف", en: "Description" },
-  price: 450, old: 520,            // `old` déclenche le badge de remise
-  img: 5974048,                    // ID photo Pexels
-  origin: { ar: "ألمانيا", en: "Germany" },
-  rating: 4.6, reviews: 12, stock: 8,
-  dim: "22×8×24 cm",
-  mat: { ar: "فولاذ", en: "Steel" },
-  warranty: 24,
-  badge: "new" }                    // new | offer | best | import
+  desc: { ar: "الوصف مع تأكيد الموديل والتوفر", en: "Description; confirm model and availability" },
+  price: null,                    // prix sur demande (aucun prix publié)
+  img: 11701114,                  // ID photo Pexels
+  origin: { ar: "حسب الموديل", en: "Model dependent" },
+  rating: null, reviews: 0, stock: null,
+  dim: "حسب الموديل",
+  mat: { ar: "سيراميك", en: "Ceramic" },
+  warranty: null,
+  badge: "new" }                   // new | offer | best | import
 ```
 
-Les prix sont affichés en **dinar libyen** (`formatPrice()` dans `src/i18n.ts`).
+`price`, `rating`, `stock` et `warranty` peuvent être `null` : l'interface affiche
+alors une demande de renseignement au lieu d'inventer une valeur. Les champs
+sont validés par `npm run typecheck`.
 
 ---
 
-## 🧾 Comment fonctionne la commande
+## 🧾 Comment fonctionne la demande
 
-1. Le visiteur ajoute des produits au panier (persistant, même après fermeture du navigateur).
+1. Le visiteur parcourt les 35 articles, ajoute ses références au panier (persistant).
 2. Il renseigne **nom, téléphone, ville, note** et choisit *livraison* ou *retrait au showroom*.
-3. **`أرسل الطلب عبر واتساب`** génère un message structuré — référence `TL-<année>-<n°>`, date, lignes avec quantités et prix, total estimé, coordonnées — puis ouvre `https://wa.me/218913442640`.
-4. Le client n'a plus qu'à appuyer sur *Envoyer* dans WhatsApp. Aucun paiement en ligne : **paiement à la livraison** ou virement.
+3. Le bouton d'envoi génère un message structuré — référence `AS-<année>-<n°>`, date,
+   lignes avec quantités, modèles et prix « sur demande », coordonnées — puis ouvre
+   `https://wa.me/218913150095`.
+4. La société confirme **modèle, prix, disponibilité et garantie** sur WhatsApp.
+   Aucun paiement en ligne, aucune commande ferme depuis le site.
 
 ---
 
-## ⚠️ Deux bases de code dans ce dépôt — ne pas les confondre
+## 🏢 Identité et contenu : شركة الصداقة الراقية / Assadaka Alraqia
 
-Le dépôt contient **deux applications différentes** selon la branche :
+Le site statique de `main` est **entièrement rebrandé** au nom de la société
+**Assadaka Alraqia** (الصداقة الراقية), spécialisée en **مواد صحية وسيراميك**
+(articles sanitaires, carrelage, robinetterie, matériaux de finition).
+
+| Donnée | Valeur | Où la modifier |
+| --- | --- | --- |
+| Nom société | `شركة الصداقة الراقية` / `Assadaka Alraqia` | `src/i18n.ts` (`brand.*`), `index.html` (SEO/OG) |
+| WhatsApp | **`218913150095`** — affiché `+218 91-3150095` | `src/i18n.ts` (`WHATSAPP_NUMBER`, `WHATSAPP_DISPLAY`) et `app/visite/config.ts` |
+| Page Facebook | `https://www.facebook.com/AssadakaARAQIA/` | `src/components/Footer.tsx` |
+| Google Maps | recherche « Assadaka Alraqia sanitary ware Tripoli Libya » | `app/visite/config.ts`, `src/components/Showroom.tsx`, `Showroom360.tsx` |
+| Marques | `IDEAL · TURKUAZ · CeraStyle` (+ logos locaux dans `public/brands/`) | `src/data/catalog.ts` (`HERO_STATS`, `TICKER_KEYS`) |
+| Catalogue | **35 articles sanitaires** (`AS-xxxx`), 8 catégories, **prix sur demande** | `src/data/catalog.ts` |
+
+⚠️ Le catalogue Assadaka **ne publie pas de prix** : `price: null` affiche
+« السعر عند الاستفسار / Price on request » ; aucune remise, aucune note ni
+stock inventé. Les modèles, prix, disponibilités et garanties se confirment
+avec la société sur WhatsApp.
+
+**Aucune base de données, aucune migration, aucune variable d'environnement,
+aucune nouvelle dépendance npm.** Le site reste 100 % statique.
+
+### ⚠️ Deux bases de code dans ce dépôt — ne pas les confondre
 
 | | **`main`** (site déployé sur `sanitary-assadaka.onrender.com`) | **`arena/a85f3eea-sanitary-assadaka`** (ancien service `tolin-shop`) |
 | --- | --- | --- |
 | Type | **Static Site** Render, Publish `dist` | **Web Service** Node/Express |
 | Base de données | **Aucune** — catalogue local dans `src/data/catalog.ts` | **Neon PostgreSQL** via `DATABASE_URL`, tables `products` / `orders` / `app_settings` |
-| Identité | TOLIN — بضائع أوروبية (nom et articles d'origine) | **الصداقة الراقية / Assadaka Alraqia** — مواد صحية وسيراميك |
+| Identité | **Assadaka Alraqia** — مواد صحية وسيراميك | Assadaka Alraqia (contenu administrable en BDD) |
 | Visite 360° | ✅ `/visite` + viewer intact `/visite-360/index.html` | ❌ absente |
 
-👉 Si un domaine affiche « l'ancien nom de société et les anciens articles », c'est qu'il
-pointe vers **l'autre service** : vérifier `Settings → Branch` et la section
+👉 Si un domaine affiche un autre nom ou d'anciens articles, c'est qu'il pointe
+vers **l'autre service** : vérifier `Settings → Branch` et la section
 **Custom Domains** de chaque service. Ce n'est **pas** un problème de base de
 données côté site statique : il n'en utilise aucune, et aucune migration n'a été
 faite (consigne : ne pas toucher à la BDD).
-
-Les coordonnées réelles de la société utilisées par `/visite` sont regroupées
-dans `app/visite/config.ts` : `Assadaka Alraqia`, `Tripoli`, WhatsApp
-`218913150095`, lien Google Maps Assadaka. Elles proviennent de
-`src/site-content.ts` de la branche Assadaka, sans lecture de la BDD.
 
 ## 🚀 Déployer sur Render (et diagnostiquer un déploiement « identique »)
 
@@ -201,13 +230,13 @@ La cause la plus fréquente : le service surveille **une autre branche** (un ser
 
 ⚠️ Sur un **Static Site créé à la main dans le Dashboard**, `render.yaml` (et donc ses en-têtes `no-cache`) ne s'applique **pas** : `deploy-info.json` peut rester en cache CDN alors que le nouveau build est déjà en ligne. Dans ce cas, ajouter manuellement la règle d'en-tête `Cache-Control: no-cache` pour `/deploy-info.json`, ou vérifier directement le contenu de `/visite` et l'onglet **Events** du Dashboard.
 
-Dans le log de build, on doit voir `✓ built` et `dist/index.html  514.94 kB`.
+Dans le log de build, on doit voir `✓ built` et `dist/index.html` (~520 kB).
 
 ### Checklist après déploiement
 
 | URL | Attendu |
 | --- | --- |
-| `/` | site TOLIN avec le lien « Visite virtuelle 360° » |
+| `/` | site **Assadaka** avec le lien « Visite virtuelle 360° » |
 | `/visite` ou `/visite/` | page noir + doré |
 | `/visite/index.html` | la même page (fichier statique) |
 | `/visite-360/index.html` | viewer Pannellum d'origine |

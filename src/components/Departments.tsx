@@ -25,7 +25,7 @@ export default function Departments() {
           <div className="flex items-center gap-3 rounded-2xl border border-line bg-white px-4 py-3">
             <span className="font-display text-[26px] font-black leading-none text-ikea tabular">{PRODUCTS.length}</span>
             <span className="text-[12px] leading-tight text-ink-soft">
-              {lang === "ar" ? "منتج متوفر الآن في مخزن طرابلس" : "products in stock at the Tripoli warehouse"}
+              {t("ui.departments.countSuffix")}
             </span>
           </div>
         }

@@ -8,9 +8,9 @@ import { IconCheck, IconWhatsApp, IconX } from "./Icons";
 import Reveal from "./Reveal";
 
 const STEPS: Bi[] = [
-  { ar: "نختار المورد الأوروبي ونعاين العيّنة قبل الشراء.", en: "We pick the European supplier and inspect the sample before buying." },
-  { ar: "الشحنة تُفحص وتُغلَّف وتُوثَّق بالصور في المخزن.", en: "The shipment is tested, packed and photographed at the warehouse." },
-  { ar: "توصلك لبيتك مع التركيب والضمان المكتوب.", en: "It reaches your home with installation and a written warranty." },
+  { ar: "أرسل مقاسات المكان أو مساحة المشروع.", en: "Share the space measurements or project area." },
+  { ar: "حدد الموديل أو اللون أو نوع التشطيب الذي تفضله.", en: "Specify the model, colour or finish you prefer." },
+  { ar: "تحقق من السعر والتوفر والضمان مع الشركة قبل الشراء.", en: "Confirm price, availability and warranty with the company before buying." },
 ];
 
 export default function Stories() {
@@ -25,13 +25,13 @@ export default function Stories() {
         className="pointer-events-none absolute inset-0 opacity-60"
         style={{
           backgroundImage:
-            "radial-gradient(46rem 28rem at 15% 0%, rgba(0,88,163,0.55), transparent 60%), radial-gradient(34rem 22rem at 92% 88%, rgba(255,219,0,0.16), transparent 60%)",
+            "radial-gradient(46rem 28rem at 15% 0%, rgba(122,92,46,0.55), transparent 60%), radial-gradient(34rem 22rem at 92% 88%, rgba(201,168,106,0.16), transparent 60%)",
         }}
       />
       <div className="relative mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-10">
         <SectionHead
           dark
-          kicker={lang === "ar" ? "من المصنع لبيتك" : "Factory to home"}
+          kicker={lang === "ar" ? "دليل الاختيار" : "Buying guide"}
           title={t("stories.title")}
           text={t("stories.text")}
           action={

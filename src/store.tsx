@@ -46,9 +46,9 @@ const load = <T,>(key: string, fallback: T): T => {
 };
 
 export function StoreProvider({ children }: { children: ReactNode }) {
-  const [lang, setLangState] = useState<Lang>(() => load<Lang>("tolin.lang", "ar"));
-  const [cart, setCart] = useState<CartLine[]>(() => load<CartLine[]>("tolin.cart", []));
-  const [favs, setFavs] = useState<string[]>(() => load<string[]>("tolin.favs", []));
+  const [lang, setLangState] = useState<Lang>(() => load<Lang>("assadaka.lang", "ar"));
+  const [cart, setCart] = useState<CartLine[]>(() => load<CartLine[]>("assadaka.cart", []));
+  const [favs, setFavs] = useState<string[]>(() => load<string[]>("assadaka.favs", []));
   const [cartOpen, setCartOpen] = useState(false);
   const [quick, setQuick] = useState<Product | null>(null);
   const [query, setQuery] = useState("");
@@ -62,8 +62,17 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     const root = document.documentElement;
     root.lang = lang;
     root.dir = dir;
+    document.title = lang === "ar"
+      ? "الصداقة الراقية | مواد صحية وسيراميك — طرابلس، ليبيا"
+      : "Assadaka Alraqia | Sanitary Ware & Ceramics — Tripoli, Libya";
+    const meta = document.querySelector<HTMLMetaElement>('meta[name="description"]');
+    if (meta) {
+      meta.content = lang === "ar"
+        ? "شركة الصداقة الراقية لاستيراد مواد البناء والمواد الصحية وملحقاتها. استفسر عن الأدوات الصحية والسيراميك والموديلات المتوفرة في طرابلس، ليبيا."
+        : "Sanitary ware, ceramics and building materials from Assadaka Alraqia in Tripoli. Ask about models, prices and availability on WhatsApp.";
+    }
     try {
-      localStorage.setItem("tolin.lang", JSON.stringify(lang));
+      localStorage.setItem("assadaka.lang", JSON.stringify(lang));
     } catch {
       /* ignore */
     }
@@ -71,7 +80,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     try {
-      localStorage.setItem("tolin.cart", JSON.stringify(cart));
+      localStorage.setItem("assadaka.cart", JSON.stringify(cart));
     } catch {
       /* ignore */
     }
@@ -79,7 +88,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     try {
-      localStorage.setItem("tolin.favs", JSON.stringify(favs));
+      localStorage.setItem("assadaka.favs", JSON.stringify(favs));
     } catch {
       /* ignore */
     }
@@ -136,7 +145,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   );
 
   const count = useMemo(() => cart.reduce((s, l) => s + l.qty, 0), [cart]);
-  const subtotal = useMemo(() => lines.reduce((s, l) => s + l.product.price * l.qty, 0), [lines]);
+  const subtotal = useMemo(() => lines.reduce((s, l) => s + (l.product.price ?? 0) * l.qty, 0), [lines]);
 
   const waLink = useCallback(
     (text: string) => `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`,
@@ -194,25 +203,29 @@ export function buildOrderMessage(opts: {
   mode: "deliver" | "pickup";
 }) {
   const { lang, lines, subtotal, name, phone, city, note, mode } = opts;
-  const orderNo = `TL-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+  const orderNo = `AS-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
   const L = (a: string, b: string) => (lang === "ar" ? a : b);
 
   const rows = lines
     .map(
       (l) =>
-        `• ${l.product.id} — ${l.product.name[lang]} × ${l.qty} = ${formatPrice(l.product.price * l.qty, lang)}`,
+        `• ${l.product.id} — ${l.product.name[lang]} × ${l.qty} = ${formatPrice(l.product.price === null ? null : l.product.price * l.qty, lang)}`,
     )
     .join("\n");
+  const hasPricedItem = lines.some((l) => l.product.price !== null);
+  const subtotalText = hasPricedItem
+    ? formatPrice(subtotal, lang)
+    : dictionaries[lang]["product.priceOnRequest"];
 
   const text = [
-    L(`*طلب جديد من موقع تولين للبضائع الأروبية*`, `*New order from the TOLIN European Goods website*`),
+    L(`*استفسار جديد من موقع شركة الصداقة الراقية*`, `*New enquiry from the Assadaka Alraqia website*`),
     `${L("رقم الطلب", "Order no.")}: ${orderNo}`,
     `${L("التاريخ", "Date")}: ${new Date().toLocaleString(lang === "ar" ? "ar-LY-u-nu-latn" : "en-GB")}`,
     "",
     L("*المنتجات:*", "*Items:*"),
     rows,
     "",
-    `${L("الإجمالي التقديري", "Estimated total")}: ${formatPrice(subtotal, lang)}`,
+    `${L("إجمالي الأسعار المعلنة", "Listed-price subtotal")}: ${subtotalText}`,
     `${L("طريقة الاستلام", "Collection")}: ${mode === "deliver" ? L("توصيل للمنزل 🚚", "Home delivery 🚚") : L("استلام من المعرض 🏬", "Showroom pick-up 🏬")}`,
     "",
     L("*بيانات العميل:*", "*Customer details:*"),
@@ -221,7 +234,7 @@ export function buildOrderMessage(opts: {
     `${L("العنوان", "Address")}: ${city || "Tripoli, Libya"}`,
     note ? `${L("ملاحظة", "Note")}: ${note}` : "",
     "",
-    L("شكراً — ننتظر تأكيدكم.", "Thank you — waiting for your confirmation."),
+    L("شكراً — ننتظر تأكيد الموديلات والأسعار والتوفر.", "Thank you — please confirm models, prices and availability."),
   ]
     .filter(Boolean)
     .join("\n");
