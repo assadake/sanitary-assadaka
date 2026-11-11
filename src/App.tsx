@@ -17,32 +17,30 @@ import { Ticker } from "./components/Bits";
 import { isTourRoute, isVisiteRoute } from "./router";
 import { StoreProvider, useStore } from "./store";
 
-const ORIGINS = [
-  { flag: "🇮🇹", ar: "إيطاليا", en: "Italy" },
-  { flag: "🇩🇪", ar: "ألمانيا", en: "Germany" },
-  { flag: "🇹🇷", ar: "تركيا", en: "Türkiye" },
-  { flag: "🇵🇱", ar: "بولندا", en: "Poland" },
-  { flag: "🇪🇸", ar: "إسبانيا", en: "Spain" },
-  { flag: "🇸🇪", ar: "السويد", en: "Sweden" },
-  { flag: "🇩🇰", ar: "الدنمارك", en: "Denmark" },
-  { flag: "🇳🇱", ar: "هولندا", en: "Netherlands" },
-  { flag: "🇫🇷", ar: "فرنسا", en: "France" },
-  { flag: "🇵🇹", ar: "البرتغال", en: "Portugal" },
+const FOCUS = [
+  { glyph: "🚿", ar: "الأدوات الصحية", en: "Sanitary ware" },
+  { glyph: "🧱", ar: "السيراميك والبلاط", en: "Ceramics & tiles" },
+  { glyph: "🚰", ar: "الحنفيات والخلاطات", en: "Faucets & mixers" },
+  { glyph: "🛁", ar: "الدش والاستحمام", en: "Showers & baths" },
+  { glyph: "🪞", ar: "أثاث الحمام", en: "Bathroom furniture" },
+  { glyph: "🔧", ar: "السباكة والتمديدات", en: "Plumbing" },
+  { glyph: "🏗️", ar: "مواد البناء والتشطيب", en: "Building materials" },
+  { glyph: "✨", ar: "إكسسوارات الحمام", en: "Bathroom accessories" },
 ];
 
 function OriginStrip() {
   const { lang } = useStore();
-  const items = [...ORIGINS, ...ORIGINS];
+  const items = [...FOCUS, ...FOCUS];
   return (
     <div className="relative flex items-center gap-4 overflow-hidden border-b border-line bg-white py-3.5">
       <span className="z-10 hidden shrink-0 items-center gap-2 bg-white ps-4 pe-6 font-display text-[11px] font-black uppercase tracking-[0.2em] text-ink sm:ps-6 md:flex lg:ps-10">
-        <span className="h-2 w-2 rounded-full bg-brick" />
-        {lang === "ar" ? "مستورد مباشرة من" : "Imported directly from"}
+        <span className="h-2 w-2 rounded-full bg-sun" />
+        {lang === "ar" ? "تشكيلة تهم مشروعك" : "Range for your project"}
       </span>
       <div className="flex w-max shrink-0 animate-marquee-rev items-center gap-8 whitespace-nowrap will-change-transform">
         {items.map((o, i) => (
           <span key={i} className="flex items-center gap-2 text-[13px] font-semibold text-ink-soft">
-            <span className="text-base leading-none">{o.flag}</span>
+            <span className="text-base leading-none">{o.glyph}</span>
             {o[lang]}
             <span className="ms-6 h-1 w-1 rounded-full bg-line" />
           </span>
