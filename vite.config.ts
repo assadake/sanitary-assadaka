@@ -6,7 +6,7 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig, type PreviewServer, type ViteDevServer } from "vite";
 import { viteSingleFile } from "vite-plugin-singlefile";
-import { VISITE_SEO } from "./app/visite/config";
+import { VISITE_KEYWORDS, VISITE_SEO } from "./app/visite/config";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,24 +22,24 @@ const escapeHtml = (value: string) =>
  * `dist/index.html` is the whole app (vite-plugin-singlefile). Copying it to
  * `dist/visite/index.html` makes /visite a REAL static file: it works on any
  * static host even when no SPA rewrite is configured (Render does not read
- * vercel.json). The copy gets French/LTR + static SEO meta tags so crawlers
- * see the right page without executing JavaScript.
+ * vercel.json). The copy keeps the site's Arabic/RTL default and gets static
+ * AR/EN SEO meta tags, so crawlers see the right page without executing JS.
+ * At runtime `VisitePage` follows `assadaka.lang` and swaps the tags to the
+ * English variants when needed.
  */
 function staticVisiteHtml(html: string) {
-  const title = escapeHtml(VISITE_SEO.title);
-  const description = escapeHtml(VISITE_SEO.description);
+  const title = escapeHtml(VISITE_SEO.ar.title);
+  const description = escapeHtml(VISITE_SEO.ar.description);
+  const keywords = escapeHtml(VISITE_KEYWORDS);
   return html
-    .replace('<html lang="ar" dir="rtl">', '<html lang="fr" dir="ltr">')
     .replace(/<title>[\s\S]*?<\/title>/, `<title>${title}</title>`)
     .replace(/(<meta\s+name="description"[\s\S]*?content=")[^"]*(")/, `$1${description}$2`)
-    .replace(
-      /(<meta\s+name="keywords"[\s\S]*?content=")[^"]*(")/,
-      "$1showroom, visite virtuelle, 360, sanitaire, vasques, robinetterie, baignoires$2",
-    )
+    .replace(/(<meta\s+name="keywords"[\s\S]*?content=")[^"]*(")/, `$1${keywords}$2`)
     .replace(/(<meta\s+property="og:title"\s+content=")[^"]*(")/, `$1${title}$2`)
     .replace(/(<meta\s+property="og:description"\s+content=")[^"]*(")/, `$1${description}$2`)
     .replace(/(<meta\s+property="og:image:alt"\s+content=")[^"]*(")/, `$1${title}$2`)
-    .replace(/(<meta\s+property="og:locale"\s+content=")[^"]*(")/, "$1fr_FR$2")
+    .replace(/(<meta\s+property="og:locale"\s+content=")[^"]*(")/, "$1ar_LY$2")
+    .replace(/(<meta\s+property="og:locale:alternate"\s+content=")[^"]*(")/, "$1en_GB$2")
     .replace(/(<meta\s+name="twitter:title"\s+content=")[^"]*(")/, `$1${title}$2`)
     .replace(/(<meta\s+name="twitter:description"\s+content=")[^"]*(")/, `$1${description}$2`);
 }

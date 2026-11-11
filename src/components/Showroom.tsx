@@ -297,7 +297,7 @@ export default function Showroom() {
                   className="accent-fill inline-flex items-center gap-2 rounded-full border px-5 py-3.5 font-display text-[13px] font-black transition-transform duration-300 hover:scale-[1.04]"
                 >
                   <IconCube className="h-4 w-4" />
-                  Visite virtuelle 360°
+                  {t("nav.visite360")}
                   <span className="rounded-full bg-black/15 px-2 py-0.5 text-[10px]">/visite</span>
                 </a>
               </div>

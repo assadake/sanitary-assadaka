@@ -23,7 +23,14 @@ modèles, prix et disponibilités se confirment avec la société.
 | Style | **Tailwind CSS 4** (thème maison : `--color-ikea`, `--color-sun`, polices `font-display` / `font-sans`) |
 | Typo | Noto Kufi Arabic (display) + IBM Plex Sans Arabic (texte) via Google Fonts |
 | État | Context React maison (`src/store.tsx`) — langue, panier, favoris persistés en `localStorage` |
-| Images | Pexels CDN + `public/brands/` + panoramas `public/visite360/` (intouchables) |
+| Images | Pexels CDN + `public/brands/` + panoramas `public/visite360/pano*.jpg` (jamais retouchés ni recompressés) |
+| Audio | `public/audio/tour/ar.mp3` + `en.mp3` — commentaire sonore enregistré pour les 8 panoramas (voir `public/audio/tour/README.md`) |
+
+La **visite virtuelle est bilingue arabe / anglais** comme le reste du site : plus aucun
+libellé français. Les deux parcours 360° (`/visite` avec le viewer Pannellum et
+`/#/showroom` avec le moteur WebGL) proposent un **commentaire audio AR/EN** visible
+dans l'interface, avec repli sur la synthèse vocale du navigateur si le MP3 ne peut
+pas être lu.
 
 Aucune dépendance backend, **aucune base de données**, aucune migration, aucune variable d'environnement requise.
 
@@ -86,7 +93,7 @@ npm install
 npm install
 npm run dev       # http://localhost:5173 → / , /visite , /visite-360/index.html
 npm run typecheck # vérification de types
-npm run build     # génère dist/index.html + dist/visite/index.html + dist/visite-360/*
+npm run build     # génère dist/index.html + dist/visite/index.html + dist/visite-360/* + dist/audio/tour/*
 npm run preview   # sert le build de production
 npm start         # serveur statique natif pour Render (PORT)
 ```
@@ -103,7 +110,9 @@ Un workflow **GitHub Actions** (`.github/workflows/ci.yml`) rejoue `npm install`
 | **Produits** (nom, modèle, prix sur demande, disponibilité…) | `src/data/catalog.ts` → `PRODUCTS` |
 | **Rayons / départements** | `src/data/catalog.ts` → `CATEGORIES` |
 | **Idées de salles de bain & guides d'achat** | `src/data/catalog.ts` → `ROOMS`, `STORIES` |
-| **Textes de l'interface** (AR + EN) | `src/i18n.ts` → objets `ar` et `en` (mêmes clés) |
+| **Textes de l'interface** (AR + EN) | `src/i18n.ts` → objets `ar` et `en` (mêmes clés) ; page `/visite` : `app/visite/i18n.ts` |
+| **Titres des 8 panoramas** (AR + EN) | `src/data/tour.ts` → `TOUR_SCENES` ; repris tels quels par `public/visite360/index.html` |
+| **Commentaire audio AR/EN** | `public/audio/tour/{ar,en}.mp3` (+ `.txt` = texte exact). Remplacer les MP3 suffit ; aucun code à changer. |
 | **Adresse, horaires, FAQ** | `src/i18n.ts` (`showroom.*`, `faq*`) + `app/visite/config.ts` et `src/components/Showroom.tsx` (lien Google Maps) |
 | **Couleurs & polices** | `src/index.css` → bloc `@theme` |
 | **Modèle du message de demande / devis** | `src/store.tsx` → `buildOrderMessage()` |
@@ -190,7 +199,7 @@ aucune nouvelle dépendance npm.** Le site reste 100 % statique.
 | Type | **Static Site** Render, Publish `dist` | **Web Service** Node/Express |
 | Base de données | **Aucune** — catalogue local dans `src/data/catalog.ts` | **Neon PostgreSQL** via `DATABASE_URL`, tables `products` / `orders` / `app_settings` |
 | Identité | **Assadaka Alraqia** — مواد صحية وسيراميك | Assadaka Alraqia (contenu administrable en BDD) |
-| Visite 360° | ✅ `/visite` + viewer intact `/visite-360/index.html` | ❌ absente |
+| Visite 360° | ✅ `/visite` + viewer Pannellum bilingue `/visite-360/index.html` + `/#/showroom` | ❌ absente |
 
 👉 Si un domaine affiche un autre nom ou d'anciens articles, c'est qu'il pointe
 vers **l'autre service** : vérifier `Settings → Branch` et la section
@@ -205,8 +214,9 @@ faite (consigne : ne pas toucher à la BDD).
 | Fichier produit | Rôle |
 | --- | --- |
 | `dist/index.html` | site complet (JS + CSS inline, `vite-plugin-singlefile`) |
-| `dist/visite/index.html` | **vrai fichier** pour `/visite` : `<html lang="fr" dir="ltr">` + balises SEO statiques. Fonctionne **sans aucune règle de réécriture** |
-| `dist/visite-360/*` | copie exacte des panoramas et du viewer Pannellum d'origine |
+| `dist/visite/index.html` | **vrai fichier** pour `/visite` : `<html lang="ar" dir="rtl">` + SEO statique arabe (alternate `en_GB`). Fonctionne **sans aucune règle de réécriture** ; au chargement la page suit `assadaka.lang` et passe en EN/LTR si besoin |
+| `dist/visite-360/*` | les 8 JPEG d'origine **octet pour octet** + le viewer Pannellum traduit AR/EN |
+| `dist/audio/tour/*` | `ar.mp3`, `en.mp3` et leurs scripts `.txt` — commentaire sonore des deux visites |
 | `dist/deploy-info.json` | diagnostic : commit, branche et date du build réellement déployés |
 
 ### Réglages du service Render
@@ -236,7 +246,7 @@ Render ne permet **pas** de transformer un Web Service en Static Site après cou
 | Build Command | `npm ci && npm run build` |
 | Start Command | `npm start` |
 
-Le script `start` (`scripts/serve.mjs`) est fourni : **zéro dépendance**, Node natif, il sert `dist/` sur `0.0.0.0:$PORT` avec fallback SPA (`/visite`, `/…` → `index.html`) et `no-cache` sur `index.html` / `deploy-info.json`. Render injecte `PORT` automatiquement : aucune variable d'environnement à créer.
+Le script `start` (`scripts/serve.mjs`) est fourni : **zéro dépendance**, Node natif, il sert `dist/` sur `0.0.0.0:$PORT` avec fallback SPA (`/visite`, `/…` → `index.html`), `no-cache` sur `index.html` / `deploy-info.json` et réponses `206 Partial Content` pour les requêtes `Range` (indispensable au `seek` dans les MP3). Render injecte `PORT` automatiquement : aucune variable d'environnement à créer.
 
 Si ce service reste sur l'ancienne branche `arena/a85f3eea-…`, il continuera à construire l'ancien site quel que soit le nombre de "Manual Deploy".
 
@@ -254,14 +264,18 @@ Dans le log de build, on doit voir `✓ built` et `dist/index.html` (~520 kB).
 
 | URL | Attendu |
 | --- | --- |
-| `/` | site **Assadaka** avec le lien « Visite virtuelle 360° » |
-| `/visite` ou `/visite/` | page noir + doré |
+| `/` | site **Assadaka** avec le lien « الزيارة الافتراضية 360° / Virtual 360° tour » |
+| `/visite` ou `/visite/` | page noir + doré **AR/RTL ou EN/LTR**, avec sélecteur de langue et bandeau « تعليق صوتي / Audio commentary » |
 | `/visite/index.html` | la même page (fichier statique) |
-| `/visite-360/index.html` | viewer Pannellum d'origine |
+| `/visite-360/index.html` | viewer Pannellum : titres, hotspots et boutons en arabe ou en anglais |
+| `/#/showroom` | second parcours 360° : bouton « تشغيل التعليق الصوتي / Turn on voice narration » bien visible |
+| `/audio/tour/ar.mp3`, `/audio/tour/en.mp3` | deux pistes de commentaire (≈ 2 min 19 s et 1 min 40 s) |
 | `/visite-360/pano1.jpg` | JPEG 930 087 octets |
 | `/deploy-info.json` | SHA de `main` |
 
-> Le viewer charge Pannellum depuis `cdn.jsdelivr.net` et les polices depuis Google Fonts : ces CDN doivent être accessibles depuis le navigateur du visiteur (ils sont bloqués dans le sandbox de test uniquement).
+> Le viewer charge Pannellum depuis `cdn.jsdelivr.net` et les polices depuis Google Fonts : ces CDN doivent être accessibles depuis le navigateur du visiteur (ils sont bloqués dans le sandbox de test uniquement). Si la bibliothèque ne charge pas, le viewer reste lisible (légendes, miniatures et audio fonctionnent quand même).
+>
+> **Audio** : les MP3 sont servis en local, sans CDN ni dépendance npm. La lecture ne démarre qu'après un clic (politique d'autoplay des navigateurs) ; l'iframe a `allow="autoplay"`. En cas de fichier absent ou de lecture refusée, les deux parcours basculent sur `speechSynthesis` avec le texte AR/EN de la scène. Le lecteur divise la durée réelle de la piste par 8 pour faire défiler les panoramas au rythme de la voix, et `seek` vers la bonne partie quand on choisit une station ; `scripts/serve.mjs` honore les requêtes `Range` pour que ce `seek` fonctionne aussi sur l'ancien *Web Service*.
 
 ---
 

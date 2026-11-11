@@ -120,7 +120,7 @@ export default function Hero() {
                 className="accent-outline-soft group inline-flex items-center gap-2.5 rounded-full border px-5 py-3.5 font-display text-[15px] font-bold transition-all duration-300"
               >
                 <IconCube className="h-5 w-5 transition-transform duration-500 group-hover:rotate-12" />
-                Visite virtuelle 360°
+                {t("nav.visite360")}
                 <IconArrow className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" />
               </a>
             </div>

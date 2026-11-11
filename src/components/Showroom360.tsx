@@ -23,14 +23,40 @@ import {
   IconZoomIn,
   IconZoomOut,
 } from "./tour/TourIcons";
-import { SCENE_DURATION, TOUR_SCENES, thumbPosition, tourSrc, vaovOf, wrapDeg, type TourScene } from "../data/tour";
-import { WHATSAPP_DISPLAY, WHATSAPP_NUMBER } from "../i18n";
+import {
+  NARRATION_TRACK,
+  SCENE_DURATION,
+  TOUR_SCENES,
+  narrationSegment,
+  sceneIndexForSegment,
+  thumbPosition,
+  tourSrc,
+  vaovOf,
+  wrapDeg,
+  type TourScene,
+} from "../data/tour";
+import { WHATSAPP_DISPLAY, WHATSAPP_NUMBER, type Lang } from "../i18n";
 import { goHome } from "../router";
 import { useStore } from "../store";
 
 const N = TOUR_SCENES.length;
 const MAPS = "https://www.google.com/maps/search/?api=1&query=Assadaka%20Alraqia%20sanitary%20ware%20Tripoli%20Libya";
 const pad = (n: number) => String(n).padStart(2, "0");
+
+/** Best available installed voice for the TTS fallback (no audio file / blocked playback). */
+function pickVoice(lang: Lang): SpeechSynthesisVoice | undefined {
+  try {
+    const voices = window.speechSynthesis.getVoices() || [];
+    const exact = lang === "ar" ? "ar-sa" : "en-gb";
+    return (
+      voices.find((v) => v.lang.toLowerCase() === exact) ||
+      voices.find((v) => v.lang.toLowerCase().startsWith(lang)) ||
+      undefined
+    );
+  } catch {
+    return undefined;
+  }
+}
 
 /* ── small building blocks ─────────────────────────────────────────── */
 function Ctrl({
@@ -93,13 +119,16 @@ export default function Showroom360() {
   const [started, setStarted] = useState(false);
   const [rotate, setRotate] = useState(true);
   const [narration, setNarration] = useState(false);
+  const [narrationActive, setNarrationActive] = useState(false);
   const [activeInfo, setActiveInfo] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadErr, setLoadErr] = useState(false);
   const [simplified, setSimplified] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
   const [hint, setHint] = useState(true);
-  const [soundSupported] = useState(() => typeof window !== "undefined" && "speechSynthesis" in window);
+  const [soundSupported] = useState(
+    () => typeof window !== "undefined" && (typeof Audio !== "undefined" || "speechSynthesis" in window),
+  );
 
   const panoRef = useRef<PanoCanvasHandle | null>(null);
   const frameRef = useRef<HTMLDivElement | null>(null);
@@ -109,6 +138,21 @@ export default function Showroom360() {
   const zoomRef = useRef<HTMLSpanElement | null>(null);
   const elapsedRef = useRef(0);
   const firstRef = useRef(true);
+
+  /* Audio commentary: one MP3 per language, Web Speech API as a fallback. */
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const trackDurationRef = useRef(0);
+  const ttsRef = useRef(false);
+  const narrationActiveRef = useRef(false);
+  const narrationRef = useRef(narration);
+  const playingRef = useRef(playing);
+  const indexRef = useRef(index);
+  const langRef = useRef(lang);
+  narrationRef.current = narration;
+  playingRef.current = playing;
+  indexRef.current = index;
+  langRef.current = lang;
 
   const scene = TOUR_SCENES[index];
   const rtl = lang === "ar";
@@ -196,9 +240,198 @@ export default function Showroom360() {
 
   const handleError = useCallback(() => setSimplified(true), []);
 
-  /* ── guided tour clock ──────────────────────────────────────────── */
+  /* ── audio commentary (recorded AR/EN track + Web Speech fallback) ─ */
+  const clearUtterance = useCallback(() => {
+    const u = utteranceRef.current;
+    if (u) {
+      u.onend = null;
+      u.onerror = null;
+      utteranceRef.current = null;
+    }
+    try {
+      if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  const stopNarration = useCallback(() => {
+    audioRef.current?.pause();
+    clearUtterance();
+    ttsRef.current = false;
+    narrationActiveRef.current = false;
+    setNarrationActive(false);
+  }, [clearUtterance]);
+
+  const pauseNarration = useCallback(() => {
+    audioRef.current?.pause();
+    clearUtterance();
+    narrationActiveRef.current = false;
+    setNarrationActive(false);
+  }, [clearUtterance]);
+
+  const startTTS = useCallback(() => {
+    if (!narrationRef.current || !playingRef.current) return;
+    const l = langRef.current;
+    const s = TOUR_SCENES[indexRef.current];
+    if (!("speechSynthesis" in window)) {
+      narrationActiveRef.current = false;
+      setNarrationActive(false);
+      return;
+    }
+    clearUtterance();
+    ttsRef.current = true;
+    const u = new SpeechSynthesisUtterance(`${s.title[l]}. ${s.text[l]}`);
+    u.lang = l === "ar" ? "ar-SA" : "en-GB";
+    u.rate = 0.96;
+    const voice = pickVoice(l);
+    if (voice) u.voice = voice;
+    u.onend = () => {
+      if (!narrationRef.current || !playingRef.current || !ttsRef.current) return;
+      elapsedRef.current = 0;
+      setIndex((i) => (i + 1) % N);
+    };
+    u.onerror = () => {
+      narrationActiveRef.current = false;
+      setNarrationActive(false);
+    };
+    utteranceRef.current = u;
+    try {
+      window.speechSynthesis.speak(u);
+      narrationActiveRef.current = true;
+      setNarrationActive(true);
+    } catch {
+      narrationActiveRef.current = false;
+      setNarrationActive(false);
+    }
+  }, [clearUtterance]);
+
+  /* One audio element for the whole tour: `timeupdate` drives the scenes, so
+     the recorded commentary is never cut off by a fixed timer. */
   useEffect(() => {
-    if (!playing) return;
+    const a = document.createElement("audio");
+    a.preload = "metadata";
+    a.loop = true;
+    audioRef.current = a;
+
+    /* A seek that lands exactly on a segment boundary can round down to the
+       previous segment in floating point; start a fraction of a second inside
+       the segment and use the same tolerance when reading `timeupdate`. */
+    const SEEK_EPSILON = 0.2;
+    const onMeta = () => {
+      const d = isFinite(a.duration) ? a.duration : 0;
+      trackDurationRef.current = d;
+      if (d && narrationRef.current && playingRef.current && !ttsRef.current) {
+        const seg = narrationSegment(TOUR_SCENES[indexRef.current].file);
+        try {
+          a.currentTime = (seg * d) / N + SEEK_EPSILON;
+        } catch {
+          /* ignore */
+        }
+        /* Changing the language calls load(), which pauses the element:
+           resume here once the new track's metadata is known. */
+        const p = a.play();
+        if (p && typeof p.catch === "function") p.catch(() => startTTS());
+        narrationActiveRef.current = true;
+        setNarrationActive(true);
+      }
+    };
+    const onTime = () => {
+      if (!narrationRef.current || !playingRef.current || ttsRef.current) return;
+      const d = trackDurationRef.current;
+      if (!d) return;
+      const segDur = d / N;
+      const p = Math.min(1, (a.currentTime % segDur) / segDur);
+      if (progressRef.current) progressRef.current.style.transform = `scaleX(${p})`;
+      const seg = Math.max(0, Math.min(N - 1, Math.floor((a.currentTime + SEEK_EPSILON) / segDur)));
+      const wanted = sceneIndexForSegment(seg);
+      if (wanted !== indexRef.current) {
+        elapsedRef.current = 0;
+        setActiveInfo(null);
+        indexRef.current = wanted;
+        setIndex(wanted);
+      }
+    };
+    const onError = () => {
+      if (narrationRef.current) startTTS();
+    };
+
+    a.addEventListener("loadedmetadata", onMeta);
+    a.addEventListener("timeupdate", onTime);
+    a.addEventListener("error", onError);
+    try {
+      if ("speechSynthesis" in window) window.speechSynthesis.getVoices();
+    } catch {
+      /* ignore */
+    }
+    return () => {
+      a.pause();
+      a.removeEventListener("loadedmetadata", onMeta);
+      a.removeEventListener("timeupdate", onTime);
+      a.removeEventListener("error", onError);
+      clearUtterance();
+      audioRef.current = null;
+    };
+  }, [clearUtterance, startTTS]);
+
+  /* Start / pause / seek the track when the scene, language or tour state changes. */
+  useEffect(() => {
+    if (!narration || !soundSupported) {
+      stopNarration();
+      return;
+    }
+    const a = audioRef.current;
+    if (!a) {
+      startTTS();
+      return;
+    }
+    const src = NARRATION_TRACK[lang];
+    const absolute = new URL(src, window.location.href).href;
+    if (a.getAttribute("src") !== src || a.src !== absolute) {
+      a.setAttribute("src", src);
+      a.load();
+      trackDurationRef.current = 0;
+    }
+    if (!playing) {
+      pauseNarration();
+      return;
+    }
+    if (ttsRef.current) {
+      startTTS();
+      return;
+    }
+    const seg = narrationSegment(TOUR_SCENES[index].file);
+    const d = trackDurationRef.current;
+    const target = d ? (seg * d) / N + 0.2 : 0;
+    if (!narrationActiveRef.current || (d > 0 && Math.abs(a.currentTime - target) > 2)) {
+      if (d > 0) {
+        try {
+          a.currentTime = target;
+        } catch {
+          /* ignore */
+        }
+      }
+      const p = a.play();
+      if (p && typeof p.catch === "function") p.catch(() => startTTS());
+      narrationActiveRef.current = true;
+      setNarrationActive(true);
+    }
+  }, [narration, playing, index, lang, soundSupported, startTTS, stopNarration, pauseNarration]);
+
+  const toggleNarration = useCallback(() => {
+    const next = !narration;
+    setNarration(next);
+    if (next) {
+      // Turning the commentary on starts the guided tour with sound.
+      setStarted(true);
+      setPlaying(true);
+      elapsedRef.current = 0;
+    }
+  }, [narration]);
+
+  /* ── guided tour clock (silent mode) ────────────────────────────── */
+  useEffect(() => {
+    if (!playing || narration) return;
     let raf = 0;
     let last = performance.now();
     const tick = (now: number) => {
@@ -215,19 +448,18 @@ export default function Showroom360() {
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [playing]);
+  }, [playing, narration]);
 
-  /* ── optional voice narration (browser TTS, no audio files) ─────── */
+  /* Safety net: if the track never advances (missing file, blocked audio),
+     keep the guided tour moving after 30 s instead of freezing. */
   useEffect(() => {
-    if (!narration || !soundSupported) return;
-    const s = TOUR_SCENES[index];
-    const utterance = new SpeechSynthesisUtterance(`${s.title[lang]}. ${s.text[lang]}`);
-    utterance.lang = rtl ? "ar-SA" : "en-GB";
-    utterance.rate = 0.96;
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(utterance);
-    return () => window.speechSynthesis.cancel();
-  }, [narration, soundSupported, index, lang, rtl]);
+    if (!playing || !narration || !soundSupported) return;
+    const id = window.setTimeout(() => {
+      elapsedRef.current = 0;
+      setIndex((i) => (i + 1) % N);
+    }, 30000);
+    return () => window.clearTimeout(id);
+  }, [playing, narration, soundSupported, index]);
 
   /* ── page metadata / shortcuts / fullscreen ─────────────────────── */
   useEffect(() => {
@@ -476,14 +708,30 @@ export default function Showroom360() {
                 <Ctrl label={t("tour.rotate")} onClick={() => setRotate((v) => !v)} active={rotate}>
                   <IconRotate />
                 </Ctrl>
-                <Ctrl
-                  label={soundSupported ? t("tour.narration") : t("tour.narrationOff")}
-                  onClick={() => setNarration((v) => !v)}
-                  active={narration}
+                <button
+                  type="button"
+                  onClick={toggleNarration}
                   disabled={!soundSupported}
+                  title={
+                    soundSupported
+                      ? narration
+                        ? t("tour.narrationStop")
+                        : t("tour.narrationOn")
+                      : t("tour.narrationOff")
+                  }
+                  aria-label={
+                    soundSupported
+                      ? narration
+                        ? t("tour.narrationStop")
+                        : t("tour.narrationOn")
+                      : t("tour.narrationOff")
+                  }
+                  aria-pressed={narration}
+                  className={`tour-ctrl tour-ctrl-wide ${narration ? "is-active" : ""}`}
                 >
-                  {narration ? <IconVolume /> : <IconVolumeOff />}
-                </Ctrl>
+                  {narration ? <IconVolume className="h-4 w-4" /> : <IconVolumeOff className="h-4 w-4" />}
+                  <span>{narration ? t("tour.narrationStop") : t("tour.narrationOn")}</span>
+                </button>
                 <Ctrl label={fullscreen ? t("tour.exitFull") : t("tour.fullscreen")} onClick={toggleFull}>
                   {fullscreen ? <IconCompress /> : <IconExpand />}
                 </Ctrl>
@@ -536,6 +784,12 @@ export default function Showroom360() {
                     </span>
                   ))}
                 </div>
+                {narrationActive && (
+                  <p className="mt-2.5 inline-flex items-center gap-2 text-[11px] font-bold text-sun">
+                    <IconVolume className="h-3.5 w-3.5" />
+                    {t("tour.narrationPlaying")}
+                  </p>
+                )}
               </div>
 
               <div className="tour-controls flex flex-wrap items-center justify-between gap-3">
@@ -639,6 +893,31 @@ export default function Showroom360() {
                   <IconReplay />
                   {t("tour.replay")}
                 </button>
+              )}
+
+              {/* Bouton explicite : le commentaire sonore est facile à trouver. */}
+              <button
+                type="button"
+                onClick={toggleNarration}
+                disabled={!soundSupported}
+                aria-pressed={narration}
+                className={`tour-narration-btn ${narration ? "is-active" : ""}`}
+              >
+                {narration ? <IconVolumeOff className="h-4 w-4" /> : <IconVolume className="h-4 w-4" />}
+                <span>
+                  {!soundSupported
+                    ? t("tour.narrationOff")
+                    : narration
+                      ? t("tour.narrationStop")
+                      : t("tour.narrationOn")}
+                </span>
+              </button>
+              <p className="tour-narration-note text-ink-soft/75">{t("tour.narrationHint")}</p>
+              {narrationActive && (
+                <p className="tour-narration-status mt-2">
+                  <span className="blip" aria-hidden="true" />
+                  {t("tour.narrationPlaying")}
+                </p>
               )}
             </div>
 

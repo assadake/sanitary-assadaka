@@ -111,7 +111,7 @@ export default function Header() {
               className="accent-outline inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1.5 font-display text-[11.5px] font-bold transition-colors"
             >
               <IconCube className="h-3.5 w-3.5" />
-              Visite virtuelle 360°
+              {t("nav.visite360")}
             </a>
             <ThemeControls lang={lang} variant="header" />
             <span className="mx-1 h-4 w-px bg-white/15" />
@@ -181,7 +181,7 @@ export default function Header() {
               className="accent-chip hidden items-center gap-2 rounded-full border px-3 py-2 font-display text-[12.5px] font-bold transition-all duration-300 xl:inline-flex"
             >
               <IconCube className="h-4 w-4" />
-              Visite virtuelle 360°
+              {t("nav.visite360")}
             </a>
 
             {/* desktop search */}
@@ -410,7 +410,7 @@ export default function Header() {
             >
               <span className="flex items-center gap-2.5">
                 <IconCube className="h-5 w-5" />
-                Visite virtuelle 360°
+                {t("nav.visite360")}
               </span>
               <span className="accent-badge rounded-full px-2 py-0.5 font-display text-[10px] font-black tabular">/visite</span>
             </a>
