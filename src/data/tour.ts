@@ -330,3 +330,28 @@ export const TOUR_SCENES: TourScene[] = [
 
 /** Duration of each stop in the auto-played guided tour (ms). */
 export const SCENE_DURATION = 9500;
+
+/**
+ * One self-contained spoken commentary per site language. Both tracks describe
+ * the panoramas in the Pannellum viewer's file order (`pano1.jpg` → `pano8.jpg`)
+ * with a spoken stop number, so a player can seek to
+ * `segment / 8 * audio.duration` to hear the commentary for a given panorama.
+ * No CDN and no dependency: if the MP3 cannot be played, the player falls back
+ * to the Web Speech API with the scene text above.
+ */
+export const NARRATION_TRACK: Record<"ar" | "en", string> = {
+  ar: "/audio/tour/ar.mp3",
+  en: "/audio/tour/en.mp3",
+};
+
+/** Zero-based position of a panorama inside the narration track. */
+export function narrationSegment(file: string) {
+  const n = Number(/pano(\d+)\.jpg/.exec(file)?.[1] ?? 1);
+  return Math.max(0, Math.min(7, n - 1));
+}
+
+/** Index inside `TOUR_SCENES` of the panorama described by a track segment. */
+export function sceneIndexForSegment(segment: number) {
+  const i = TOUR_SCENES.findIndex((s) => narrationSegment(s.file) === segment);
+  return i < 0 ? 0 : i;
+}

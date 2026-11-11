@@ -21,6 +21,7 @@ const MIME = {
   ".mjs": "text/javascript; charset=utf-8",
   ".css": "text/css; charset=utf-8",
   ".json": "application/json; charset=utf-8",
+  ".mp3": "audio/mpeg",
   ".jpg": "image/jpeg",
   ".jpeg": "image/jpeg",
   ".png": "image/png",
@@ -56,13 +57,53 @@ createServer((req, res) => {
   if (existsSync(file) && statSync(file).isDirectory()) file = join(file, "index.html");
   if (!existsSync(file) || !statSync(file).isFile()) file = join(ROOT, "index.html"); // SPA fallback
 
+  const stat = statSync(file);
   const noCache = file.endsWith("index.html") || file.endsWith("deploy-info.json");
-  res.writeHead(200, {
+  const headers = {
     "Content-Type": MIME[extname(file).toLowerCase()] || "application/octet-stream",
     "Cache-Control": noCache ? "no-cache" : "public, max-age=3600",
     "X-Content-Type-Options": "nosniff",
     "Referrer-Policy": "strict-origin-when-cross-origin",
-  });
+    "Accept-Ranges": "bytes",
+  };
+
+  /* Browsers seek inside the AR/EN MP3 commentaries with `Range` requests.
+     Without 206 responses Chromium restarts the track at zero instead of
+     jumping to the matching stop, so honour a single byte range here. */
+  const range = req.headers.range;
+  if (range) {
+    const match = /^bytes=(\d*)-(\d*)$/.exec(range.trim());
+    let start = 0;
+    let end = stat.size - 1;
+    if (!match || (!match[1] && !match[2])) {
+      res.writeHead(416, { ...headers, "Content-Range": `bytes */${stat.size}` }).end();
+      return;
+    }
+    if (!match[1]) {
+      const suffix = Number(match[2]);
+      start = Math.max(0, stat.size - suffix);
+    } else {
+      start = Number(match[1]);
+      if (match[2]) end = Math.min(Number(match[2]), stat.size - 1);
+    }
+    if (!Number.isFinite(start) || !Number.isFinite(end) || start > end || start >= stat.size) {
+      res.writeHead(416, { ...headers, "Content-Range": `bytes */${stat.size}` }).end();
+      return;
+    }
+    res.writeHead(206, {
+      ...headers,
+      "Content-Range": `bytes ${start}-${end}/${stat.size}`,
+      "Content-Length": end - start + 1,
+    });
+    if (req.method === "HEAD") {
+      res.end();
+      return;
+    }
+    createReadStream(file, { start, end }).pipe(res);
+    return;
+  }
+
+  res.writeHead(200, { ...headers, "Content-Length": stat.size });
   if (req.method === "HEAD") {
     res.end();
     return;

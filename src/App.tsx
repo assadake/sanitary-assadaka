@@ -122,8 +122,9 @@ export default function App() {
     return () => window.removeEventListener("popstate", onPop);
   }, []);
 
-  // /visite is a standalone French/LTR page. Rendering it outside StoreProvider
-  // prevents the shop's Arabic/RTL effect from overriding <html lang|dir>.
+  // /visite is a standalone page (no shop header), but it is bilingual AR/EN:
+  // it reads the same `assadaka.lang` as the shop and follows its RTL/LTR dir.
+  // Rendering it outside StoreProvider keeps its own document title/SEO.
   if (isVisiteRoute(pathname)) return <VisitePage />;
 
   return (

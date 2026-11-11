@@ -110,7 +110,7 @@ export default function Header() {
               className="inline-flex items-center gap-1.5 rounded-full border border-[#c9a86a]/50 px-2.5 py-1.5 font-display text-[11.5px] font-bold text-[#e3cfa2] transition-colors hover:bg-[#c9a86a] hover:text-black"
             >
               <IconCube className="h-3.5 w-3.5" />
-              Visite virtuelle 360°
+              {t("nav.visite360")}
             </a>
             <span className="mx-1 h-4 w-px bg-white/15" />
             <LangSwitch dark />
@@ -179,7 +179,7 @@ export default function Header() {
               className="hidden items-center gap-2 rounded-full border border-[#c9a86a]/60 bg-[#c9a86a]/10 px-3 py-2 font-display text-[12.5px] font-bold text-[#8a6d38] transition-all duration-300 hover:bg-[#c9a86a] hover:text-black xl:inline-flex"
             >
               <IconCube className="h-4 w-4" />
-              Visite virtuelle 360°
+              {t("nav.visite360")}
             </a>
 
             {/* desktop search */}
@@ -408,7 +408,7 @@ export default function Header() {
             >
               <span className="flex items-center gap-2.5">
                 <IconCube className="h-5 w-5" />
-                Visite virtuelle 360°
+                {t("nav.visite360")}
               </span>
               <span className="rounded-full bg-[#c9a86a] px-2 py-0.5 font-display text-[10px] font-black tabular text-black">/visite</span>
             </a>
