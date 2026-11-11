@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import ThemeControls from "../../src/components/ThemeControls";
 import {
   CITY,
   MAPS_URL,
@@ -328,6 +329,7 @@ export default function VisitePage() {
               English
             </button>
           </div>
+          <ThemeControls lang={lang} variant="visite" />
           <a href={WHATSAPP_DIRECT} target="_blank" rel="noreferrer noopener" className="visite-top-cta">
             {t("contact")}
           </a>

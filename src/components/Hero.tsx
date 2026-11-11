@@ -34,13 +34,13 @@ export default function Hero() {
   ];
 
   return (
-    <section className="relative overflow-hidden bg-ink text-white">
+    <section className="relative overflow-hidden bg-dark-panel text-white">
       {/* layered ambient */}
       <div
         className="pointer-events-none absolute inset-0 opacity-70"
         style={{
           backgroundImage:
-            "radial-gradient(50rem 30rem at 85% 10%, rgba(122,92,46,0.55), transparent 60%), radial-gradient(38rem 26rem at 10% 90%, rgba(201,168,106,0.22), transparent 60%)",
+            "radial-gradient(50rem 30rem at 85% 10%, rgba(var(--color-ikea-rgb),0.55), transparent 60%), radial-gradient(38rem 26rem at 10% 90%, rgba(var(--color-sun-rgb),0.22), transparent 60%)",
         }}
       />
       <div
@@ -102,7 +102,7 @@ export default function Hero() {
                 )}
                 target="_blank"
                 rel="noreferrer noopener"
-                className="group inline-flex items-center gap-2.5 rounded-full bg-sun px-6 py-3.5 font-display text-[15px] font-bold text-ink transition-all duration-300 hover:bg-white hover:shadow-[0_16px_40px_-14px_rgba(201,168,106,0.8)] active:scale-95"
+                className="group inline-flex items-center gap-2.5 rounded-full bg-sun px-6 py-3.5 font-display text-[15px] font-bold text-on-accent transition-all duration-300 hover:bg-surface hover:shadow-[0_16px_40px_-14px_rgba(var(--color-sun-rgb),0.8)] active:scale-95"
               >
                 <IconWhatsApp className="h-5 w-5 text-leaf transition-transform duration-300 group-hover:scale-110" />
                 {t("hero.cta1")}
@@ -117,7 +117,7 @@ export default function Hero() {
               {/* Accès direct et bien visible à la page /visite (viewer Pannellum) */}
               <a
                 href="/visite"
-                className="group inline-flex items-center gap-2.5 rounded-full border border-[#c9a86a] bg-[#c9a86a]/15 px-5 py-3.5 font-display text-[15px] font-bold text-[#e3cfa2] transition-all duration-300 hover:bg-[#c9a86a] hover:text-black"
+                className="accent-outline-soft group inline-flex items-center gap-2.5 rounded-full border px-5 py-3.5 font-display text-[15px] font-bold transition-all duration-300"
               >
                 <IconCube className="h-5 w-5 transition-transform duration-500 group-hover:rotate-12" />
                 {t("nav.visite360")}
@@ -140,7 +140,7 @@ export default function Hero() {
           <Reveal delay={370}>
             <dl className="mt-10 grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-white/10 sm:grid-cols-4">
               {stats.map((s) => (
-                <div key={s.k} className="group bg-ink px-4 py-5 transition-colors duration-300 hover:bg-ikea-deep">
+                <div key={s.k} className="group bg-dark-panel px-4 py-5 transition-colors duration-300 hover:bg-ikea-deep">
                   <dt className="font-display text-[clamp(1.5rem,3vw,2.1rem)] font-black tabular leading-none text-sun">
                     {s.v}
                   </dt>
@@ -161,7 +161,7 @@ export default function Hero() {
                 className="h-full w-full animate-kenburns object-cover"
                 loading="eager"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/10 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-dark-panel/85 via-dark-panel/10 to-transparent" />
               <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-5">
                 <div>
                   <p className="font-display text-[11px] font-bold uppercase tracking-[0.2em] text-sun">
@@ -181,20 +181,20 @@ export default function Hero() {
             <img
               src={px(HERO_IMG_C, 400, 400)}
               alt=""
-              className="absolute -start-3 top-6 hidden h-24 w-24 animate-float rounded-2xl border-4 border-ink object-cover shadow-2xl sm:block lg:h-28 lg:w-28"
+              className="absolute -start-3 top-6 hidden h-24 w-24 animate-float rounded-2xl border-4 border-dark-panel object-cover shadow-2xl sm:block lg:h-28 lg:w-28"
               style={{ animationDelay: "0.6s" }}
               loading="lazy"
             />
             <img
               src={px(HERO_IMG_B, 400, 400)}
               alt=""
-              className="absolute -end-2 bottom-24 hidden h-20 w-20 animate-float rounded-2xl border-4 border-ink object-cover shadow-2xl lg:block lg:h-24 lg:w-24"
+              className="absolute -end-2 bottom-24 hidden h-20 w-20 animate-float rounded-2xl border-4 border-dark-panel object-cover shadow-2xl lg:block lg:h-24 lg:w-24"
               style={{ animationDelay: "1.4s" }}
               loading="lazy"
             />
 
             {/* rotating product card */}
-            <div className="absolute -bottom-6 start-2 w-[min(20rem,calc(100%-1rem))] rounded-2xl border border-white/12 bg-white p-3 text-ink shadow-[0_30px_60px_-24px_rgba(0,0,0,0.8)] sm:start-5">
+            <div className="absolute -bottom-6 start-2 w-[min(20rem,calc(100%-1rem))] rounded-2xl border border-white/12 bg-surface p-3 text-ink shadow-[0_30px_60px_-24px_rgba(0,0,0,0.8)] sm:start-5">
               <div className="flex gap-3">
                 <img
                   key={featured.id}
@@ -244,7 +244,7 @@ export default function Hero() {
       </div>
 
       {/* bottom bar */}
-      <div className="relative border-t border-white/10 bg-ink/60">
+      <div className="relative border-t border-white/10 bg-dark-panel/60">
         <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-4 px-4 py-4 text-[12.5px] text-white/55 sm:px-6 lg:px-10">
           <span className="inline-flex items-center gap-2">
             <span className="relative flex h-2 w-2">

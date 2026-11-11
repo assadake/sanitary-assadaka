@@ -139,6 +139,24 @@ sont validés par `npm run typecheck`.
 
 ---
 
+## 🎨 Apparence : 8 couleurs + mode clair / sombre
+
+Le sélecteur est disponible dans la barre supérieure, le menu mobile, l'ancienne
+visite `#/showroom` et la page `/visite`. Il propose **8 palettes inspirées du
+sanitaire et de la céramique** : Or Assadaka, Bleu céramique, Vert sauge, Terre
+cuite, Ardoise, Sable, Cuivre, Lavande — ainsi que **Clair / Sombre**.
+
+| Élément | Fichier |
+| --- | --- |
+| Palettes, persistance, variables CSS | `src/theme.ts` (`assadaka.theme`, `assadaka.mode`) |
+| Interface du sélecteur | `src/components/ThemeControls.tsx` |
+| Styles clair / sombre | `src/index.css` (`html[data-mode="dark"]`) |
+| Application au démarrage | `src/main.tsx` |
+
+Le choix est enregistré dans `localStorage`, appliqué avant le rendu React et
+partagé par le site principal, `/visite` et l'ancienne visite guidée. Aucune
+nouvelle dépendance, aucune variable d'environnement, aucune base de données.
+
 ## 🧾 Comment fonctionne la demande
 
 1. Le visiteur parcourt les 35 articles, ajoute ses références au panier (persistant).

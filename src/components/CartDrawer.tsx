@@ -29,7 +29,7 @@ export default function CartDrawer() {
     <div className={`fixed inset-0 z-[80] ${cartOpen ? "" : "pointer-events-none"}`} aria-hidden={!cartOpen}>
       <div
         onClick={() => setCartOpen(false)}
-        className={`absolute inset-0 bg-ink/60 backdrop-blur-[3px] transition-opacity duration-400 ${
+        className={`absolute inset-0 bg-dark-panel/60 backdrop-blur-[3px] transition-opacity duration-400 ${
           cartOpen ? "opacity-100" : "opacity-0"
         }`}
       />
@@ -42,7 +42,7 @@ export default function CartDrawer() {
         }`}
       >
         {/* header */}
-        <div className="flex items-center justify-between gap-3 border-b border-line bg-white px-5 py-4">
+        <div className="flex items-center justify-between gap-3 border-b border-line bg-surface px-5 py-4">
           <div className="flex items-center gap-3">
             <span className="grid h-10 w-10 place-items-center rounded-xl bg-ikea text-white">
               <IconBag className="h-5 w-5" />
@@ -77,7 +77,7 @@ export default function CartDrawer() {
                 ? `افتحنا محادثة مع ${WHATSAPP_DISPLAY} وطلبك مكتوب فيها. اضغط إرسال في واتساب لتأكيد الطلب.`
                 : `We opened a chat with ${WHATSAPP_DISPLAY} with your order written in it. Press send inside WhatsApp to confirm.`}
             </p>
-            <p className="rounded-full bg-white px-4 py-2 font-display text-[13px] font-bold tabular text-ikea">
+            <p className="rounded-full bg-surface px-4 py-2 font-display text-[13px] font-bold tabular text-ikea">
               {t("cart.orderNum")}: {sent}
             </p>
             <button
@@ -87,14 +87,14 @@ export default function CartDrawer() {
                 clear();
                 setCartOpen(false);
               }}
-              className="mt-2 inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 font-display text-[13.5px] font-bold text-white transition-colors hover:bg-ikea"
+              className="mt-2 inline-flex items-center gap-2 rounded-full bg-dark-panel px-6 py-3 font-display text-[13.5px] font-bold text-white transition-colors hover:bg-ikea"
             >
               {lang === "ar" ? "تمام، أغلق السلة" : "Done, close the bag"}
             </button>
           </div>
         ) : lines.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-4 px-8 text-center">
-            <span className="relative grid h-20 w-20 place-items-center rounded-full bg-white text-ink-soft">
+            <span className="relative grid h-20 w-20 place-items-center rounded-full bg-surface text-ink-soft">
               <IconBag className="h-8 w-8" />
               <span className="absolute -bottom-1 -end-1 grid h-8 w-8 animate-float place-items-center rounded-full bg-sun text-[15px]">
                 🛍️
@@ -120,7 +120,7 @@ export default function CartDrawer() {
             <div className="flex-1 overflow-y-auto px-4 py-4">
               <ul className="space-y-3">
                 {lines.map(({ product: p, qty }) => (
-                  <li key={p.id} className="group flex gap-3 rounded-2xl border border-line bg-white p-3">
+                  <li key={p.id} className="group flex gap-3 rounded-2xl border border-line bg-surface p-3">
                     <img
                       src={px(p.img, 200, 200)}
                       alt={p.name[lang]}
@@ -149,7 +149,7 @@ export default function CartDrawer() {
                           <button
                             type="button"
                             onClick={() => setQty(p.id, qty - 1)}
-                            className="grid h-7 w-7 place-items-center rounded-full bg-white transition-colors hover:bg-ikea hover:text-white"
+                            className="grid h-7 w-7 place-items-center rounded-full bg-surface transition-colors hover:bg-ikea hover:text-white"
                             aria-label="-"
                           >
                             <IconMinus className="h-3.5 w-3.5" />
@@ -158,7 +158,7 @@ export default function CartDrawer() {
                           <button
                             type="button"
                             onClick={() => setQty(p.id, qty + 1)}
-                            className="grid h-7 w-7 place-items-center rounded-full bg-white transition-colors hover:bg-ikea hover:text-white"
+                            className="grid h-7 w-7 place-items-center rounded-full bg-surface transition-colors hover:bg-ikea hover:text-white"
                             aria-label="+"
                           >
                             <IconPlus className="h-3.5 w-3.5" />
@@ -174,7 +174,7 @@ export default function CartDrawer() {
               </ul>
 
               {/* customer details */}
-              <div className="mt-5 rounded-2xl border border-line bg-white p-4">
+              <div className="mt-5 rounded-2xl border border-line bg-surface p-4">
                 <p className="mb-3 font-display text-[11px] font-bold uppercase tracking-[0.18em] text-ink-soft/70">
                   {lang === "ar" ? "بيانات التوصيل" : "Delivery details"}
                 </p>
@@ -212,7 +212,7 @@ export default function CartDrawer() {
                           value={form[key]}
                           onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
                           placeholder={ph}
-                          className="w-full resize-none rounded-xl border border-line bg-mist px-3.5 py-2.5 text-[13px] outline-none transition-all placeholder:text-ink-soft/50 focus:border-ikea focus:bg-white focus:shadow-[0_0_0_3px_rgba(122,92,46,0.12)]"
+                          className="w-full resize-none rounded-xl border border-line bg-mist px-3.5 py-2.5 text-[13px] outline-none transition-all placeholder:text-ink-soft/50 focus:border-ikea focus:bg-surface focus:shadow-[0_0_0_3px_rgba(var(--color-ikea-rgb),0.12)]"
                         />
                       ) : (
                         <input
@@ -220,7 +220,7 @@ export default function CartDrawer() {
                           value={form[key]}
                           onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
                           placeholder={ph}
-                          className="w-full rounded-xl border border-line bg-mist px-3.5 py-2.5 text-[13px] outline-none transition-all placeholder:text-ink-soft/50 focus:border-ikea focus:bg-white focus:shadow-[0_0_0_3px_rgba(122,92,46,0.12)]"
+                          className="w-full rounded-xl border border-line bg-mist px-3.5 py-2.5 text-[13px] outline-none transition-all placeholder:text-ink-soft/50 focus:border-ikea focus:bg-surface focus:shadow-[0_0_0_3px_rgba(var(--color-ikea-rgb),0.12)]"
                         />
                       )}
                     </label>
@@ -230,7 +230,7 @@ export default function CartDrawer() {
             </div>
 
             {/* footer */}
-            <div className="border-t border-line bg-white px-5 py-4">
+            <div className="border-t border-line bg-surface px-5 py-4">
               <dl className="space-y-1.5 text-[13px]">
                 <div className="flex items-center justify-between">
                   <dt className="text-ink-soft">{t("cart.subtotal")}</dt>

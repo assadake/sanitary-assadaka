@@ -46,7 +46,7 @@ export function WhatsAppFloat() {
         type="button"
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         aria-label={lang === "ar" ? "الرجوع للأعلى" : "Back to top"}
-        className="grid h-10 w-10 place-items-center rounded-full border border-line bg-white text-ink shadow-lg transition-colors hover:bg-ink hover:text-white"
+        className="grid h-10 w-10 place-items-center rounded-full border border-line bg-surface text-ink shadow-lg transition-colors hover:bg-dark-panel hover:text-white"
       >
         <IconArrow className="h-4 w-4 -rotate-90 rtl:rotate-90" />
       </button>
@@ -63,7 +63,7 @@ export function Toast() {
       }`}
     >
       {toast && (
-        <div className="pointer-events-auto flex items-center gap-3 rounded-full border border-white/10 bg-ink py-2.5 pe-3 ps-4 text-white shadow-[0_24px_50px_-20px_rgba(0,0,0,0.8)]">
+        <div className="pointer-events-auto flex items-center gap-3 rounded-full border border-white/10 bg-dark-panel py-2.5 pe-3 ps-4 text-white shadow-[0_24px_50px_-20px_rgba(0,0,0,0.8)]">
           <span className="grid h-7 w-7 place-items-center rounded-full bg-leaf">
             <IconCheck className="h-4 w-4" />
           </span>
@@ -71,7 +71,7 @@ export function Toast() {
           <button
             type="button"
             onClick={() => setCartOpen(true)}
-            className="inline-flex items-center gap-1.5 rounded-full bg-sun px-3.5 py-1.5 font-display text-[12px] font-bold text-ink transition-transform hover:scale-105"
+            className="inline-flex items-center gap-1.5 rounded-full bg-sun px-3.5 py-1.5 font-display text-[12px] font-bold text-on-accent transition-transform hover:scale-105"
           >
             <IconBag className="h-4 w-4" />
           </button>

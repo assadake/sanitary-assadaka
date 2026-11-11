@@ -20,12 +20,12 @@ export default function Stories() {
   const story = STORIES.find((s) => s.id === openId) ?? null;
 
   return (
-    <section id="stories" className="relative scroll-mt-24 overflow-hidden bg-ink py-16 text-white lg:py-24">
+    <section id="stories" className="relative scroll-mt-24 overflow-hidden bg-dark-panel py-16 text-white lg:py-24">
       <div
         className="pointer-events-none absolute inset-0 opacity-60"
         style={{
           backgroundImage:
-            "radial-gradient(46rem 28rem at 15% 0%, rgba(122,92,46,0.55), transparent 60%), radial-gradient(34rem 22rem at 92% 88%, rgba(201,168,106,0.16), transparent 60%)",
+            "radial-gradient(46rem 28rem at 15% 0%, rgba(var(--color-ikea-rgb),0.55), transparent 60%), radial-gradient(34rem 22rem at 92% 88%, rgba(var(--color-sun-rgb),0.16), transparent 60%)",
         }}
       />
       <div className="relative mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-10">
@@ -68,8 +68,8 @@ export default function Stories() {
                   loading="lazy"
                   className="h-full w-full object-cover grayscale-[35%] transition-all duration-[900ms] group-hover:scale-105 group-hover:grayscale-0"
                 />
-                <span className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-ink to-transparent" />
-                <span className="absolute start-4 top-4 rounded-full bg-sun px-2.5 py-1 font-display text-[10px] font-black uppercase tracking-[0.14em] text-ink">
+                <span className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-dark-panel to-transparent" />
+                <span className="absolute start-4 top-4 rounded-full bg-sun px-2.5 py-1 font-display text-[10px] font-black uppercase tracking-[0.14em] text-on-accent">
                   {s.tag[lang]}
                 </span>
               </span>
@@ -96,19 +96,19 @@ export default function Stories() {
 
       {story && (
         <div className="fixed inset-0 z-[70] flex items-end justify-center p-0 sm:items-center sm:p-6">
-          <div className="absolute inset-0 bg-ink/80 backdrop-blur-sm" onClick={() => setOpenId(null)} />
-          <div className="relative max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-t-[26px] bg-white text-ink shadow-2xl sm:rounded-[26px]">
+          <div className="absolute inset-0 bg-dark-panel/80 backdrop-blur-sm" onClick={() => setOpenId(null)} />
+          <div className="relative max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-t-[26px] bg-surface text-ink shadow-2xl sm:rounded-[26px]">
             <div className="relative aspect-[16/9] overflow-hidden sm:rounded-t-[26px]">
               <img src={px(story.img, 1100, 620)} alt={story.title[lang]} className="h-full w-full object-cover" />
-              <span className="absolute inset-0 bg-gradient-to-t from-ink/85 to-transparent" />
-              <span className="absolute start-5 top-5 rounded-full bg-sun px-3 py-1.5 font-display text-[11px] font-black uppercase tracking-[0.16em] text-ink">
+              <span className="absolute inset-0 bg-gradient-to-t from-dark-panel/85 to-transparent" />
+              <span className="absolute start-5 top-5 rounded-full bg-sun px-3 py-1.5 font-display text-[11px] font-black uppercase tracking-[0.16em] text-on-accent">
                 {story.tag[lang]}
               </span>
               <button
                 type="button"
                 onClick={() => setOpenId(null)}
                 aria-label={t("close")}
-                className="absolute end-4 top-4 grid h-9 w-9 place-items-center rounded-full bg-white/90 text-ink transition-colors hover:bg-brick hover:text-white"
+                className="absolute end-4 top-4 grid h-9 w-9 place-items-center rounded-full bg-surface/90 text-ink transition-colors hover:bg-brick hover:text-white"
               >
                 <IconX className="h-4.5 w-4.5" />
               </button>

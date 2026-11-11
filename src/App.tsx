@@ -32,8 +32,8 @@ function OriginStrip() {
   const { lang } = useStore();
   const items = [...FOCUS, ...FOCUS];
   return (
-    <div className="relative flex items-center gap-4 overflow-hidden border-b border-line bg-white py-3.5">
-      <span className="z-10 hidden shrink-0 items-center gap-2 bg-white ps-4 pe-6 font-display text-[11px] font-black uppercase tracking-[0.2em] text-ink sm:ps-6 md:flex lg:ps-10">
+    <div className="relative flex items-center gap-4 overflow-hidden border-b border-line bg-surface py-3.5">
+      <span className="z-10 hidden shrink-0 items-center gap-2 bg-surface ps-4 pe-6 font-display text-[11px] font-black uppercase tracking-[0.2em] text-ink sm:ps-6 md:flex lg:ps-10">
         <span className="h-2 w-2 rounded-full bg-sun" />
         {lang === "ar" ? "تشكيلة تهم مشروعك" : "Range for your project"}
       </span>
@@ -46,7 +46,7 @@ function OriginStrip() {
           </span>
         ))}
       </div>
-      <span className="pointer-events-none absolute inset-y-0 end-0 w-24 bg-gradient-to-l from-white to-transparent rtl:bg-gradient-to-r" />
+      <span className="pointer-events-none absolute inset-y-0 end-0 w-24 bg-gradient-to-l from-surface to-transparent rtl:bg-gradient-to-r" />
     </div>
   );
 }

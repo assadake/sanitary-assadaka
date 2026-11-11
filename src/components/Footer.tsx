@@ -56,7 +56,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="relative overflow-hidden bg-ink text-white">
+    <footer className="relative overflow-hidden bg-dark-panel text-white">
       <span
         aria-hidden
         className="pointer-events-none absolute -bottom-[6vw] start-1/2 -translate-x-1/2 font-display text-[24vw] font-black leading-none tracking-tighter text-white/[0.04] select-none"
@@ -111,7 +111,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noreferrer noopener"
                   aria-label={s.label}
-                  className="grid h-10 w-10 place-items-center rounded-full border border-white/15 text-white/70 transition-all duration-300 hover:-translate-y-0.5 hover:border-sun hover:bg-sun hover:text-ink"
+                  className="grid h-10 w-10 place-items-center rounded-full border border-white/15 text-white/70 transition-all duration-300 hover:-translate-y-0.5 hover:border-sun hover:bg-sun hover:text-on-accent"
                 >
                   {s.icon}
                 </a>
