@@ -24,8 +24,6 @@
   --color-sun-soft: #153f53;
   --color-sun-on-dark: #92c1d6;
 
-  --animate-marquee: marquee 38s linear infinite;
-  --animate-marquee-rev: marquee-rev 44s linear infinite;
   --animate-float: float 7s ease-in-out infinite;
   --animate-kenburns: kenburns 22s ease-in-out infinite alternate;
   --animate-pop: pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -48,27 +46,19 @@
   --v-overlay: rgba(247, 244, 236, 0.78);
 }
 
-@keyframes marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-@keyframes marquee-rev {
-  from {
-    transform: translateX(-50%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
+/* Both ribbons are built as two identical halves translating by exactly half
+   the track width — see .brand-marquee (0 → -50%) and .origin-marquee
+   (-50% → 0), which run in opposite directions. RTL anchoring is handled
+   with `direction: ltr` on the viewports. */
 
 /* The two identical groups meet exactly at the loop point, so the logo
-   ribbon stays continuously filled at every viewport width. */
+   ribbon stays continuously filled at every viewport width. `direction: ltr`
+   is required: the track anchors to the inline-start edge, and translateX()
+   is physical, so in RTL the track would slide out of view leaving a blank
+   band. Logos are direction-neutral — the belt always runs LTR. */
 .brand-marquee {
   --brand-gap: clamp(28px, 4vw, 64px);
+  direction: ltr;
   overflow: hidden;
   border-block: 1px solid var(--color-line);
   background: #fff;
@@ -112,6 +102,38 @@
   to { transform: translateX(-50%); }
 }
 
+/* ── Project-range ribbon (text + logo marquee) — same belt technique as the
+   logo ribbon: an LTR, overflow-hidden viewport; a track of two strictly
+   identical halves; an exact half-width translation. No empty space, ever, in
+   RTL or LTR. It scrolls in the OPPOSITE direction of the brand-logo ribbon. */
+.origin-marquee {
+  direction: ltr;
+  overflow: hidden;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.origin-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: origin-marquee 46s linear infinite;
+  will-change: transform;
+}
+
+.origin-marquee-half {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 2.5rem;
+  padding-inline-end: 2.5rem;
+  width: max-content;
+}
+
+@keyframes origin-marquee {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+
 @media (min-width: 640px) {
   .brand-marquee { padding-block: 18px; }
   .brand-marquee-logo { height: 58px; }
@@ -119,6 +141,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .brand-marquee-track { animation-play-state: paused; }
+  .origin-marquee-track { animation-play-state: paused; }
 }
 @keyframes float {
   0%,

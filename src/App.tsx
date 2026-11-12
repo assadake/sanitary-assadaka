@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import VisitePage from "../app/visite/page";
 import Catalog from "./components/Catalog";
 import CartDrawer from "./components/CartDrawer";
@@ -29,23 +29,48 @@ const FOCUS = [
   { glyph: "✨", ar: "إكسسوارات الحمام", en: "Bathroom accessories" },
 ];
 
+// One half of the belt: every focus text is followed by the Assadaka logo.
+// Repeated twice so each half stays wider than any viewport (gap-free loop).
+const BELT = [...FOCUS, ...FOCUS];
+
 function OriginStrip() {
   const { lang } = useStore();
-  const items = [...FOCUS, ...FOCUS];
+  const halves = ["primary", "duplicate"] as const;
   return (
     <div className="relative flex items-center gap-4 overflow-hidden border-b border-line bg-surface py-3.5">
       <span className="z-10 hidden shrink-0 items-center gap-2 bg-surface ps-4 pe-6 font-display text-[11px] font-black uppercase tracking-[0.2em] text-ink sm:ps-6 md:flex lg:ps-10">
         <span className="h-2 w-2 rounded-full bg-sun" />
         {lang === "ar" ? "تشكيلة تهم مشروعك" : "Range for your project"}
       </span>
-      <div className="flex w-max shrink-0 animate-marquee-rev items-center gap-8 whitespace-nowrap will-change-transform">
-        {items.map((o, i) => (
-          <span key={i} className="flex items-center gap-2 text-[13px] font-semibold text-ink-soft">
-            <span className="text-base leading-none">{o.glyph}</span>
-            {o[lang]}
-            <span className="ms-6 h-1 w-1 rounded-full bg-line" />
-          </span>
-        ))}
+      {/* Two strictly identical halves + an exact half-width translation = a
+          seamless, gap-free belt, scrolling opposite to the brand ribbon.
+          direction:ltr keeps the track anchored in RTL. */}
+      <div className="origin-marquee" dir="ltr">
+        <div className="origin-marquee-track">
+          {halves.map((half) => (
+            <div key={half} className="origin-marquee-half" aria-hidden={half === "duplicate"}>
+              {BELT.map((o, i) => (
+                <Fragment key={`${half}-${i}`}>
+                  <span
+                    dir={lang === "ar" ? "rtl" : "ltr"}
+                    className="flex shrink-0 items-center gap-2 whitespace-nowrap text-[13px] font-semibold text-ink-soft"
+                  >
+                    <span className="text-base leading-none">{o.glyph}</span>
+                    {o[lang]}
+                  </span>
+                  <img
+                    src="/brands/assadaka-ais.png"
+                    alt=""
+                    aria-hidden="true"
+                    draggable={false}
+                    loading="eager"
+                    className="h-9 w-auto shrink-0 select-none"
+                  />
+                </Fragment>
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
       <span className="pointer-events-none absolute inset-y-0 end-0 w-24 bg-gradient-to-l from-surface to-transparent rtl:bg-gradient-to-r" />
     </div>
