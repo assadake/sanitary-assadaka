@@ -101,8 +101,15 @@ function visite360Alias() {
       );
       // index.html référence ./favicon.svg après vite-plugin-singlefile :
       // fournir ce fichier dans /visite/ pour éviter un 404 sur la page statique.
+      const adminDir = path.join(distDir, "admin");
+      fs.mkdirSync(adminDir, { recursive: true });
+      fs.writeFileSync(path.join(adminDir, "index.html"), fs.readFileSync(indexHtml, "utf8"));
+
       const favicon = path.join(distDir, "favicon.svg");
-      if (fs.existsSync(favicon)) fs.copyFileSync(favicon, path.join(visiteDir, "favicon.svg"));
+      if (fs.existsSync(favicon)) {
+        fs.copyFileSync(favicon, path.join(visiteDir, "favicon.svg"));
+        fs.copyFileSync(favicon, path.join(adminDir, "favicon.svg"));
+      }
 
       // Diagnostic: GET /deploy-info.json on the deployed site reveals exactly
       // which commit/branch is live — useful when a manual deploy looks stale.
@@ -114,7 +121,7 @@ function visite360Alias() {
             shortCommit: gitValue(["rev-parse", "--short", "HEAD"]),
             branch: gitValue(["rev-parse", "--abbrev-ref", "HEAD"]),
             builtAt: new Date().toISOString(),
-            pages: ["/", "/visite", "/visite/index.html", "/visite-360/index.html"],
+            pages: ["/", "/admin", "/visite", "/visite/index.html", "/visite-360/index.html"],
           },
           null,
           2,

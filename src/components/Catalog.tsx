@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { CATEGORIES, PRODUCTS, px, type Product } from "../data/catalog";
-import { WHATSAPP_NUMBER, formatPrice } from "../i18n";
+import { px, type Product } from "../data/catalog";
+import { formatPrice } from "../i18n";
 import { useStore } from "../store";
 import { SectionHead, Stars } from "./Bits";
 import {
@@ -26,9 +26,9 @@ const BADGES: Record<string, { ar: string; en: string; cls: string }> = {
 };
 
 function ProductCard({ p, index }: { p: Product; index: number }) {
-  const { t, lang, add, favs, toggleFav, setQuick } = useStore();
+  const { t, lang, add, favs, toggleFav, setQuick, categories } = useStore();
   const [added, setAdded] = useState(false);
-  const cat = CATEGORIES.find((c) => c.id === p.cat);
+  const cat = categories.find((c) => c.id === p.cat);
   const off = p.price !== null && p.old ? Math.round((1 - p.price / p.old) * 100) : 0;
 
   const onAdd = () => {
@@ -138,7 +138,7 @@ function ProductCard({ p, index }: { p: Product; index: number }) {
 
 /* ───────────────────────── Quick view ───────────────────────── */
 function QuickView() {
-  const { quick, setQuick, t, lang, add, favs, toggleFav } = useStore();
+  const { quick, setQuick, t, lang, add, favs, toggleFav, categories, settings } = useStore();
   const [qty, setQty] = useState(1);
 
   useEffect(() => {
@@ -152,7 +152,7 @@ function QuickView() {
 
   if (!quick) return null;
   const p = quick;
-  const cat = CATEGORIES.find((c) => c.id === p.cat);
+  const cat = categories.find((c) => c.id === p.cat);
 
   const specs = [
     { k: t("product.origin"), v: p.origin[lang] },
@@ -239,7 +239,7 @@ function QuickView() {
                 {t("product.addToCart")}
               </button>
               <a
-                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+                href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(
                   lang === "ar"
                     ? `السلام عليكم، نبي نسأل عن الصنف:\n${p.name.ar} (${p.id})\nالسعر: ${formatPrice(p.price, "ar")}`
                     : `Hello, I'd like to ask about:\n${p.name.en} (${p.id})\nPrice: ${formatPrice(p.price, "en")}`,
@@ -278,12 +278,12 @@ function QuickView() {
 
 /* ───────────────────────── Catalog ───────────────────────── */
 export default function Catalog() {
-  const { t, lang, query, setQuery, cat, setCat, sort, setSort } = useStore();
+  const { t, lang, query, setQuery, cat, setCat, sort, setSort, products, categories, settings } = useStore();
   const [visible, setVisible] = useState(8);
 
   const list = useMemo(() => {
     const q = query.trim().toLowerCase();
-    let out = PRODUCTS.filter((p) => {
+    let out = products.filter((p) => {
       const okCat = cat === "all" || p.cat === cat;
       const hay = `${p.name.ar} ${p.name.en} ${p.desc.ar} ${p.desc.en} ${p.id} ${p.origin.ar} ${p.origin.en} ${p.cat}`.toLowerCase();
       return okCat && (!q || hay.includes(q));
@@ -345,9 +345,9 @@ export default function Catalog() {
 
         {/* category chips */}
         <div className="no-bar -mx-4 mb-8 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0">
-          {[{ id: "all", name: { ar: t("product.all"), en: t("product.all") } }, ...CATEGORIES].map((c) => {
+          {[{ id: "all", name: { ar: t("product.all"), en: t("product.all") } }, ...categories].map((c) => {
             const active = cat === c.id;
-            const n = c.id === "all" ? PRODUCTS.length : PRODUCTS.filter((p) => p.cat === c.id).length;
+            const n = c.id === "all" ? products.length : products.filter((p) => p.cat === c.id).length;
             return (
               <button
                 key={c.id}
@@ -388,7 +388,7 @@ export default function Catalog() {
             </span>
             <p className="font-display text-[18px] font-bold">{t("search.none")}</p>
             <a
-              href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+              href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(
                 lang === "ar" ? `السلام عليكم، نبي نسأل عن منتج: ${query}` : `Hello, I'm looking for: ${query}`,
               )}`}
               target="_blank"

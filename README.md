@@ -121,6 +121,34 @@ vrais appareils et navigateurs.
 | **Couleurs & polices** | `src/index.css` → bloc `@theme` |
 | **Modèle du message de demande / devis** | `src/store.tsx` → `buildOrderMessage()` |
 
+### Panneau d’administration
+
+Le panneau est accessible sur **`/admin`** (également depuis les liens « Admin » et « Administration » du site). Le code local initial est **`admin2026`** ; la session se ferme avec le bouton de déconnexion.
+
+Fonctions disponibles :
+
+- création, duplication, modification et suppression des articles, avec tous leurs champs techniques et leurs traductions arabe/anglais ;
+- gestion des catégories, inspirations et conseils ;
+- recherche et modification de tous les textes présents dans les dictionnaires de l’interface ;
+- coordonnées WhatsApp, Facebook et Google Maps ;
+- export/import d’une sauvegarde JSON et restauration du contenu initial.
+
+#### Activer Supabase (publication en ligne)
+
+1. Créer un projet gratuit sur [supabase.com](https://supabase.com).
+2. Dans **SQL Editor**, exécuter tout le fichier [`supabase/setup.sql`](supabase/setup.sql). Il crée le contenu, la liste des administrateurs, le bucket `site-images` et les politiques RLS.
+3. Dans **Authentication → Users**, créer l’administrateur avec e-mail et mot de passe. Copier son UUID puis exécuter :
+
+   ```sql
+   insert into public.admin_users (user_id) values ('UUID_DE_L_ADMIN');
+   ```
+
+4. Copier `.env.example` vers `.env.local` et renseigner **Project URL** et **anon public key** depuis **Project Settings → API**. Ne jamais utiliser la clé `service_role` dans le navigateur.
+5. Ajouter ces deux variables `VITE_SUPABASE_URL` et `VITE_SUPABASE_ANON_KEY` dans Render/Vercel, puis reconstruire le site.
+6. Ouvrir `/admin`, se connecter avec l’e-mail Supabase, effectuer une première modification et cliquer **Publier**. Cela initialise la ligne `site_content/main` avec le contenu actuel.
+
+Avec Supabase configuré, les visiteurs lisent le contenu en ligne sans compte ; seuls les UUID présents dans `admin_users` peuvent publier et téléverser des images. Sans ces variables, le mode de développement local reste disponible avec le code **`admin2026`** et `localStorage` (`assadaka.admin.content.v1`), sans synchronisation entre navigateurs.
+
 ### Ajouter un article sanitaire
 
 ```ts

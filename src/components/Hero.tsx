@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { HERO_STATS, PRODUCTS, px } from "../data/catalog";
-import { WHATSAPP_DISPLAY, WHATSAPP_NUMBER, formatPrice } from "../i18n";
+import { HERO_STATS, px } from "../data/catalog";
+import { formatPrice } from "../i18n";
 import { useStore } from "../store";
 import { IconArrow, IconBag, IconCheck, IconPin, IconShield, IconTruck, IconWhatsApp } from "./Icons";
 import Reveal from "./Reveal";
@@ -11,20 +11,18 @@ const HERO_IMG_A = 11701114; // salle de bain / sanitaire
 const HERO_IMG_B = 8135115; // robinetterie
 const HERO_IMG_C = 12340558; // carrelage / céramique
 
-const ROTATING = ["AS-1001", "AS-4001", "AS-2001"].map(
-  (id) => PRODUCTS.find((p) => p.id === id)!,
-);
-
 export default function Hero() {
-  const { t, lang, add, waLink } = useStore();
+  const { t, lang, add, waLink, products, settings } = useStore();
+  const rotating = ["AS-1001", "AS-4001", "AS-2001"].map((id) => products.find((p) => p.id === id)).filter((p) => p !== undefined);
+  const slides = rotating.length ? rotating : products;
   const [idx, setIdx] = useState(0);
 
   useEffect(() => {
-    const id = window.setInterval(() => setIdx((i) => (i + 1) % ROTATING.length), 4200);
+    const id = window.setInterval(() => setIdx((i) => (i + 1) % Math.max(1, slides.length)), 4200);
     return () => window.clearInterval(id);
-  }, []);
+  }, [slides.length]);
 
-  const featured = ROTATING[idx];
+  const featured = slides[idx % Math.max(1, slides.length)];
   const stats = HERO_STATS.map((s) => ({ v: s.value[lang], k: t(s.key) }));
 
   const perks = [
@@ -194,7 +192,7 @@ export default function Hero() {
             />
 
             {/* rotating product card */}
-            <div className="absolute -bottom-6 start-2 w-[min(20rem,calc(100%-1rem))] rounded-2xl border border-white/12 bg-surface p-3 text-ink shadow-[0_30px_60px_-24px_rgba(0,0,0,0.8)] sm:start-5">
+            {featured && <div className="absolute -bottom-6 start-2 w-[min(20rem,calc(100%-1rem))] rounded-2xl border border-white/12 bg-surface p-3 text-ink shadow-[0_30px_60px_-24px_rgba(0,0,0,0.8)] sm:start-5">
               <div className="flex gap-3">
                 <img
                   key={featured.id}
@@ -226,19 +224,19 @@ export default function Hero() {
                 </div>
               </div>
               <div className="mt-2.5 flex gap-1">
-                {ROTATING.map((p, i) => (
+                {slides.map((p, i) => (
                   <button
                     key={p.id}
                     type="button"
                     onClick={() => setIdx(i)}
                     aria-label={p.name[lang]}
                     className={`h-1 rounded-full transition-all duration-500 ${
-                      i === idx ? "w-8 bg-ikea" : "w-3 bg-line hover:bg-ink-soft/40"
+                      i === idx % Math.max(1, slides.length) ? "w-8 bg-ikea" : "w-3 bg-line hover:bg-ink-soft/40"
                     }`}
                   />
                 ))}
               </div>
-            </div>
+            </div>}
           </Reveal>
         </div>
       </div>
@@ -254,13 +252,13 @@ export default function Hero() {
             {lang === "ar" ? "معرضنا في طرابلس، ليبيا — تواصل لتأكيد الموقع" : "Our showroom in Tripoli, Libya — contact us for the exact address"}
           </span>
           <a
-            href={`https://wa.me/${WHATSAPP_NUMBER}`}
+            href={`https://wa.me/${settings.whatsappNumber}`}
             target="_blank"
             rel="noreferrer noopener"
             className="link-sweep inline-flex items-center gap-2 font-semibold text-white/80 hover:text-sun"
           >
             <IconWhatsApp className="h-4 w-4" />
-            <span className="tabular">{WHATSAPP_DISPLAY}</span>
+            <span className="tabular">{settings.whatsappDisplay}</span>
           </a>
           <span className="hidden items-center gap-2 md:inline-flex">
             {t("hero.scroll")}

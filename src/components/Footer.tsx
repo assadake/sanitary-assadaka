@@ -1,5 +1,3 @@
-import { CATEGORIES } from "../data/catalog";
-import { WHATSAPP_DISPLAY, WHATSAPP_NUMBER } from "../i18n";
 import { useStore } from "../store";
 import { LangSwitch, Logo } from "./Bits";
 import {
@@ -14,7 +12,7 @@ import {
 } from "./Icons";
 
 export default function Footer() {
-  const { t, lang, setCat, setQuery, waLink } = useStore();
+  const { t, lang, setCat, setQuery, waLink, categories, settings } = useStore();
 
   const goCat = (id: string) => {
     setCat(id);
@@ -28,7 +26,7 @@ export default function Footer() {
   const columns: { title: string; links: { label: string; onClick?: () => void; href?: string }[] }[] = [
     {
       title: t("footer.shop"),
-      links: CATEGORIES.slice(0, 6).map((c) => ({ label: c.name[lang], onClick: () => goCat(c.id) })),
+      links: categories.slice(0, 6).map((c) => ({ label: c.name[lang], onClick: () => goCat(c.id) })),
     },
     {
       title: t("footer.help"),
@@ -76,14 +74,14 @@ export default function Footer() {
                 {t("showroom.addressVal")}
               </li>
               <li>
-                <a href={`tel:+${WHATSAPP_NUMBER}`} className="flex items-center gap-2.5 transition-colors hover:text-sun">
+                <a href={`tel:+${settings.whatsappNumber}`} className="flex items-center gap-2.5 transition-colors hover:text-sun">
                   <IconPhone className="h-4 w-4 shrink-0 text-sun" />
-                  <span className="tabular">{WHATSAPP_DISPLAY}</span>
+                  <span className="tabular">{settings.whatsappDisplay}</span>
                 </a>
               </li>
               <li>
                 <a
-                  href="https://www.facebook.com/AssadakaARAQIA/"
+                  href={settings.facebookUrl}
                   target="_blank"
                   rel="noreferrer noopener"
                   className="flex items-center gap-2.5 transition-colors hover:text-sun"
@@ -96,9 +94,9 @@ export default function Footer() {
 
             <div className="mt-6 flex items-center gap-2">
               {[
-                { icon: <IconFacebook className="h-4.5 w-4.5" />, label: "Facebook", href: "https://www.facebook.com/AssadakaARAQIA/" },
-                { icon: <IconInstagram className="h-4.5 w-4.5" />, label: "Instagram", href: "https://www.facebook.com/AssadakaARAQIA/" },
-                { icon: <IconTiktok className="h-4.5 w-4.5" />, label: "TikTok", href: "https://www.facebook.com/AssadakaARAQIA/" },
+                { icon: <IconFacebook className="h-4.5 w-4.5" />, label: "Facebook", href: settings.facebookUrl },
+                { icon: <IconInstagram className="h-4.5 w-4.5" />, label: "Instagram", href: settings.facebookUrl },
+                { icon: <IconTiktok className="h-4.5 w-4.5" />, label: "TikTok", href: settings.facebookUrl },
                 {
                   icon: <IconWhatsApp className="h-4.5 w-4.5" />,
                   label: "WhatsApp",
@@ -186,7 +184,10 @@ export default function Footer() {
             <span className="hidden h-3 w-px bg-white/15 sm:block" />
             <span>{t("footer.payNote")}</span>
           </div>
-          <p className="text-white/60">{t("footer.made")}</p>
+          <div className="flex items-center gap-4">
+            <a href="/admin" className="transition-colors hover:text-white">Administration</a>
+            <p className="text-white/60">{t("footer.made")}</p>
+          </div>
         </div>
       </div>
     </footer>

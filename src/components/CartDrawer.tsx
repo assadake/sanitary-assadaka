@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { px } from "../data/catalog";
-import { WHATSAPP_DISPLAY, formatPrice } from "../i18n";
+import { formatPrice } from "../i18n";
 import { buildOrderMessage, useStore } from "../store";
 import { IconBag, IconCheck, IconMinus, IconPlus, IconTrash, IconTruck, IconWhatsApp, IconX } from "./Icons";
 
 export default function CartDrawer() {
-  const { t, lang, cartOpen, setCartOpen, lines, count, subtotal, setQty, remove, clear, setCat } = useStore();
+  const { t, lang, cartOpen, setCartOpen, lines, count, subtotal, setQty, remove, clear, setCat, settings } = useStore();
   const [form, setForm] = useState({ name: "", phone: "", city: "", note: "", mode: "deliver" as "deliver" | "pickup" });
   const [sent, setSent] = useState<string | null>(null);
   /** Tous les articles Assadaka sont affichés « prix sur demande » : ne jamais montrer 0 د.ل. */
@@ -20,7 +20,7 @@ export default function CartDrawer() {
   }, [cartOpen, setCartOpen]);
 
   const submit = () => {
-    const order = buildOrderMessage({ ...form, lines, subtotal, lang });
+    const order = buildOrderMessage({ ...form, lines, subtotal, lang, whatsappNumber: settings.whatsappNumber });
     window.open(order.href, "_blank", "noopener,noreferrer");
     setSent(order.orderNo);
   };
@@ -74,8 +74,8 @@ export default function CartDrawer() {
             </h3>
             <p className="text-[13.5px] leading-relaxed text-ink-soft">
               {lang === "ar"
-                ? `افتحنا محادثة مع ${WHATSAPP_DISPLAY} وطلبك مكتوب فيها. اضغط إرسال في واتساب لتأكيد الطلب.`
-                : `We opened a chat with ${WHATSAPP_DISPLAY} with your order written in it. Press send inside WhatsApp to confirm.`}
+                ? `افتحنا محادثة مع ${settings.whatsappDisplay} وطلبك مكتوب فيها. اضغط إرسال في واتساب لتأكيد الطلب.`
+                : `We opened a chat with ${settings.whatsappDisplay} with your order written in it. Press send inside WhatsApp to confirm.`}
             </p>
             <p className="rounded-full bg-surface px-4 py-2 font-display text-[13px] font-bold tabular text-ikea">
               {t("cart.orderNum")}: {sent}

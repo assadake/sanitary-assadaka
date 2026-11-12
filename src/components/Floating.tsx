@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import { WHATSAPP_DISPLAY } from "../i18n";
 import { useStore } from "../store";
 import { IconArrow, IconBag, IconCheck, IconWhatsApp } from "./Icons";
 
 export function WhatsAppFloat() {
-  const { lang, waLink, t } = useStore();
+  const { lang, waLink, t, settings } = useStore();
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -28,7 +27,7 @@ export function WhatsAppFloat() {
         )}
         target="_blank"
         rel="noreferrer noopener"
-        aria-label={`${t("wa.float")} — ${WHATSAPP_DISPLAY}`}
+        aria-label={`${t("wa.float")} — ${settings.whatsappDisplay}`}
         className="group flex items-center gap-3 rounded-full bg-leaf p-2.5 text-white shadow-[0_18px_40px_-14px_rgba(31,122,77,0.9)] transition-transform duration-300 hover:scale-[1.03] active:scale-95 min-[480px]:py-3 min-[480px]:pe-5 min-[480px]:ps-3"
       >
         <span className="relative grid h-9 w-9 place-items-center rounded-full bg-white/15">
@@ -38,7 +37,7 @@ export function WhatsAppFloat() {
         <span className="hidden flex-col leading-tight min-[480px]:flex">
           <span className="font-display text-[13.5px] font-bold">{t("wa.float")}</span>
           <span className="text-[11px] text-white/70 tabular">
-            {WHATSAPP_DISPLAY} · {t("wa.floatSub")}
+            {settings.whatsappDisplay} · {t("wa.floatSub")}
           </span>
         </span>
       </a>

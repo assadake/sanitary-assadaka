@@ -1304,6 +1304,26 @@ html[data-mode="light"] .visite-page .visite-btn--wa:hover { border-color: #1f7a
   .theme-popover { width: 264px; }
 }
 
+/* Administration — formulaires denses, lisibles et cohérents sur mobile. */
+.admin-input {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #dbe3eb;
+  border-radius: 0.75rem;
+  background: #fff;
+  padding: 0.68rem 0.8rem;
+  color: #172b3a;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.admin-input:focus { border-color: #3b82c4; box-shadow: 0 0 0 3px rgba(59,130,196,.12); }
+.admin-input::placeholder { color: #94a3b8; }
+.admin-primary { border-radius: .75rem; background: #145da0; padding: .68rem 1rem; color: white; font-size: .75rem; font-weight: 700; }
+.admin-primary:hover { background: #0c4a80; }
+.admin-secondary { border: 1px solid #dbe3eb; border-radius: .75rem; background: white; padding: .68rem 1rem; color: #475569; font-size: .75rem; font-weight: 700; }
+.admin-secondary:hover { background: #f8fafc; }
 /* Mobile: keep controls inside the available viewport rather than clipping them. */
 .theme-controls--mobile {
   display: flex;
