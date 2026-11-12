@@ -170,7 +170,8 @@ export class PanoEngine {
     this.resize();
     if (typeof ResizeObserver !== "undefined") {
       this.ro = new ResizeObserver(() => this.resize());
-      this.ro.observe(this.canvas);
+      // The canvas is hidden in fallback mode; its container still has a size.
+      this.ro.observe(this.fallback ?? this.canvas);
     }
     this.lastFrame = performance.now();
     this.loop(this.lastFrame);
@@ -450,7 +451,7 @@ export class PanoEngine {
 
   /* ── Frame loop ──────────────────────────────────────────────────── */
   private resize() {
-    const rect = this.canvas.getBoundingClientRect();
+    const rect = (this.gl ? this.canvas : this.fallback ?? this.canvas).getBoundingClientRect();
     if (!rect.width || !rect.height) return;
     this.width = rect.width;
     this.height = rect.height;
@@ -501,7 +502,9 @@ export class PanoEngine {
       view: this.getView(),
       width: this.width,
       height: this.height,
-      project: (deg, pitchDeg) => this.project(deg, pitchDeg),
+      // Projected hotspots need the WebGL perspective. In the flat-image
+      // fallback they would be misplaced and can overlap the controls.
+      project: (deg, pitchDeg) => this.gl ? this.project(deg, pitchDeg) : { x: -999, y: -999, visible: false, depth: 0 },
     };
     this.opts.onFrame?.(ctx);
     if (now - this.lastViewEmit > 110) {

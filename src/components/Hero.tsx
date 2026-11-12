@@ -136,10 +136,10 @@ export default function Hero() {
           </Reveal>
 
           <Reveal delay={370}>
-            <dl className="mt-10 grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-white/10 sm:grid-cols-4">
+            <dl className="mt-10 grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-white/10 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
               {stats.map((s) => (
                 <div key={s.k} className="group bg-dark-panel px-4 py-5 transition-colors duration-300 hover:bg-ikea-deep">
-                  <dt className="font-display text-[clamp(1.5rem,3vw,2.1rem)] font-black tabular leading-none text-sun">
+                  <dt className="font-display text-[clamp(1rem,4.5vw,1.25rem)] font-black tabular leading-none text-sun xl:text-[clamp(1.1rem,1.5vw,1.5rem)]">
                     {s.v}
                   </dt>
                   <dd className="mt-2 text-[11.5px] leading-snug text-white/55">{s.k}</dd>
@@ -208,7 +208,7 @@ export default function Hero() {
                     {featured.name[lang]}
                   </p>
                   <p className="mt-1 text-[10.5px] text-ink-soft">{t("product.askAvailability")}</p>
-                  <div className="mt-1.5 flex items-center justify-between gap-2">
+                  <div className="mt-1.5 flex flex-wrap items-center justify-between gap-2">
                     <span className="font-display text-[15px] font-black tabular text-ink">
                       {formatPrice(featured.price, lang)}
                     </span>

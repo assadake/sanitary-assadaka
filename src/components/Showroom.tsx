@@ -234,13 +234,13 @@ export default function Showroom() {
 
             <Reveal delay={120}>
               <div className="mt-4 grid grid-cols-2 gap-4">
-                <div className="rounded-[22px] border border-line bg-surface p-5">
+                <div className="rounded-[22px] border border-line bg-surface p-4 sm:p-5">
                   <p className="font-display text-[34px] font-black leading-none text-ikea tabular">35</p>
                   <p className="mt-2 text-[12.5px] leading-snug text-ink-soft">
                     {lang === "ar" ? "صنف ضمن التشكيلة" : "Items in the range"}
                   </p>
                 </div>
-                <div className="rounded-[22px] border border-line bg-surface p-5">
+                <div className="rounded-[22px] border border-line bg-surface p-4 sm:p-5">
                   <p className="font-display text-[34px] font-black leading-none text-ikea tabular">8</p>
                   <p className="mt-2 text-[12.5px] leading-snug text-ink-soft">
                     {lang === "ar" ? "أقسام للمواد الصحية" : "Sanitary departments"}

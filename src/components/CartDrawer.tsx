@@ -26,7 +26,7 @@ export default function CartDrawer() {
   };
 
   return (
-    <div className={`fixed inset-0 z-[80] ${cartOpen ? "" : "pointer-events-none"}`} aria-hidden={!cartOpen}>
+    <div className={`fixed inset-0 z-[80] ${cartOpen ? "" : "pointer-events-none"}`} aria-hidden={!cartOpen} inert={!cartOpen}>
       <div
         onClick={() => setCartOpen(false)}
         className={`absolute inset-0 bg-dark-panel/60 backdrop-blur-[3px] transition-opacity duration-400 ${
@@ -37,12 +37,12 @@ export default function CartDrawer() {
         role="dialog"
         aria-modal="true"
         aria-label={t("cart.title")}
-        className={`absolute inset-y-0 end-0 flex w-full max-w-[27rem] flex-col bg-mist shadow-[0_0_80px_rgba(0,0,0,0.45)] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+        className={`cart-drawer absolute inset-y-0 end-0 flex w-full max-w-[27rem] flex-col bg-mist shadow-[0_0_80px_rgba(0,0,0,0.45)] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
           cartOpen ? "translate-x-0" : "ltr:translate-x-full rtl:-translate-x-full"
         }`}
       >
         {/* header */}
-        <div className="flex items-center justify-between gap-3 border-b border-line bg-surface px-5 py-4">
+        <div className="cart-drawer-header flex shrink-0 items-center justify-between gap-3 border-b border-line bg-surface px-5 py-4">
           <div className="flex items-center gap-3">
             <span className="grid h-10 w-10 place-items-center rounded-xl bg-ikea text-white">
               <IconBag className="h-5 w-5" />
@@ -117,7 +117,7 @@ export default function CartDrawer() {
         ) : (
           <>
             {/* lines */}
-            <div className="flex-1 overflow-y-auto px-4 py-4">
+            <div className="cart-drawer-lines min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4">
               <ul className="space-y-3">
                 {lines.map(({ product: p, qty }) => (
                   <li key={p.id} className="group flex gap-3 rounded-2xl border border-line bg-surface p-3">
@@ -144,7 +144,7 @@ export default function CartDrawer() {
                           <IconTrash className="h-4 w-4" />
                         </button>
                       </div>
-                      <div className="mt-auto flex items-center justify-between gap-2 pt-2">
+                      <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-2">
                         <div className="flex items-center gap-0.5 rounded-full border border-line bg-mist p-0.5">
                           <button
                             type="button"
@@ -230,7 +230,7 @@ export default function CartDrawer() {
             </div>
 
             {/* footer */}
-            <div className="border-t border-line bg-surface px-5 py-4">
+            <div className="cart-drawer-footer shrink-0 border-t border-line bg-surface px-5 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
               <dl className="space-y-1.5 text-[13px]">
                 <div className="flex items-center justify-between">
                   <dt className="text-ink-soft">{t("cart.subtotal")}</dt>

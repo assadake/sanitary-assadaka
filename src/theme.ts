@@ -35,8 +35,9 @@ export const THEMES: ThemePalette[] = [
 
 const THEME_KEY = "assadaka.theme";
 const MODE_KEY = "assadaka.mode";
-const DEFAULT_THEME: ThemeId = "or";
+const DEFAULT_THEME: ThemeId = "ceramique";
 const DEFAULT_MODE: ThemeMode = "light";
+const DEFAULT_PALETTE = THEMES.find((theme) => theme.id === DEFAULT_THEME)!;
 
 type ThemeState = {
   theme: ThemeId;
@@ -122,7 +123,7 @@ const DARK_PANEL = "#0b0c0f";
 
 export function applyTheme(themeId: ThemeId, mode: ThemeMode): void {
   if (typeof document === "undefined") return;
-  const palette = THEMES.find((x) => x.id === themeId) ?? THEMES[0];
+  const palette = THEMES.find((x) => x.id === themeId) ?? DEFAULT_PALETTE;
   const root = document.documentElement;
   const dark = mode === "dark";
 
@@ -174,6 +175,7 @@ export function applyTheme(themeId: ThemeId, mode: ThemeMode): void {
   set("--v-panel", vPanel);
   set("--v-text", vText);
   set("--v-muted", vMuted);
+  set("--v-on-gold", dark ? "#111114" : "#ffffff");
   set("--v-line", `rgba(${rgbString(vGold)}, ${dark ? 0.24 : 0.34})`);
   set("--v-topbar", dark ? "rgba(8, 9, 11, 0.88)" : "rgba(247, 244, 236, 0.92)");
   set("--v-overlay", dark ? "rgba(8, 9, 11, 0.72)" : "rgba(247, 244, 236, 0.78)");
@@ -209,7 +211,7 @@ function subscribe(listener: Listener): () => void {
 if (typeof window !== "undefined") {
   applyTheme(state.theme, state.mode);
   window.addEventListener("storage", (event) => {
-    if (event.key !== THEME_KEY && event.key !== MODE_KEY) return;
+    if (event.key !== null && event.key !== THEME_KEY && event.key !== MODE_KEY) return;
     const next = readStored();
     state = next;
     applyTheme(next.theme, next.mode);
@@ -219,7 +221,7 @@ if (typeof window !== "undefined") {
 
 export function useTheme() {
   const snapshot = useSyncExternalStore(subscribe, getThemeState, getThemeState);
-  const palette = THEMES.find((x) => x.id === snapshot.theme) ?? THEMES[0];
+  const palette = THEMES.find((x) => x.id === snapshot.theme) ?? DEFAULT_PALETTE;
   return {
     ...snapshot,
     palette,

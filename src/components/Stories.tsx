@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { px, type Bi } from "../data/catalog";
 import { useStore } from "../store";
 import { SectionHead } from "./Bits";
@@ -17,6 +17,15 @@ export default function Stories() {
   const rail = useRail();
   const [openId, setOpenId] = useState<string | null>(null);
   const story = stories.find((s) => s.id === openId) ?? null;
+
+  useEffect(() => {
+    if (!openId) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpenId(null);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [openId]);
 
   return (
     <section id="stories" className="relative scroll-mt-24 overflow-hidden bg-dark-panel py-16 text-white lg:py-24">
@@ -96,8 +105,8 @@ export default function Stories() {
       {story && (
         <div className="fixed inset-0 z-[70] flex items-end justify-center p-0 sm:items-center sm:p-6">
           <div className="absolute inset-0 bg-dark-panel/80 backdrop-blur-sm" onClick={() => setOpenId(null)} />
-          <div className="relative max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-t-[26px] bg-surface text-ink shadow-2xl sm:rounded-[26px]">
-            <div className="relative aspect-[16/9] overflow-hidden sm:rounded-t-[26px]">
+          <div role="dialog" aria-modal="true" aria-label={story.title[lang]} className="mobile-sheet relative w-full max-w-2xl overflow-y-auto rounded-t-[26px] bg-surface text-ink shadow-2xl sm:rounded-[26px]">
+            <div className="story-cover relative aspect-[16/9] overflow-hidden sm:rounded-t-[26px]">
               <img src={px(story.img, 1100, 620)} alt={story.title[lang]} className="h-full w-full object-cover" />
               <span className="absolute inset-0 bg-gradient-to-t from-dark-panel/85 to-transparent" />
               <span className="absolute start-5 top-5 rounded-full bg-sun px-3 py-1.5 font-display text-[11px] font-black uppercase tracking-[0.16em] text-on-accent">
