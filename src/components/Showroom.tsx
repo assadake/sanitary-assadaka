@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { FAQ_KEYS } from "../data/catalog";
 import { TOUR_SCENES, thumbPosition, tourSrc } from "../data/tour";
-import { WHATSAPP_DISPLAY } from "../i18n";
 import { TOUR_HASH } from "../router";
 import { useStore } from "../store";
 import { IconCube } from "./tour/TourIcons";
@@ -9,10 +8,9 @@ import { SectionHead } from "./Bits";
 import { IconArrow, IconCheck, IconChevron, IconClock, IconPhone, IconPin, IconWhatsApp } from "./Icons";
 import Reveal from "./Reveal";
 
-const MAPS = "https://www.google.com/maps/search/?api=1&query=Assadaka%20Alraqia%20sanitary%20ware%20Tripoli%20Libya";
 
 export default function Showroom() {
-  const { t, lang, waLink } = useStore();
+  const { t, lang, waLink, settings } = useStore();
   const [openFaq, setOpenFaq] = useState<string | null>("faq1");
   const [email, setEmail] = useState("");
   const [done, setDone] = useState(false);
@@ -20,7 +18,7 @@ export default function Showroom() {
   const facts = [
     { icon: <IconPin className="h-5 w-5" />, k: t("showroom.address"), v: t("showroom.addressVal") },
     { icon: <IconClock className="h-5 w-5" />, k: t("showroom.hours"), v: t("showroom.hoursVal") },
-    { icon: <IconPhone className="h-5 w-5" />, k: t("showroom.phone"), v: WHATSAPP_DISPLAY },
+    { icon: <IconPhone className="h-5 w-5" />, k: t("showroom.phone"), v: settings.whatsappDisplay },
   ];
 
   return (
@@ -54,7 +52,7 @@ export default function Showroom() {
             <Reveal delay={220}>
               <div className="mt-5 flex flex-wrap gap-2.5">
                 <a
-                  href={MAPS}
+                  href={settings.mapsUrl}
                   target="_blank"
                   rel="noreferrer noopener"
                   className="group inline-flex items-center gap-2 rounded-full bg-dark-panel px-5 py-3.5 font-display text-[13.5px] font-bold text-white transition-colors hover:bg-ikea"
@@ -124,7 +122,7 @@ export default function Showroom() {
                   <p className="font-display text-[11px] font-black uppercase tracking-[0.18em] text-ikea">ASSADAKA · Tripoli</p>
                   <p className="mt-1.5 font-display text-[15px] font-bold leading-snug text-ink">{t("showroom.addressVal")}</p>
                   <a
-                    href={MAPS}
+                    href={settings.mapsUrl}
                     target="_blank"
                     rel="noreferrer noopener"
                     className="mt-2.5 inline-flex items-center gap-1.5 font-display text-[12.5px] font-bold text-ikea hover:text-ikea-deep"
@@ -229,7 +227,7 @@ export default function Showroom() {
                 </form>
                 <p className="relative mt-4 flex items-center gap-2 text-[12px] font-semibold text-ink/70">
                   <IconWhatsApp className="h-4 w-4 text-leaf" />
-                  <span className="tabular">{WHATSAPP_DISPLAY}</span>
+                  <span className="tabular">{settings.whatsappDisplay}</span>
                 </p>
               </div>
             </Reveal>

@@ -14,7 +14,8 @@ import Showroom from "./components/Showroom";
 import Showroom360 from "./components/Showroom360";
 import Stories from "./components/Stories";
 import { Ticker } from "./components/Bits";
-import { isTourRoute, isVisiteRoute } from "./router";
+import { isAdminRoute, isTourRoute, isVisiteRoute } from "./router";
+import Admin from "./components/Admin";
 import { StoreProvider, useStore } from "./store";
 
 const FOCUS = [
@@ -129,7 +130,7 @@ export default function App() {
 
   return (
     <StoreProvider>
-      <Shell />
+      {isAdminRoute(pathname) ? <Admin /> : <Shell />}
     </StoreProvider>
   );
 }

@@ -1,5 +1,5 @@
-import { PRODUCTS, px } from "../data/catalog";
-import { WHATSAPP_DISPLAY, WHATSAPP_NUMBER, formatPrice } from "../i18n";
+import { px } from "../data/catalog";
+import { formatPrice } from "../i18n";
 import { useStore } from "../store";
 import { IconArrow, IconTag, IconWhatsApp } from "./Icons";
 import Reveal from "./Reveal";
@@ -10,8 +10,8 @@ import Reveal from "./Reveal";
  * la société). Aucun compte à rebours ni pourcentage inventé.
  */
 export default function Offers() {
-  const { t, lang, setCat, waLink } = useStore();
-  const featured = PRODUCTS.slice(0, 6);
+  const { t, lang, setCat, waLink, products, settings } = useStore();
+  const featured = products.slice(0, 6);
 
   const enquiryLink = waLink(
     lang === "ar"
@@ -118,13 +118,13 @@ export default function Offers() {
                 <IconArrow className="h-4 w-4 transition-transform group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" />
               </button>
               <a
-                href={`https://wa.me/${WHATSAPP_NUMBER}`}
+                href={`https://wa.me/${settings.whatsappNumber}`}
                 target="_blank"
                 rel="noreferrer noopener"
                 className="inline-flex items-center gap-2 rounded-full border border-white/30 px-5 py-3 font-display text-[13px] font-bold text-white transition-colors hover:border-sun hover:text-sun"
               >
                 <IconWhatsApp className="h-4.5 w-4.5" />
-                <span className="tabular">{WHATSAPP_DISPLAY}</span>
+                <span className="tabular">{settings.whatsappDisplay}</span>
               </a>
             </div>
           </div>

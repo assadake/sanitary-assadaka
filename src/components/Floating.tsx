@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import { WHATSAPP_DISPLAY } from "../i18n";
 import { useStore } from "../store";
 import { IconArrow, IconBag, IconCheck, IconWhatsApp } from "./Icons";
 
 export function WhatsAppFloat() {
-  const { lang, waLink, t } = useStore();
+  const { lang, waLink, t, settings } = useStore();
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -37,7 +36,7 @@ export function WhatsAppFloat() {
         <span className="flex flex-col leading-tight">
           <span className="font-display text-[13.5px] font-bold">{t("wa.float")}</span>
           <span className="text-[11px] text-white/70 tabular">
-            {WHATSAPP_DISPLAY} · {t("wa.floatSub")}
+            {settings.whatsappDisplay} · {t("wa.floatSub")}
           </span>
         </span>
       </a>

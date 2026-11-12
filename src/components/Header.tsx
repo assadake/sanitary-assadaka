@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { WHATSAPP_DISPLAY, WHATSAPP_NUMBER } from "../i18n";
 import { useStore } from "../store";
 import { LangSwitch, Logo } from "./Bits";
 import ThemeControls from "./ThemeControls";
@@ -16,7 +15,7 @@ import {
   IconWhatsApp,
   IconX,
 } from "./Icons";
-import { CATEGORIES, PRODUCTS, px } from "../data/catalog";
+import { px } from "../data/catalog";
 import { TOUR_HASH } from "../router";
 import { IconCube } from "./tour/TourIcons";
 
@@ -32,7 +31,7 @@ const NAV = [
 ];
 
 export default function Header() {
-  const { t, count, favs, setCartOpen, query, setQuery, lang, setCat } = useStore();
+  const { t, count, favs, setCartOpen, query, setQuery, lang, setCat, products, categories, settings } = useStore();
   const [scrolled, setScrolled] = useState(false);
   const [progress, setProgress] = useState(0);
   const [mobile, setMobile] = useState(false);
@@ -69,7 +68,7 @@ export default function Header() {
     return () => document.removeEventListener("keydown", onKey);
   }, [mobile, mega]);
 
-  const waGeneral = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+  const waGeneral = `https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(
     lang === "ar" ? "السلام عليكم، عندي استفسار بخصوص المواد الصحية والسيراميك." : "Hello, I have a question about sanitary ware and ceramics.",
   )}`;
 
@@ -90,11 +89,11 @@ export default function Header() {
           </div>
           <div className="flex items-center gap-1">
             <a
-              href={`tel:+${WHATSAPP_NUMBER}`}
+              href={`tel:+${settings.whatsappNumber}`}
               className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-white/75 transition-colors hover:bg-white/10 hover:text-white"
             >
               <IconPhone className="h-3.5 w-3.5" />
-              <span className="tabular">{WHATSAPP_DISPLAY}</span>
+              <span className="tabular">{settings.whatsappDisplay}</span>
             </a>
             <a
               href={waGeneral}
@@ -104,6 +103,9 @@ export default function Header() {
             >
               <IconWhatsApp className="h-4 w-4" />
               {t("top.help")}
+            </a>
+            <a href="/admin" className="rounded-full px-2.5 py-1.5 text-white/55 transition-colors hover:bg-white/10 hover:text-white" title="Administration">
+              Admin
             </a>
             {/* /visite — page vitrine 360° autour du viewer Pannellum d'origine */}
             <a
@@ -283,7 +285,7 @@ export default function Header() {
                     {lang === "ar" ? "كل الأقسام" : "All departments"}
                   </p>
                   <div className="grid gap-1.5 sm:grid-cols-2 xl:grid-cols-3">
-                    {CATEGORIES.map((c) => (
+                    {categories.map((c) => (
                       <button
                         key={c.id}
                         type="button"
@@ -299,7 +301,7 @@ export default function Header() {
                         <span className="min-w-0 flex-1">
                           <span className="block truncate font-display text-[13px] font-bold text-ink">{c.name[lang]}</span>
                           <span className="mt-0.5 block text-[11px] text-ink-soft tabular">
-                            {PRODUCTS.filter((p) => p.cat === c.id).length} {t("cat.count")}
+                            {products.filter((p) => p.cat === c.id).length} {t("cat.count")}
                           </span>
                         </span>
                         <IconArrow className="h-4 w-4 shrink-0 text-ink-soft/35 transition-all duration-300 group-hover:translate-x-1 group-hover:text-ikea rtl:rotate-180 rtl:group-hover:-translate-x-1" />
@@ -331,7 +333,7 @@ export default function Header() {
                       </p>
                     </div>
                     <a
-                      href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+                      href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(
                         lang === "ar"
                           ? "السلام عليكم، نبي نستفسر عن تشكيلة الأدوات الصحية والسيراميك الجديدة."
                           : "Hello, I'd like to enquire about the new sanitary ware and ceramics range.",
@@ -429,6 +431,9 @@ export default function Header() {
           <div className="space-y-3 border-t border-line bg-mist px-5 py-5">
             <ThemeControls lang={lang} variant="mobile" placement="up" />
             <LangSwitch />
+            <a href="/admin" className="flex items-center justify-center rounded-xl bg-dark-panel px-4 py-3 font-display text-[13px] font-bold text-white transition-colors hover:bg-ikea">
+              Administration du site
+            </a>
             <div className="flex items-center gap-2 text-[13px] text-ink-soft">
               <IconPin className="h-4 w-4 text-ikea" />
               {t("top.location")}
@@ -440,7 +445,7 @@ export default function Header() {
               className="flex items-center justify-center gap-2 rounded-full bg-leaf px-4 py-3 font-display text-[14px] font-bold text-white"
             >
               <IconWhatsApp className="h-5 w-5" />
-              <span className="tabular">{WHATSAPP_DISPLAY}</span>
+              <span className="tabular">{settings.whatsappDisplay}</span>
             </a>
           </div>
         </div>

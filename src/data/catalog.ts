@@ -1,9 +1,12 @@
 import type { Lang } from "../i18n";
 
-/** Pexels image helper (a handful of assets are served as .png) */
+/** Pexels image helper. Admin content may also use a complete image URL. */
 const PNG_IDS = new Set([27569266, 33948970]);
-export const px = (id: number, w: number, h: number) =>
-  `https://images.pexels.com/photos/${id}/pexels-photo-${id}.${PNG_IDS.has(id) ? "png" : "jpeg"}?auto=compress&cs=tinysrgb&fit=crop&w=${w}&h=${h}`;
+export type ImageSource = number | string;
+export const px = (source: ImageSource, w: number, h: number) => {
+  if (typeof source === "string") return source;
+  return `https://images.pexels.com/photos/${source}/pexels-photo-${source}.${PNG_IDS.has(source) ? "png" : "jpeg"}?auto=compress&cs=tinysrgb&fit=crop&w=${w}&h=${h}`;
+};
 
 export type Bi = { ar: string; en: string };
 export const bi = (b: Bi, lang: Lang) => b[lang];
@@ -12,7 +15,7 @@ export type Category = {
   id: string;
   name: Bi;
   tagline: Bi;
-  img: number;
+  img: ImageSource;
   accent: string;
 };
 
@@ -35,7 +38,7 @@ export type Product = {
   /** Null means price is quoted after confirming the model and availability. */
   price: number | null;
   old?: number;
-  img: number;
+  img: ImageSource;
   /** Product maker/brand, when known. */
   origin: Bi;
   rating: number | null;
@@ -93,7 +96,7 @@ export const PRODUCTS: Product[] = [
   { id: "AS-8004", cat: "accessories", name: { ar: "سلة مهملات وفرشاة مرحاض", en: "Bin and toilet brush set" }, desc: { ar: "ملحقات عملية للحمام؛ الألوان والخامات حسب التشكيلة.", en: "Practical bathroom accessories; colours and materials vary by range." }, price: null, img: 6492398, origin: { ar: "حسب الموديل", en: "Model dependent" }, rating: null, reviews: 0, stock: null, dim: "حسب الطقم", mat: { ar: "مواد مركبة / معدن", en: "Composite / metal" }, warranty: null },
 ];
 
-export type Room = { id: string; title: Bi; sub: Bi; img: number; cat: string };
+export type Room = { id: string; title: Bi; sub: Bi; img: ImageSource; cat: string };
 
 export const ROOMS: Room[] = [
   { id: "r1", title: { ar: "حمام بطابع هادئ", en: "A calm bathroom" }, sub: { ar: "تنسيق السيراميك والمغسلة والخلاطات في مساحة متوازنة.", en: "Coordinate tiles, basin and mixers for a balanced space." }, img: 11701114, cat: "sanitary" },
@@ -105,7 +108,7 @@ export const ROOMS: Room[] = [
   { id: "r7", title: { ar: "لمسات الحمام الأخيرة", en: "Finishing touches" }, sub: { ar: "إكسسوارات عملية تكمل الاستخدام اليومي.", en: "Practical accessories for everyday use." }, img: 6394610, cat: "accessories" },
 ];
 
-export type Story = { id: string; tag: Bi; title: Bi; text: Bi; img: number };
+export type Story = { id: string; tag: Bi; title: Bi; text: Bi; img: ImageSource };
 
 export const STORIES: Story[] = [
   { id: "s1", tag: { ar: "اختيار المنتج", en: "Product selection" }, title: { ar: "كيف تختار المرحاض المناسب؟", en: "Choosing the right toilet" }, text: { ar: "قارن شكل التصريف، طريقة التركيب، المساحة المتاحة وتوافق صندوق الطرد قبل الشراء.", en: "Compare the outlet, installation type, available space and cistern compatibility before buying." }, img: 6492398 },

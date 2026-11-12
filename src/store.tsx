@@ -1,10 +1,40 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { dictionaries, WHATSAPP_NUMBER, formatPrice, type Lang } from "./i18n";
-import { PRODUCTS, type Product } from "./data/catalog";
+import { dictionaries, formatPrice, type Lang } from "./i18n";
+import { CATEGORIES, PRODUCTS, ROOMS, STORIES, type Category, type Product, type Room, type Story } from "./data/catalog";
+import type { SiteContent, SiteSettings } from "./admin-types";
+import { isSupabaseConfigured, loadRemoteContent, saveRemoteContent } from "./supabase";
+
+export const CONTENT_STORAGE_KEY = "assadaka.admin.content.v1";
+
+export const DEFAULT_CONTENT: SiteContent = {
+  version: 1,
+  products: PRODUCTS,
+  categories: CATEGORIES,
+  rooms: ROOMS,
+  stories: STORIES,
+  texts: dictionaries,
+  settings: {
+    whatsappNumber: "218913150095",
+    whatsappDisplay: "+218 91-3150095",
+    facebookUrl: "https://www.facebook.com/AssadakaARAQIA/",
+    mapsUrl: "https://maps.google.com/?q=Tripoli+Libya",
+  },
+};
 
 export type CartLine = { id: string; qty: number };
 
 type Store = {
+  content: SiteContent;
+  products: Product[];
+  categories: Category[];
+  rooms: Room[];
+  stories: Story[];
+  settings: SiteSettings;
+  saveContent: (content: SiteContent) => Promise<boolean>;
+  resetContent: () => Promise<boolean>;
+  contentReady: boolean;
+  contentError: string | null;
+  remoteEnabled: boolean;
   lang: Lang;
   setLang: (l: Lang) => void;
   t: (k: string) => string;
@@ -36,6 +66,8 @@ type Store = {
 
 const Ctx = createContext<Store | null>(null);
 
+const cloneContent = (value: SiteContent): SiteContent => JSON.parse(JSON.stringify(value)) as SiteContent;
+
 const load = <T,>(key: string, fallback: T): T => {
   try {
     const raw = localStorage.getItem(key);
@@ -46,6 +78,26 @@ const load = <T,>(key: string, fallback: T): T => {
 };
 
 export function StoreProvider({ children }: { children: ReactNode }) {
+  const [content, setContent] = useState<SiteContent>(() => {
+    const saved = isSupabaseConfigured ? null : load<SiteContent | null>(CONTENT_STORAGE_KEY, null);
+    if (!saved || saved.version !== 1 || !Array.isArray(saved.products)) return DEFAULT_CONTENT;
+    return {
+      ...DEFAULT_CONTENT,
+      ...saved,
+      texts: {
+        ar: { ...dictionaries.ar, ...saved.texts?.ar },
+        en: { ...dictionaries.en, ...saved.texts?.en },
+      },
+      settings: { ...DEFAULT_CONTENT.settings, ...saved.settings },
+    };
+  });
+  const [contentReady, setContentReady] = useState(!isSupabaseConfigured);
+  const [contentError, setContentError] = useState<string | null>(null);
+  const products = content.products;
+  const categories = content.categories;
+  const rooms = content.rooms;
+  const stories = content.stories;
+  const settings = content.settings;
   const [lang, setLangState] = useState<Lang>(() => load<Lang>("assadaka.lang", "ar"));
   const [cart, setCart] = useState<CartLine[]>(() => load<CartLine[]>("assadaka.cart", []));
   const [favs, setFavs] = useState<string[]>(() => load<string[]>("assadaka.favs", []));
@@ -57,6 +109,31 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [toast, setToast] = useState<string | null>(null);
 
   const dir = lang === "ar" ? "rtl" : "ltr";
+
+  useEffect(() => {
+    if (!isSupabaseConfigured) return;
+    let active = true;
+    loadRemoteContent()
+      .then((remote) => {
+        if (!active) return;
+        if (remote) setContent({
+          ...DEFAULT_CONTENT,
+          ...remote,
+          texts: {
+            ar: { ...dictionaries.ar, ...remote.texts?.ar },
+            en: { ...dictionaries.en, ...remote.texts?.en },
+          },
+          settings: { ...DEFAULT_CONTENT.settings, ...remote.settings },
+        });
+        setContentReady(true);
+      })
+      .catch(() => {
+        if (!active) return;
+        setContentError("Impossible de charger le contenu Supabase. Le contenu local de secours est affiché.");
+        setContentReady(true);
+      });
+    return () => { active = false; };
+  }, []);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -108,7 +185,26 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   }, [toast]);
 
   const setLang = useCallback((l: Lang) => setLangState(l), []);
-  const t = useCallback((k: string) => dictionaries[lang][k] ?? dictionaries.ar[k] ?? k, [lang]);
+  const t = useCallback((k: string) => content.texts[lang][k] ?? content.texts.ar[k] ?? k, [content.texts, lang]);
+  const saveContent = useCallback(async (next: SiteContent) => {
+    try {
+      if (isSupabaseConfigured) await saveRemoteContent(next);
+      else localStorage.setItem(CONTENT_STORAGE_KEY, JSON.stringify(next));
+      setContent(next);
+      setContentError(null);
+      return true;
+    } catch {
+      return false;
+    }
+  }, []);
+  const resetContent = useCallback(async () => {
+    const initial = cloneContent(DEFAULT_CONTENT);
+    const saved = await saveContent(initial);
+    if (saved && !isSupabaseConfigured) {
+      try { localStorage.removeItem(CONTENT_STORAGE_KEY); } catch { /* ignore */ }
+    }
+    return saved;
+  }, [saveContent]);
 
   const add = useCallback(
     (id: string, qty = 1) => {
@@ -117,10 +213,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         if (found) return prev.map((l) => (l.id === id ? { ...l, qty: Math.min(99, l.qty + qty) } : l));
         return [...prev, { id, qty }];
       });
-      const p = PRODUCTS.find((x) => x.id === id);
-      if (p) setToast(`${dictionaries[lang]["cart.added"]} · ${p.name[lang]}`);
+      const p = products.find((x) => x.id === id);
+      if (p) setToast(`${content.texts[lang]["cart.added"]} · ${p.name[lang]}`);
     },
-    [lang],
+    [content.texts, lang, products],
   );
 
   const setQty = useCallback((id: string, qty: number) => {
@@ -139,20 +235,31 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const lines = useMemo(
     () =>
       cart
-        .map((l) => ({ product: PRODUCTS.find((p) => p.id === l.id)!, qty: l.qty }))
+        .map((l) => ({ product: products.find((p) => p.id === l.id)!, qty: l.qty }))
         .filter((l) => Boolean(l.product)),
-    [cart],
+    [cart, products],
   );
 
   const count = useMemo(() => cart.reduce((s, l) => s + l.qty, 0), [cart]);
   const subtotal = useMemo(() => lines.reduce((s, l) => s + (l.product.price ?? 0) * l.qty, 0), [lines]);
 
   const waLink = useCallback(
-    (text: string) => `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`,
-    [],
+    (text: string) => `https://wa.me/${settings.whatsappNumber.replace(/\D/g, "")}?text=${encodeURIComponent(text)}`,
+    [settings.whatsappNumber],
   );
 
   const value: Store = {
+    content,
+    products,
+    categories,
+    rooms,
+    stories,
+    settings,
+    saveContent,
+    resetContent,
+    contentReady,
+    contentError,
+    remoteEnabled: isSupabaseConfigured,
     lang,
     setLang,
     t,
@@ -201,6 +308,7 @@ export function buildOrderMessage(opts: {
   city: string;
   note: string;
   mode: "deliver" | "pickup";
+  whatsappNumber?: string;
 }) {
   const { lang, lines, subtotal, name, phone, city, note, mode } = opts;
   const orderNo = `AS-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
@@ -242,6 +350,6 @@ export function buildOrderMessage(opts: {
   return {
     text,
     orderNo,
-    href: `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`,
+    href: `https://wa.me/${(opts.whatsappNumber || "218913150095").replace(/\D/g, "")}?text=${encodeURIComponent(text)}`,
   };
 }

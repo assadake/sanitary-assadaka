@@ -9,6 +9,12 @@ export const HOME_HASH = "#/";
 
 /** Real URL of the standalone /visite landing page (SPA pathname route). */
 export const VISITE_PATH = "/visite";
+export const ADMIN_PATH = "/admin";
+
+export function isAdminRoute(pathname: string) {
+  const p = pathname.replace(/\/+$/, "");
+  return p === ADMIN_PATH || p === `${ADMIN_PATH}/index.html`;
+}
 /**
  * `dist/visite/index.html` is a real file generated at build time so static
  * hosts (Render, Netlify, S3...) can serve /visite without any rewrite. Some

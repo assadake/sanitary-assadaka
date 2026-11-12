@@ -35,7 +35,7 @@ import {
   wrapDeg,
   type TourScene,
 } from "../data/tour";
-import { WHATSAPP_DISPLAY, WHATSAPP_NUMBER, type Lang } from "../i18n";
+import { type Lang } from "../i18n";
 import { goHome } from "../router";
 import { useStore } from "../store";
 
@@ -112,7 +112,7 @@ function Tip({ icon, title, text }: { icon: ReactNode; title: string; text: stri
 
 /* ── page ──────────────────────────────────────────────────────────── */
 export default function Showroom360() {
-  const { t, lang, waLink } = useStore();
+  const { t, lang, waLink, settings } = useStore();
 
   const [index, setIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
@@ -1062,7 +1062,7 @@ export default function Showroom360() {
                 </li>
                 <li className="flex items-center gap-2">
                   <IconPhone className="h-4 w-4 text-sun" />
-                  <span className="tabular">{WHATSAPP_DISPLAY}</span>
+                  <span className="tabular">{settings.whatsappDisplay}</span>
                 </li>
               </ul>
             </div>
@@ -1105,7 +1105,7 @@ export default function Showroom360() {
             © {new Date().getFullYear()} {t("brand.full")} · {t("footer.made")}
           </p>
           <div className="flex items-center gap-3">
-            <span className="hidden text-[11.5px] text-ink-soft/60 sm:inline tabular">+{WHATSAPP_NUMBER}</span>
+            <span className="hidden text-[11.5px] text-ink-soft/60 sm:inline tabular">+{settings.whatsappNumber}</span>
             <LangSwitch />
           </div>
         </div>

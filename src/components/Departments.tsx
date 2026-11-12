@@ -1,11 +1,11 @@
-import { CATEGORIES, PRODUCTS, px } from "../data/catalog";
+import { px } from "../data/catalog";
 import { useStore } from "../store";
 import { SectionHead } from "./Bits";
 import { IconArrow } from "./Icons";
 import Reveal from "./Reveal";
 
 export default function Departments() {
-  const { t, lang, setCat, setQuery } = useStore();
+  const { t, lang, setCat, setQuery, products, categories } = useStore();
 
   const go = (id: string) => {
     setCat(id);
@@ -23,7 +23,7 @@ export default function Departments() {
         text={t("cat.text")}
         action={
           <div className="flex items-center gap-3 rounded-2xl border border-line bg-surface px-4 py-3">
-            <span className="font-display text-[26px] font-black leading-none text-ikea tabular">{PRODUCTS.length}</span>
+            <span className="font-display text-[26px] font-black leading-none text-ikea tabular">{products.length}</span>
             <span className="text-[12px] leading-tight text-ink-soft">
               {t("ui.departments.countSuffix")}
             </span>
@@ -32,8 +32,8 @@ export default function Departments() {
       />
 
       <div className="grid auto-rows-[minmax(190px,auto)] grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4">
-        {CATEGORIES.map((c, i) => {
-          const count = PRODUCTS.filter((p) => p.cat === c.id).length;
+        {categories.map((c, i) => {
+          const count = products.filter((p) => p.cat === c.id).length;
           const big = span[i] === "md:col-span-2 md:row-span-2";
           return (
             <Reveal key={c.id} delay={i * 60} className={span[i]}>

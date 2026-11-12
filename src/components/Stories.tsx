@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { STORIES, px, type Bi } from "../data/catalog";
-import { WHATSAPP_NUMBER } from "../i18n";
+import { px, type Bi } from "../data/catalog";
 import { useStore } from "../store";
 import { SectionHead } from "./Bits";
 import { RailArrows, RailProgress, useRail } from "./Carousel";
@@ -14,10 +13,10 @@ const STEPS: Bi[] = [
 ];
 
 export default function Stories() {
-  const { t, lang } = useStore();
+  const { t, lang, stories, settings } = useStore();
   const rail = useRail();
   const [openId, setOpenId] = useState<string | null>(null);
-  const story = STORIES.find((s) => s.id === openId) ?? null;
+  const story = stories.find((s) => s.id === openId) ?? null;
 
   return (
     <section id="stories" className="relative scroll-mt-24 overflow-hidden bg-dark-panel py-16 text-white lg:py-24">
@@ -50,7 +49,7 @@ export default function Stories() {
         ref={rail.ref}
         className="no-bar snap-x-mand relative flex gap-4 overflow-x-auto scroll-smooth px-4 pb-2 sm:px-6 lg:px-10"
       >
-        {STORIES.map((s, i) => (
+        {stories.map((s, i) => (
           <Reveal
             key={s.id}
             delay={i * 60}
@@ -129,7 +128,7 @@ export default function Stories() {
                 ))}
               </ol>
               <a
-                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+                href={`https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(
                   lang === "ar" ? `قرأت قصة «${story.title.ar}» ونبي تفاصيل أكثر.` : `I read "${story.title.en}" and would like more details.`,
                 )}`}
                 target="_blank"
