@@ -90,15 +90,19 @@ vercel --prod   # production
 
 ```bash
 npm install
-npm install
 npm run dev       # http://localhost:5173 → / , /visite , /visite-360/index.html
 npm run typecheck # vérification de types
+npx playwright install chromium # une fois, pour les tests navigateur
+npm run test:e2e  # contrôles responsive, interactions et thème
 npm run build     # génère dist/index.html + dist/visite/index.html + dist/visite-360/* + dist/audio/tour/*
 npm run preview   # sert le build de production
 npm start         # serveur statique natif pour Render (PORT)
 ```
 
-Un workflow **GitHub Actions** (`.github/workflows/ci.yml`) rejoue `npm install` + type-check + build à chaque push et conserve `dist/` comme artefact — utile pour vérifier un déploiement avant de le merger.
+Les tests Playwright émulent plusieurs tailles de téléphone et de tablette, en
+portrait et en paysage, en arabe et en anglais. Ils vérifient aussi les menus,
+le panier et les visites 360°. Ils ne remplacent pas une vérification sur de
+vrais appareils et navigateurs.
 
 ---
 
@@ -145,6 +149,8 @@ Le sélecteur est disponible dans la barre supérieure, le menu mobile, l'ancien
 visite `#/showroom` et la page `/visite`. Il propose **8 palettes inspirées du
 sanitaire et de la céramique** : Or Assadaka, Bleu céramique, Vert sauge, Terre
 cuite, Ardoise, Sable, Cuivre, Lavande — ainsi que **Clair / Sombre**.
+La palette **Bleu céramique en mode clair** est utilisée par défaut ; un choix
+enregistré précédemment par le visiteur est conservé.
 
 | Élément | Fichier |
 | --- | --- |
@@ -152,6 +158,7 @@ cuite, Ardoise, Sable, Cuivre, Lavande — ainsi que **Clair / Sombre**.
 | Interface du sélecteur | `src/components/ThemeControls.tsx` |
 | Styles clair / sombre | `src/index.css` (`html[data-mode="dark"]`) |
 | Application au démarrage | `src/main.tsx` |
+| Accents du viewer Pannellum autonome | `public/visite360/index.html` |
 
 Le choix est enregistré dans `localStorage`, appliqué avant le rendu React et
 partagé par le site principal, `/visite` et l'ancienne visite guidée. Aucune

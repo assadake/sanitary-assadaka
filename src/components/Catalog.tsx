@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { CATEGORIES, PRODUCTS, px, type Product } from "../data/catalog";
 import { WHATSAPP_NUMBER, formatPrice } from "../i18n";
 import { useStore } from "../store";
@@ -75,7 +75,7 @@ function ProductCard({ p, index }: { p: Product; index: number }) {
           <button
             type="button"
             onClick={() => setQuick(p)}
-            className="absolute inset-x-3 bottom-3 translate-y-[130%] rounded-full bg-dark-panel/90 py-2.5 font-display text-[12px] font-bold text-white opacity-0 backdrop-blur transition-all duration-400 group-hover:translate-y-0 group-hover:opacity-100"
+            className="product-quick absolute inset-x-3 bottom-3 min-h-11 translate-y-[130%] rounded-full bg-dark-panel/90 py-2.5 font-display text-[12px] font-bold text-white opacity-0 backdrop-blur transition-all duration-400 group-hover:translate-y-0 group-hover:opacity-100"
           >
             {t("product.quick")}
           </button>
@@ -110,12 +110,12 @@ function ProductCard({ p, index }: { p: Product; index: number }) {
             </span>
           </div>
 
-          <div className="mt-auto flex items-end justify-between gap-2 pt-4">
+          <div className="mt-auto flex flex-wrap items-end justify-between gap-2 pt-4">
             <div className="flex flex-col">
               {p.old && (
                 <span className="text-[12px] text-ink-soft/60 line-through tabular">{formatPrice(p.old, lang)}</span>
               )}
-              <span className="font-display text-[19px] font-black leading-none tabular text-ink">
+              <span className="font-display text-[19px] font-black leading-snug tabular text-ink">
                 {formatPrice(p.price, lang)}
               </span>
             </div>
@@ -140,6 +140,16 @@ function ProductCard({ p, index }: { p: Product; index: number }) {
 function QuickView() {
   const { quick, setQuick, t, lang, add, favs, toggleFav } = useStore();
   const [qty, setQty] = useState(1);
+
+  useEffect(() => {
+    if (!quick) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setQuick(null);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [quick, setQuick]);
+
   if (!quick) return null;
   const p = quick;
   const cat = CATEGORIES.find((c) => c.id === p.cat);
@@ -156,7 +166,7 @@ function QuickView() {
   return (
     <div className="fixed inset-0 z-[60] flex items-end justify-center sm:items-center">
       <div className="absolute inset-0 bg-dark-panel/65 backdrop-blur-sm" onClick={() => setQuick(null)} />
-      <div className="relative max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-t-[26px] bg-surface shadow-2xl sm:rounded-[26px]">
+      <div role="dialog" aria-modal="true" aria-label={p.name[lang]} className="mobile-sheet relative w-full max-w-4xl overflow-y-auto rounded-t-[26px] bg-surface shadow-2xl sm:rounded-[26px]">
         <button
           type="button"
           onClick={() => setQuick(null)}
@@ -166,7 +176,7 @@ function QuickView() {
           <IconX className="h-4.5 w-4.5" />
         </button>
         <div className="grid gap-0 sm:grid-cols-2">
-          <div className="relative aspect-square overflow-hidden bg-mist sm:rounded-s-[26px]">
+          <div className="quick-view-image relative aspect-square overflow-hidden bg-mist sm:rounded-s-[26px]">
             <img src={px(p.img, 900, 900)} alt={p.name[lang]} className="h-full w-full object-cover" />
             {p.badge && (
               <span className={`absolute start-4 top-4 rounded-full px-3 py-1.5 font-display text-[11px] font-bold ${BADGES[p.badge].cls}`}>
@@ -200,7 +210,7 @@ function QuickView() {
               ))}
             </div>
 
-            <div className="mt-4 flex items-end gap-3">
+            <div className="mt-4 flex flex-wrap items-end gap-3">
               <div className="flex flex-col">
                 {p.old && <span className="text-[13px] text-ink-soft/60 line-through tabular">{formatPrice(p.old, lang)}</span>}
                 <span className="font-display text-[26px] font-black leading-none tabular">{formatPrice(p.price, lang)}</span>

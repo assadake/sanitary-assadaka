@@ -186,6 +186,8 @@ export default function VisitePage() {
         setNarrating(d.on);
       } else if (d.type === "REQUEST_LANG" && (d.lang === "ar" || d.lang === "en")) {
         changeLang(d.lang);
+      } else if (d.type === "EXIT_FULLSCREEN" && e.source === iframeRef.current?.contentWindow) {
+        setFallbackFs(false);
       }
     };
     window.addEventListener("message", onMessage);
@@ -264,7 +266,6 @@ export default function VisitePage() {
   const openFullscreen = async () => {
     const frame = iframeRef.current;
     if (!frame) return;
-    postToViewer("FULLSCREEN");
     try {
       if (typeof frame.requestFullscreen === "function") {
         await frame.requestFullscreen();
@@ -299,7 +300,7 @@ export default function VisitePage() {
     <div className="visite-page" dir={lang === "ar" ? "rtl" : "ltr"} lang={lang}>
       <header className="visite-topbar">
         <div className="visite-topbar-inner">
-          <a href="/" className="visite-brand">
+          <a href="/" className="visite-brand" aria-label={SHOP_NAME}>
             <span className="visite-brand-mark" aria-hidden="true">360°</span>
             <span className="visite-brand-text">
               {SHOP_NAME}

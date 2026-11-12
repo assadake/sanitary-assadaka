@@ -59,7 +59,7 @@ export default function Offers() {
           {featured.map((p, i) => (
             <Reveal key={p.id} delay={i * 70}>
               <article className="group flex h-full gap-4 overflow-hidden rounded-[20px] border border-white/12 bg-white/[0.06] p-3 transition-all duration-400 hover:-translate-y-1 hover:border-sun/60 hover:bg-white/[0.11]">
-                <div className="relative h-28 w-28 shrink-0 overflow-hidden rounded-2xl sm:h-32 sm:w-32">
+                <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl min-[400px]:h-28 min-[400px]:w-28 sm:h-32 sm:w-32">
                   <img
                     src={px(p.img, 320, 320)}
                     alt={p.name[lang]}
@@ -73,7 +73,7 @@ export default function Offers() {
                 <div className="flex min-w-0 flex-1 flex-col">
                   <h3 className="font-display text-[14.5px] font-bold leading-snug">{p.name[lang]}</h3>
                   <p className="mt-1 line-clamp-2 text-[12px] leading-relaxed text-white/55">{p.desc[lang]}</p>
-                  <div className="mt-auto flex items-end justify-between gap-2 pt-3">
+                  <div className="mt-auto flex flex-wrap items-end justify-between gap-2 pt-3">
                     <span className="font-display text-[14px] font-black tabular text-sun">
                       {formatPrice(p.price, lang)}
                     </span>

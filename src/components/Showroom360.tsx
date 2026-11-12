@@ -89,9 +89,9 @@ function Ctrl({
 
 function Stat({ value, label }: { value: string; label: string }) {
   return (
-    <div className="rounded-2xl border border-line bg-surface px-4 py-3.5 shadow-[0_12px_30px_-24px_rgba(var(--color-ikea-rgb),0.9)]">
-      <p className="font-display text-[22px] font-black leading-none tabular text-ikea sm:text-[26px]">{value}</p>
-      <p className="mt-1.5 text-[11.5px] font-medium leading-tight text-ink-soft">{label}</p>
+    <div className="rounded-2xl border border-line bg-surface px-2 py-3.5 shadow-[0_12px_30px_-24px_rgba(var(--color-ikea-rgb),0.9)] min-[360px]:px-4">
+      <p className="font-display text-[clamp(1rem,6vw,1.375rem)] font-black leading-none tabular text-ikea sm:text-[26px]">{value}</p>
+      <p className="mt-1.5 break-words text-[10px] font-medium leading-tight text-ink-soft min-[360px]:text-[11.5px]">{label}</p>
     </div>
   );
 }
@@ -596,24 +596,25 @@ export default function Showroom360() {
   return (
     <div className="min-h-screen bg-mist">
       {/* compact top bar */}
-      <div className="sticky top-0 z-40 border-b border-line bg-surface/92 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-[1440px] items-center gap-3 px-4 py-2.5 sm:px-6 lg:px-10">
+      <div className="tour-header sticky top-0 z-40 border-b border-line bg-surface/92 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-[1440px] items-center gap-1.5 px-3 py-2.5 sm:gap-3 sm:px-6 lg:px-10">
           <button
             type="button"
             onClick={() => goHome()}
-            className="group inline-flex items-center gap-2 rounded-full border border-line px-3.5 py-2 font-display text-[12.5px] font-bold text-ink transition-colors hover:border-ikea hover:text-ikea"
+            aria-label={t("tour.back")}
+            className="group inline-flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full border border-line font-display text-[12.5px] font-bold text-ink transition-colors hover:border-ikea hover:text-ikea md:h-auto md:w-auto md:px-3.5 md:py-2"
           >
             <IconArrow className="h-4 w-4 rotate-180 transition-transform group-hover:-translate-x-0.5 rtl:rotate-0 rtl:group-hover:translate-x-0.5" />
-            <span className="hidden sm:inline">{t("tour.back")}</span>
+            <span className="hidden md:inline">{t("tour.back")}</span>
           </button>
 
           <div className="mx-auto flex items-center gap-2.5">
             <span className="inline-flex items-center rounded-[7px] bg-ikea p-[3px] shadow-[0_2px_0_0_var(--color-ikea-deep)]">
-              <span className="inline-flex items-center rounded-[50%] bg-sun px-2.5 py-[5px] font-display text-[14px] font-black leading-none text-ikea-deep">
+              <span className="inline-flex items-center rounded-[50%] bg-sun px-1.5 py-[5px] font-display text-[12px] font-black leading-none text-ikea-deep min-[380px]:px-2.5 min-[380px]:text-[14px]">
                 {rtl ? "الصداقة" : "ASSADAKA"}
               </span>
             </span>
-            <span className="hidden flex-col leading-none sm:flex">
+            <span className="hidden flex-col leading-none md:flex">
               <span className="font-display text-[12.5px] font-bold text-ink">{t("brand.full")}</span>
               <span className="mt-0.5 text-[9px] font-medium uppercase tracking-[0.18em] text-ikea">Tripoli · Libya</span>
             </span>
@@ -623,13 +624,13 @@ export default function Showroom360() {
             <span className="hidden rounded-full bg-ikea-soft px-3 py-1.5 font-display text-[10.5px] font-black tracking-[0.16em] text-ikea md:inline-flex">
               360°
             </span>
-            <LangSwitch />
+            <LangSwitch compactOnMobile />
             <ThemeControls lang={lang} variant="tour" />
             <a
               href={bookLink}
               target="_blank"
               rel="noreferrer noopener"
-              className="hidden items-center gap-2 rounded-full bg-leaf px-4 py-2.5 font-display text-[12.5px] font-bold text-white transition-transform hover:scale-[1.03] sm:inline-flex"
+              className="hidden items-center gap-2 rounded-full bg-leaf px-4 py-2.5 font-display text-[12.5px] font-bold text-white transition-transform hover:scale-[1.03] lg:inline-flex"
             >
               <IconWhatsApp className="h-4 w-4" />
               {t("showroom.wa")}
@@ -661,7 +662,12 @@ export default function Showroom360() {
 
       {/* viewer + programme */}
       <section id="tour-viewer" className="mx-auto max-w-[1440px] scroll-mt-24 px-4 sm:px-6 lg:px-10">
-        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_330px] xl:grid-cols-[minmax(0,1fr)_360px]">
+        {simplified && (
+          <p role="status" className="mb-3 rounded-2xl border border-ikea/25 bg-ikea-soft px-4 py-3 text-[12px] font-semibold text-ikea">
+            {t("tour.noWebgl")}
+          </p>
+        )}
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_330px] xl:grid-cols-[minmax(0,1fr)_360px]">
           {/* ── immersive frame ── */}
           <div ref={frameRef} className="tour-frame relative isolate overflow-hidden rounded-[26px] border border-white/10 bg-[#0b1220]">
             <PanoCanvas
@@ -684,8 +690,8 @@ export default function Showroom360() {
             </div>
 
             {/* viewer top bar */}
-            <div className="absolute inset-x-0 top-0 z-20 flex items-start justify-between gap-3 p-3.5 sm:p-5">
-              <div className="flex flex-wrap items-center gap-2">
+            <div className="tour-viewer-top absolute inset-x-0 top-0 z-20 flex items-start justify-between gap-3 p-3.5 sm:p-5">
+              <div className="tour-viewer-status flex flex-wrap items-center gap-2">
                 <span className="tour-chip">
                   <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-sun" />
                   {t("tour.live")}
@@ -693,10 +699,9 @@ export default function Showroom360() {
                 <span className="tour-chip tabular">
                   {pad(index + 1)} <span className="opacity-50">/</span> {pad(N)}
                 </span>
-                {simplified && <span className="tour-chip tour-chip-warn">{t("tour.noWebgl")}</span>}
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="tour-viewer-actions flex items-center gap-2">
                 <div className="tour-compass" title={`${t("tour.step")} ${index + 1}`}>
                   <span ref={compassNeedleRef} className="tour-compass-needle">
                     <span className="tour-compass-arrow" />
@@ -740,7 +745,7 @@ export default function Showroom360() {
 
             {/* first-visit hint */}
             {hint && !loading && (
-              <div className="pointer-events-none absolute left-1/2 top-20 z-20 -translate-x-1/2 sm:top-[4.6rem]">
+              <div className="tour-hint pointer-events-none absolute left-1/2 top-20 z-20 flex w-[calc(100%-2rem)] -translate-x-1/2 justify-center sm:top-[4.6rem]">
                 <span className="tour-hint-pill">
                   <IconHand className="h-4 w-4" />
                   {t("tour.hint")}
@@ -773,10 +778,10 @@ export default function Showroom360() {
                 <h2 className="mt-1 font-display text-[19px] font-black leading-tight text-white sm:text-[25px]">
                   {scene.title[lang]}
                 </h2>
-                <p className="mt-2 line-clamp-2 text-[12.5px] leading-relaxed text-white/70 sm:line-clamp-3 sm:text-[13.5px]">
+                <p className="tour-caption-description mt-2 line-clamp-2 text-[12.5px] leading-relaxed text-white/70 sm:line-clamp-3 sm:text-[13.5px]">
                   {scene.text[lang]}
                 </p>
-                <div className="mt-3 flex flex-wrap items-center gap-2">
+                <div className="tour-caption-tags mt-3 flex flex-wrap items-center gap-2">
                   <span className="tour-look">{t("tour.look")}</span>
                   {tags.map((tag) => (
                     <span key={tag} className="tour-tag">
