@@ -4,21 +4,33 @@ import { useStore } from "../store";
 import { IconChevron, IconGlobe, IconStar } from "./Icons";
 
 /* ─────────────────────────── Logo ─────────────────────────── */
-export function Logo({ compact = false, onDark = false }: { compact?: boolean; onDark?: boolean }) {
+export function Logo({
+  compact = false,
+  compactOnMobile = false,
+  onDark = false,
+}: {
+  compact?: boolean;
+  compactOnMobile?: boolean;
+  onDark?: boolean;
+}) {
   const { lang, t } = useStore();
   return (
     <a
       href="#top"
-      className="group inline-flex items-center gap-2.5"
+      className="group inline-flex max-w-full flex-wrap items-center gap-2.5"
       aria-label={t("brand.full")}
     >
       <span className="relative inline-flex items-center rounded-[7px] bg-ikea p-[3px] shadow-[0_2px_0_0_var(--color-ikea-deep)] transition-transform duration-300 group-hover:-rotate-2 group-hover:scale-105">
-        <span className="inline-flex items-center rounded-[50%] bg-sun px-2.5 py-[5px] font-display text-[15px] font-black leading-none tracking-tight text-ikea-deep sm:px-3.5 sm:text-[19px]">
+        <span
+          className={`inline-flex items-center rounded-[50%] bg-sun py-[5px] font-display font-black leading-none tracking-tight text-ikea-deep sm:px-3.5 sm:text-[19px] ${
+            compactOnMobile ? "px-1.5 text-[12px] min-[380px]:px-2.5 min-[380px]:text-[15px]" : "px-2.5 text-[15px]"
+          }`}
+        >
           {lang === "ar" ? "الصداقة" : "ASSADAKA"}
         </span>
       </span>
       {!compact && (
-        <span className="flex flex-col leading-none">
+        <span className={`${compactOnMobile ? "hidden md:flex" : "flex"} min-w-0 flex-col leading-none`}>
           <span className={`font-display text-[11px] font-bold tracking-tight sm:text-[13px] ${onDark ? "text-white" : "text-ink"}`}>
             {t("brand.full")}
           </span>
@@ -86,7 +98,15 @@ export function SectionHead({
 }
 
 /* ─────────────────────── Language switch ─────────────────────── */
-export function LangSwitch({ dark = false }: { dark?: boolean }) {
+export function LangSwitch({
+  dark = false,
+  inline = false,
+  compactOnMobile = false,
+}: {
+  dark?: boolean;
+  inline?: boolean;
+  compactOnMobile?: boolean;
+}) {
   const { lang, setLang, t } = useStore();
   const [open, setOpen] = useState(false);
   const box = useRef<HTMLDivElement | null>(null);
@@ -96,10 +116,10 @@ export function LangSwitch({ dark = false }: { dark?: boolean }) {
       if (box.current && !box.current.contains(e.target as Node)) setOpen(false);
     };
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
-    document.addEventListener("mousedown", onDoc);
+    document.addEventListener("click", onDoc);
     document.addEventListener("keydown", onKey);
     return () => {
-      document.removeEventListener("mousedown", onDoc);
+      document.removeEventListener("click", onDoc);
       document.removeEventListener("keydown", onKey);
     };
   }, []);
@@ -113,50 +133,56 @@ export function LangSwitch({ dark = false }: { dark?: boolean }) {
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-label={t("top.lang")}
-        className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-[12px] font-semibold transition-colors ${
+        className={`inline-flex items-center gap-1.5 rounded-full py-1.5 text-[12px] font-semibold transition-colors ${
+          compactOnMobile ? "px-1.5 min-[380px]:px-2.5" : "px-2.5"
+        } ${
           dark
             ? "text-white/80 hover:bg-white/10 hover:text-white"
             : "text-ink-soft hover:bg-ikea-soft hover:text-ikea"
         }`}
       >
         <IconGlobe className="h-4 w-4" />
-        <span className="hidden sm:inline">{current.id === "ar" ? "العربية" : "English"}</span>
-        <span className={`hidden sm:inline ${dark ? "text-white/40" : "text-ink/30"}`}>|</span>
-        <span className={dark ? "text-white/70" : "text-ink-soft/70"}>LY</span>
+        <span className={inline ? "inline" : "hidden sm:inline"}>{current.id === "ar" ? "العربية" : "English"}</span>
+        <span className={`${inline ? "inline" : "hidden sm:inline"} ${dark ? "text-white/40" : "text-ink/30"}`}>|</span>
+        <span className={`${compactOnMobile ? "hidden min-[380px]:inline" : ""} ${dark ? "text-white/70" : "text-ink-soft/70"}`}>LY</span>
         <IconChevron className={`h-3.5 w-3.5 transition-transform duration-300 ${open ? "rotate-180" : ""}`} />
       </button>
 
-      <div
-        className={`absolute end-0 top-[calc(100%+8px)] z-50 w-60 origin-top overflow-hidden rounded-xl border border-line bg-surface p-1.5 shadow-[0_24px_60px_-12px_rgba(17,17,20,0.35)] transition-all duration-200 ${
-          open ? "pointer-events-auto scale-100 opacity-100" : "pointer-events-none scale-95 opacity-0"
-        }`}
-      >
-        <p className="px-3 py-2 font-display text-[10px] font-bold uppercase tracking-[0.18em] text-ink-soft/70">
-          {t("top.lang")}
-        </p>
-        {LANGS.map((l) => (
-          <button
-            key={l.id}
-            type="button"
-            onClick={() => {
-              setLang(l.id as Lang);
-              setOpen(false);
-            }}
-            className={`flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-start transition-colors ${
-              l.id === lang ? "bg-ikea-soft text-ikea" : "text-ink hover:bg-mist"
-            }`}
-          >
-            <span className="flex items-center gap-2.5">
-              <span className="text-base leading-none">{l.flag}</span>
-              <span className="flex flex-col">
-                <span className="text-[13px] font-semibold leading-tight">{l.native}</span>
-                <span className="text-[11px] text-ink-soft/70">{l.label} · Libya</span>
+      {(open || !inline) && (
+        <div
+          aria-hidden={!open}
+          inert={!open}
+          className={`lang-switch-popover ${inline ? "relative mt-2 w-full" : "absolute end-0 top-[calc(100%+8px)] z-50 w-60 origin-top"} overflow-hidden rounded-xl border border-line bg-surface p-1.5 shadow-[0_24px_60px_-12px_rgba(17,17,20,0.35)] transition-all duration-200 ${
+            open ? "pointer-events-auto scale-100 opacity-100" : "pointer-events-none scale-95 opacity-0"
+          }`}
+        >
+          <p className="px-3 py-2 font-display text-[10px] font-bold uppercase tracking-[0.18em] text-ink-soft/70">
+            {t("top.lang")}
+          </p>
+          {LANGS.map((l) => (
+            <button
+              key={l.id}
+              type="button"
+              onClick={() => {
+                setLang(l.id as Lang);
+                setOpen(false);
+              }}
+              className={`flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-start transition-colors ${
+                l.id === lang ? "bg-ikea-soft text-ikea" : "text-ink hover:bg-mist"
+              }`}
+            >
+              <span className="flex items-center gap-2.5">
+                <span className="text-base leading-none">{l.flag}</span>
+                <span className="flex flex-col">
+                  <span className="text-[13px] font-semibold leading-tight">{l.native}</span>
+                  <span className="text-[11px] text-ink-soft/70">{l.label} · Libya</span>
+                </span>
               </span>
-            </span>
-            {l.id === lang && <span className="h-2 w-2 rounded-full bg-ikea" />}
-          </button>
-        ))}
-      </div>
+              {l.id === lang && <span className="h-2 w-2 rounded-full bg-ikea" />}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

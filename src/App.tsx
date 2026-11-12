@@ -105,10 +105,10 @@ function Shell() {
           <Showroom />
         </main>
         <Footer />
+        <WhatsAppFloat />
+        <Toast />
       </div>
       <CartDrawer />
-      <WhatsAppFloat />
-      <Toast />
     </div>
   );
 }

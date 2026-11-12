@@ -62,16 +62,18 @@ export default function ThemeControls({
 
   useEffect(() => {
     if (!open) return;
-    const onPointer = (event: PointerEvent) => {
+    // Close after the click, not on pointerdown: the inline mobile panel can
+    // otherwise collapse and move the control the visitor was trying to tap.
+    const onClick = (event: MouseEvent) => {
       if (ref.current && !ref.current.contains(event.target as Node)) setOpen(false);
     };
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") setOpen(false);
     };
-    document.addEventListener("pointerdown", onPointer);
+    document.addEventListener("click", onClick);
     document.addEventListener("keydown", onKey);
     return () => {
-      document.removeEventListener("pointerdown", onPointer);
+      document.removeEventListener("click", onClick);
       document.removeEventListener("keydown", onKey);
     };
   }, [open]);

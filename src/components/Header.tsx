@@ -126,17 +126,19 @@ export default function Header() {
           scrolled ? "border-line bg-surface/95 shadow-[0_10px_30px_-18px_rgba(17,17,20,0.6)] backdrop-blur" : "border-transparent bg-surface"
         }`}
       >
-        <div className="relative z-40 mx-auto flex max-w-[1440px] items-center gap-3 px-4 py-3 sm:px-6 lg:px-10">
+        <div className="relative z-40 mx-auto flex max-w-[1440px] items-center gap-1.5 px-3 py-3 sm:gap-3 sm:px-6 lg:px-10">
           <button
             type="button"
             onClick={() => setMobile(true)}
-            className="-ms-1 inline-flex h-10 w-10 items-center justify-center rounded-full text-ink transition-colors hover:bg-mist lg:hidden"
+            className="-ms-1 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-ink transition-colors hover:bg-mist lg:hidden"
             aria-label={t("nav.menu")}
+            aria-expanded={mobile}
+            aria-controls="mobile-menu"
           >
             <IconMenu />
           </button>
 
-          <Logo />
+          <Logo compactOnMobile />
 
           <nav className="mx-auto hidden items-center gap-1 lg:flex" onMouseLeave={() => setMega(false)}>
             <button
@@ -163,7 +165,7 @@ export default function Header() {
             ))}
           </nav>
 
-          <div className="ms-auto flex items-center gap-1 lg:ms-0">
+          <div className="ms-auto flex shrink-0 items-center gap-0 sm:gap-1 lg:ms-0">
             {/* 360° showroom tour — dedicated page */}
             <a
               href={TOUR_HASH}
@@ -175,15 +177,6 @@ export default function Header() {
                 360
               </span>
             </a>
-            {/* /visite — accès visible dans la barre principale (le 1er lien reste /#/showroom) */}
-            <a
-              href="/visite"
-              className="accent-chip hidden items-center gap-2 rounded-full border px-3 py-2 font-display text-[12.5px] font-bold transition-all duration-300 xl:inline-flex"
-            >
-              <IconCube className="h-4 w-4" />
-              {t("nav.visite360")}
-            </a>
-
             {/* desktop search */}
             <form
               onSubmit={(e) => {
@@ -198,7 +191,7 @@ export default function Header() {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder={t("search.placeholder")}
-                  className="w-36 bg-transparent text-[13px] text-ink outline-none placeholder:text-ink-soft/55 2xl:w-72"
+                  className="w-36 bg-transparent text-[13px] text-ink outline-none placeholder:text-ink-soft/55 2xl:w-44"
                   aria-label={t("search.placeholder")}
                 />
                 {query && (
@@ -223,7 +216,7 @@ export default function Header() {
 
             <a
               href="#catalog"
-              className="relative inline-flex h-10 w-10 items-center justify-center rounded-full text-ink transition-colors hover:bg-mist"
+              className="relative inline-flex h-10 w-10 items-center justify-center rounded-full text-ink transition-colors hover:bg-mist max-[319px]:hidden"
               aria-label={t("fav.title")}
             >
               <IconHeart className="h-5 w-5" filled={favs.length > 0} />
@@ -237,7 +230,8 @@ export default function Header() {
             <button
               type="button"
               onClick={() => setCartOpen(true)}
-              className="group relative ms-1 inline-flex items-center gap-2 rounded-full bg-ikea px-4 py-2.5 font-display text-[13px] font-bold text-white transition-all duration-300 hover:bg-ikea-deep hover:shadow-[0_10px_24px_-10px_rgba(var(--color-ikea-rgb),0.9)] active:scale-95"
+              aria-label={`${t("cart.title")} (${count})`}
+              className="group relative inline-flex items-center gap-1.5 rounded-full bg-ikea px-2.5 py-2.5 font-display text-[13px] font-bold text-white transition-all duration-300 hover:bg-ikea-deep hover:shadow-[0_10px_24px_-10px_rgba(var(--color-ikea-rgb),0.9)] active:scale-95 sm:ms-1 sm:gap-2 sm:px-4"
             >
               <IconBag className="h-5 w-5 transition-transform duration-300 group-hover:-rotate-6" />
               <span className="hidden sm:inline">{t("cart.button")}</span>
@@ -263,7 +257,8 @@ export default function Header() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={t("search.placeholder")}
-              className="w-full bg-transparent text-[14px] outline-none placeholder:text-ink-soft/55"
+              aria-label={t("search.placeholder")}
+              className="min-w-0 w-full bg-transparent text-[14px] outline-none placeholder:text-ink-soft/55"
             />
           </label>
         </div>
@@ -368,7 +363,7 @@ export default function Header() {
       </div>
 
       {/* mobile menu */}
-      <div className={`fixed inset-0 z-50 lg:hidden ${mobile ? "" : "pointer-events-none"}`}>
+      <div className={`fixed inset-0 z-50 lg:hidden ${mobile ? "" : "pointer-events-none"}`} aria-hidden={!mobile} inert={!mobile}>
         <div
           onClick={() => setMobile(false)}
           className={`absolute inset-0 bg-dark-panel/55 backdrop-blur-sm transition-opacity duration-300 ${
@@ -376,12 +371,16 @@ export default function Header() {
           }`}
         />
         <div
-          className={`absolute inset-y-0 start-0 flex w-[86%] max-w-sm flex-col bg-surface transition-transform duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          id="mobile-menu"
+          role="dialog"
+          aria-modal="true"
+          aria-label={t("nav.menu")}
+          className={`absolute inset-y-0 start-0 flex w-[min(92vw,24rem)] flex-col bg-surface transition-transform duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] ${
             mobile ? "translate-x-0" : "ltr:-translate-x-full rtl:translate-x-full"
           }`}
         >
-          <div className="flex items-center justify-between border-b border-line px-5 py-4">
-            <Logo />
+          <div className="flex shrink-0 items-center justify-between gap-3 border-b border-line px-5 py-4">
+            <Logo compactOnMobile />
             <button
               type="button"
               onClick={() => setMobile(false)}
@@ -391,57 +390,59 @@ export default function Header() {
               <IconX />
             </button>
           </div>
-          <nav className="flex-1 overflow-y-auto px-3 py-4">
-            <a
-              href={TOUR_HASH}
-              onClick={() => setMobile(false)}
-              className="mb-3 flex items-center justify-between gap-3 rounded-2xl bg-ikea px-4 py-4 font-display text-[15px] font-black text-white transition-colors hover:bg-ikea-deep"
-            >
-              <span className="flex items-center gap-2.5">
-                <IconCube className="h-5 w-5" />
-                {t("nav.tour360")}
-              </span>
-              <span className="rounded-full bg-sun px-2 py-0.5 font-display text-[10px] font-black tabular text-on-accent">360°</span>
-            </a>
-            <a
-              href="/visite"
-              onClick={() => setMobile(false)}
-              className="accent-chip mb-3 flex items-center justify-between gap-3 rounded-2xl border px-4 py-3.5 font-display text-[14.5px] font-bold transition-colors"
-            >
-              <span className="flex items-center gap-2.5">
-                <IconCube className="h-5 w-5" />
-                {t("nav.visite360")}
-              </span>
-              <span className="accent-badge rounded-full px-2 py-0.5 font-display text-[10px] font-black tabular">/visite</span>
-            </a>
-            {NAV.map((n, i) => (
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+            <nav className="px-3 py-4">
               <a
-                key={n.key + i}
-                href={n.href}
+                href={TOUR_HASH}
                 onClick={() => setMobile(false)}
-                className="flex items-center justify-between border-b border-line/70 px-3 py-4 font-display text-[16px] font-bold text-ink transition-colors hover:text-ikea"
+                className="mb-3 flex items-center justify-between gap-3 rounded-2xl bg-ikea px-4 py-4 font-display text-[15px] font-black text-white transition-colors hover:bg-ikea-deep"
               >
-                {t(n.key)}
-                <span className="text-[11px] font-medium text-ink-soft/50 tabular">0{i + 1}</span>
+                <span className="flex items-center gap-2.5">
+                  <IconCube className="h-5 w-5" />
+                  {t("nav.tour360")}
+                </span>
+                <span className="rounded-full bg-sun px-2 py-0.5 font-display text-[10px] font-black tabular text-on-accent">360°</span>
               </a>
-            ))}
-          </nav>
-          <div className="space-y-3 border-t border-line bg-mist px-5 py-5">
-            <ThemeControls lang={lang} variant="mobile" placement="up" />
-            <LangSwitch />
-            <div className="flex items-center gap-2 text-[13px] text-ink-soft">
-              <IconPin className="h-4 w-4 text-ikea" />
-              {t("top.location")}
+              <a
+                href="/visite"
+                onClick={() => setMobile(false)}
+                className="accent-chip mb-3 flex items-center justify-between gap-3 rounded-2xl border px-4 py-3.5 font-display text-[14.5px] font-bold transition-colors"
+              >
+                <span className="flex items-center gap-2.5">
+                  <IconCube className="h-5 w-5" />
+                  {t("nav.visite360")}
+                </span>
+                <span className="accent-badge rounded-full px-2 py-0.5 font-display text-[10px] font-black tabular">/visite</span>
+              </a>
+              {NAV.map((n, i) => (
+                <a
+                  key={n.key + i}
+                  href={n.href}
+                  onClick={() => setMobile(false)}
+                  className="flex items-center justify-between border-b border-line/70 px-3 py-4 font-display text-[16px] font-bold text-ink transition-colors hover:text-ikea"
+                >
+                  {t(n.key)}
+                  <span className="text-[11px] font-medium text-ink-soft/50 tabular">0{i + 1}</span>
+                </a>
+              ))}
+            </nav>
+            <div className="space-y-3 border-t border-line bg-mist px-5 pt-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
+              <ThemeControls lang={lang} variant="mobile" />
+              <LangSwitch inline />
+              <div className="flex items-center gap-2 text-[13px] text-ink-soft">
+                <IconPin className="h-4 w-4 text-ikea" />
+                {t("top.location")}
+              </div>
+              <a
+                href={waGeneral}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="flex items-center justify-center gap-2 rounded-full bg-leaf px-4 py-3 font-display text-[14px] font-bold text-white"
+              >
+                <IconWhatsApp className="h-5 w-5" />
+                <span className="tabular">{WHATSAPP_DISPLAY}</span>
+              </a>
             </div>
-            <a
-              href={waGeneral}
-              target="_blank"
-              rel="noreferrer noopener"
-              className="flex items-center justify-center gap-2 rounded-full bg-leaf px-4 py-3 font-display text-[14px] font-bold text-white"
-            >
-              <IconWhatsApp className="h-5 w-5" />
-              <span className="tabular">{WHATSAPP_DISPLAY}</span>
-            </a>
           </div>
         </div>
       </div>
